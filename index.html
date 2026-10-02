@@ -285,9 +285,14 @@ const L = (ru, en) => LANG==='en' ? en : ru;
 
 /* ============ analytics ============ */
 // GoatCounter: no cookies, no personal data. Empty code = analytics off; never runs locally.
-const GC_CODE = '';
+// Stats: https://sharipovrus.goatcounter.com
+const GC_CODE = 'sharipovrus';
 (()=>{
   if(!GC_CODE || location.protocol==='file:' || /^(localhost|127\.|\[::1\])/.test(location.hostname)) return;
+  // /en/ redirects here and leaves the original referrer in sessionStorage, otherwise it would be lost
+  let ref = null; try{ ref = sessionStorage.getItem('ritm-ref'); sessionStorage.removeItem('ritm-ref'); }catch(e){}
+  // one path per language actually shown, without utm and other query noise
+  window.goatcounter = Object.assign({path: ()=>location.pathname + (LANG==='en' ? '?lang=en' : '')}, ref ? {referrer: ref} : {});
   const s = document.createElement('script');
   s.async = true; s.src = 'https://gc.zgo.at/count.js'; s.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
   document.head.appendChild(s);

@@ -18,7 +18,7 @@
 
 ## Технически
 
-Одна HTML-страница без зависимостей и сборки. Прогресс хранится в localStorage браузера, сервер не используется, данные никуда не отправляются.
+Одна HTML-страница без зависимостей и сборки. Прогресс хранится в localStorage браузера. Посещения считает GoatCounter — без cookies и без персональных данных.
 
 ## Запуск локально
 
@@ -40,4 +40,4 @@ MIT — делай что хочешь, упоминание авторства 
 - A cheat sheet of 58 PM terms; terms in the text are clickable
 - A shareable result card with your grade and metrics at the end
 
-One HTML file, no dependencies, no build, no backend. Progress is stored in your browser's localStorage. Switch languages with the RU / EN toggle in the header.
+One HTML file, no dependencies, no build, no backend. Progress is stored in your browser's localStorage. Visits are counted with GoatCounter: no cookies, no personal data. Switch languages with the RU / EN toggle in the header.

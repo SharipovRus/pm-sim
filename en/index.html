@@ -15,7 +15,10 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232A4FE6'/%3E%3Cpath d='M7 22 L13 13 L18 18 L25 9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<script>location.replace('../?lang=en' + location.hash);</script>
+<script>
+try{ if(document.referrer) sessionStorage.setItem('ritm-ref', document.referrer); }catch(e){}
+location.replace('../?lang=en' + location.hash);
+</script>
 <style>body{font-family:system-ui,sans-serif;background:#EDF0EA;color:#16202A;margin:0;padding:40px 16px;text-align:center}a{color:#2A4FE6}</style>
 </head>
 <body>
