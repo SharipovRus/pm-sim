@@ -292,7 +292,7 @@ const GC_CODE = 'sharipovrus';
   // /en/ redirects here and leaves the original referrer in sessionStorage, otherwise it would be lost
   let ref = null; try{ ref = sessionStorage.getItem('ritm-ref'); sessionStorage.removeItem('ritm-ref'); }catch(e){}
   // one path per language actually shown, without utm and other query noise
-  window.goatcounter = Object.assign({path: ()=>location.pathname + (LANG==='en' ? '?lang=en' : '')}, ref ? {referrer: ref} : {});
+  window.goatcounter = Object.assign({path: ()=>location.pathname + (LANG==='en' ? '?lang=en' : '')}, ref!==null ? {referrer: ()=>ref} : {});
   const s = document.createElement('script');
   s.async = true; s.src = 'https://gc.zgo.at/count.js'; s.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
   document.head.appendChild(s);
