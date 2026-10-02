@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Браузерный тренажёр продакт-менеджера: 10 месяцев управления подписочным приложением. Кейсы стейкхолдеров, задачи на метрики, юнит-экономику, A/B-тесты, приоритизацию и discovery. Со встроенной шпаргалкой по терминам.">
+<meta name="author" content="Ruslan Sharipov">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232A4FE6'/%3E%3Cpath d='M7 22 L13 13 L18 18 L25 9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ритм — симулятор продакт-менеджера">
+<meta property="og:description" content="Браузерный тренажёр продакт-менеджера: 10 месяцев управления подписочным приложением. Кейсы стейкхолдеров, задачи на метрики, юнит-экономику, A/B-тесты, приоритизацию и discovery. Со встроенной шпаргалкой по терминам.">
+<meta property="og:image" content="https://sharipovrus.github.io/pm-sim/og.png">
+<meta property="og:url" content="https://sharipovrus.github.io/pm-sim/">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{color-scheme:light dark; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0}
+body{font-family:system-ui,sans-serif; font-size:14px}
+img{max-width:100%}
+[hidden]{display:none !important}
+</style>
+<title>Ритм · PM-симулятор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EDF0EA; --surface:#FFFFFF; --surface2:#F5F7F2; --ink:#16202A; --muted:#5A6570; --line:#D5DBD1;
+  --accent:#2A4FE6; --accent-soft:#E3E8FD; --accent-ink:#FFFFFF;
+  --xp:#D98E0B; --xp-soft:#FBEFD6;
+  --good:#1D8657; --good-soft:#DDF2E7; --warn:#B87200; --warn-soft:#FAEBCF; --bad:#C23E2C; --bad-soft:#F8E0DB;
+  --shadow:0 1px 0 rgba(22,32,42,.04), 0 8px 24px -12px rgba(22,32,42,.18);
+  --display:"Unbounded", "Onest", system-ui, sans-serif;
+  --body:"Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1217; --surface:#161B22; --surface2:#1C222A; --ink:#E6EBEE; --muted:#96A1AB; --line:#29313B;
+    --accent:#7B93FF; --accent-soft:#1F2847; --accent-ink:#0E1217;
+    --xp:#F0B340; --xp-soft:#3A2E14;
+    --good:#43C488; --good-soft:#15301F; --warn:#E6A844; --warn-soft:#342812; --bad:#F2705B; --bad-soft:#3A1C17;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1217; --surface:#161B22; --surface2:#1C222A; --ink:#E6EBEE; --muted:#96A1AB; --line:#29313B;
+  --accent:#7B93FF; --accent-soft:#1F2847; --accent-ink:#0E1217;
+  --xp:#F0B340; --xp-soft:#3A2E14;
+  --good:#43C488; --good-soft:#15301F; --warn:#E6A844; --warn-soft:#342812; --bad:#F2705B; --bad-soft:#3A1C17;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+.app{max-width:1200px; margin:0 auto; padding-inline:16px; padding-block:18px 48px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* HUD */
+.hud{display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; margin-bottom:18px}
+.brand{display:flex; align-items:baseline; gap:10px}
+.brand b{font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:-.01em}
+.brand span{color:var(--muted); font-size:13px}
+.track{flex:1 1 280px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.track-label{display:flex; justify-content:space-between; font-size:12px; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
+.segs{display:grid; grid-template-columns:repeat(10,1fr); gap:4px}
+.seg{height:8px; border-radius:2px; background:var(--line)}
+.seg.done{background:var(--accent)}
+.seg.now{background:var(--accent); opacity:.45; animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.9}}
+.rank{display:flex; align-items:center; gap:10px; padding:6px 12px 6px 6px; background:var(--surface); border:1px solid var(--line); border-radius:999px}
+.rank i{font-style:normal; font-family:var(--mono); font-size:12px; font-weight:600; background:var(--xp-soft); color:var(--xp); padding:3px 8px; border-radius:999px}
+.rank b{font-size:13px; font-weight:600}
+
+.grid{display:grid; grid-template-columns:minmax(0,1fr) 370px; gap:20px; align-items:start}
+@media (max-width: 920px){ .grid{grid-template-columns:minmax(0,1fr)} }
+
+/* Stage */
+.stage{background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:26px; min-width:0}
+@media (max-width:560px){ .stage{padding:18px} }
+.eyebrow{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:14px}
+.chip{display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; letter-spacing:.02em; text-transform:none; background:var(--surface2); border:1px solid var(--line); color:var(--ink)}
+.chip.d-disc{background:#E6F3EC; border-color:#BFE0CD; color:#1B6B45}
+.chip.d-prio{background:#F4E9FB; border-color:#DDC6EE; color:#6A2F93}
+.chip.d-metr{background:#E3EAFD; border-color:#C3D0F7; color:#2440B8}
+.chip.d-exp{background:#FCEBDD; border-color:#F0CDAE; color:#9A4A0E}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip.d-disc{background:#14301F;border-color:#23523A;color:#7DDBA9} :root:not([data-theme="light"]) .chip.d-prio{background:#2A1A38;border-color:#4A2F63;color:#D3A8F2} :root:not([data-theme="light"]) .chip.d-metr{background:#1A2446;border-color:#2E3F78;color:#9DB2FF} :root:not([data-theme="light"]) .chip.d-exp{background:#36220F;border-color:#5C3A1A;color:#F3B37C} }
+:root[data-theme="dark"] .chip.d-disc{background:#14301F;border-color:#23523A;color:#7DDBA9}
+:root[data-theme="dark"] .chip.d-prio{background:#2A1A38;border-color:#4A2F63;color:#D3A8F2}
+:root[data-theme="dark"] .chip.d-metr{background:#1A2446;border-color:#2E3F78;color:#9DB2FF}
+:root[data-theme="dark"] .chip.d-exp{background:#36220F;border-color:#5C3A1A;color:#F3B37C}
+
+h1,h2,h3{text-wrap:balance; margin:0}
+.h-display{font-family:var(--display); font-weight:700; letter-spacing:-.015em; line-height:1.15}
+h2.h-display{font-size:clamp(20px,2.4vw,26px); margin-bottom:12px}
+.lead{color:var(--muted); max-width:62ch}
+p{margin:0 0 12px}
+
+.msg-head{display:flex; align-items:center; gap:12px; margin-bottom:16px}
+.ava{width:40px; height:40px; border-radius:12px; display:grid; place-items:center; font-weight:700; font-size:14px; color:#fff; flex:none}
+.msg-who b{display:block; font-weight:600}
+.msg-who span{font-size:13px; color:var(--muted)}
+.msg-body{font-size:16px; max-width:64ch; margin-bottom:20px}
+
+.opts{display:flex; flex-direction:column; gap:10px}
+.opt{display:flex; gap:14px; align-items:flex-start; text-align:left; width:100%; padding:14px 16px; background:var(--surface2); border:1px solid var(--line); border-radius:12px; cursor:pointer; transition:border-color .15s, transform .15s, background .15s}
+.opt:hover{border-color:var(--accent); background:var(--accent-soft)}
+.opt:active{transform:translateY(1px)}
+.opt kbd{flex:none; width:26px; height:26px; display:grid; place-items:center; border-radius:7px; border:1px solid var(--line); background:var(--surface); font-family:var(--mono); font-size:12px; color:var(--muted)}
+.opt[disabled]{cursor:default; opacity:.55}
+.opt[disabled]:hover{border-color:var(--line); background:var(--surface2)}
+.opt.picked{opacity:1; border-color:var(--ink)}
+.opt.is-best{border-color:var(--good); background:var(--good-soft); opacity:1}
+.opt.is-wrong{border-color:var(--bad); background:var(--bad-soft); opacity:1}
+
+.verdict{border-radius:12px; padding:16px 18px; margin-top:18px; border:1px solid}
+.verdict.best{background:var(--good-soft); border-color:var(--good)}
+.verdict.ok{background:var(--warn-soft); border-color:var(--warn)}
+.verdict.bad{background:var(--bad-soft); border-color:var(--bad)}
+.verdict h3{font-size:15px; font-weight:700; display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap}
+.verdict h3 .xp{font-family:var(--mono); font-size:12px; background:var(--xp-soft); color:var(--xp); padding:2px 8px; border-radius:999px}
+.verdict p{margin:0 0 8px; max-width:66ch}
+.verdict p:last-child{margin-bottom:0}
+.fx{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+.fx span{font-family:var(--mono); font-size:12px; padding:3px 8px; border-radius:6px; background:var(--surface); border:1px solid var(--line)}
+.fx .up{color:var(--good)} .fx .down{color:var(--bad)}
+.later{font-size:13px; color:var(--muted); margin-top:10px}
+
+.actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; align-items:center}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:11px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-weight:600}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent}
+.hint{font-size:12px; color:var(--muted)}
+
+/* challenge */
+.task-box{background:var(--surface2); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; overflow-x:auto}
+table.t{border-collapse:collapse; width:100%; font-size:14px; min-width:360px}
+table.t th, table.t td{padding:7px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+table.t th:first-child, table.t td:first-child{text-align:left; white-space:normal}
+table.t th{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+table.t td{font-family:var(--mono); font-variant-numeric:tabular-nums}
+table.t td:first-child{font-family:var(--body)}
+table.t tr:last-child td{border-bottom:0}
+.kv{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px}
+.kv div{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 12px}
+.kv small{display:block; font-size:12px; color:var(--muted)}
+.kv b{font-family:var(--mono); font-size:18px}
+.num-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.num-row input{font-family:var(--mono); font-size:18px; padding:11px 14px; border-radius:11px; border:1px solid var(--line); background:var(--surface); color:var(--ink); width:200px; max-width:100%}
+.num-row input:focus{outline:2px solid var(--accent); outline-offset:1px}
+
+/* summary */
+.deltas{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:6px 0 18px}
+.delta{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface2)}
+.delta small{display:block; color:var(--muted); font-size:12px}
+.delta b{font-family:var(--mono); font-size:20px; display:block}
+.delta em{font-style:normal; font-family:var(--mono); font-size:12px}
+.up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
+.notes{display:flex; flex-direction:column; gap:8px; margin-bottom:18px}
+.note{font-size:14px; padding:10px 14px; border-radius:10px; background:var(--accent-soft); border:1px solid var(--line)}
+.note.warn{background:var(--warn-soft)}
+.budget{border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--surface2)}
+.budget-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+.budget-top b{font-family:var(--mono); font-size:20px}
+input[type=range]{width:100%; accent-color:var(--accent)}
+.budget-calc{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin-top:12px; font-size:13px}
+.budget-calc div{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:8px 10px}
+.budget-calc span{display:block; color:var(--muted); font-size:12px}
+.budget-calc b{font-family:var(--mono)}
+
+/* dash */
+.dash{display:flex; flex-direction:column; gap:14px}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px}
+.panel-title{display:flex; justify-content:space-between; align-items:baseline; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:12px}
+.hero-metric{display:flex; justify-content:space-between; align-items:flex-end; gap:10px; padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:12px}
+.hero-metric small{display:block; color:var(--muted); font-size:12px}
+.hero-metric b{font-family:var(--display); font-size:28px; font-weight:700; letter-spacing:-.02em}
+.hero-metric svg{color:var(--accent); flex:none}
+.tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px}
+.tile small{display:block; color:var(--muted); font-size:12px}
+.tile b{font-family:var(--mono); font-size:16px; font-weight:600}
+.tile .row{display:flex; align-items:center; justify-content:space-between; gap:6px}
+.tile svg{color:var(--muted)}
+.pill{display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; font-family:var(--body)}
+.pill.good{background:var(--good-soft); color:var(--good)} .pill.warn{background:var(--warn-soft); color:var(--warn)} .pill.bad{background:var(--bad-soft); color:var(--bad)}
+.bars{display:flex; flex-direction:column; gap:10px}
+.bar-row{display:grid; grid-template-columns:110px 1fr 34px; align-items:center; gap:10px; font-size:13px}
+.bar{height:8px; border-radius:4px; background:var(--surface2); border:1px solid var(--line); overflow:hidden}
+.bar i{display:block; height:100%; border-radius:4px; background:var(--accent); transition:width .5s}
+.bar i.good{background:var(--good)} .bar i.warn{background:var(--warn)} .bar i.bad{background:var(--bad)}
+.bar-row b{font-family:var(--mono); font-size:12px; text-align:right}
+.skill{display:grid; grid-template-columns:1fr auto; gap:4px 10px; font-size:13px}
+.skill + .skill{margin-top:12px}
+.skill .lvl{font-family:var(--mono); font-size:12px; color:var(--muted)}
+.skill .bar{grid-column:1/-1}
+.skill .bar i{background:var(--xp)}
+
+/* intro & end */
+.intro-hero{display:grid; gap:14px; margin-bottom:22px}
+.intro-hero h1{font-family:var(--display); font-weight:700; font-size:clamp(26px,4vw,40px); letter-spacing:-.02em; line-height:1.08}
+.rules{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:18px 0}
+.rule{border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--surface2)}
+.rule b{display:block; margin-bottom:4px}
+.rule span{font-size:14px; color:var(--muted)}
+.goals{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 4px}
+.grade{display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:18px}
+.grade-badge{font-family:var(--display); font-weight:700; font-size:clamp(26px,4vw,36px); letter-spacing:-.02em}
+.score{font-family:var(--mono); font-size:14px; padding:6px 12px; border-radius:999px; background:var(--xp-soft); color:var(--xp); font-weight:600}
+.badges{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:10px 0 20px}
+.badge{border:1px dashed var(--line); border-radius:12px; padding:12px; font-size:13px; color:var(--muted)}
+.badge b{display:block; font-size:14px}
+.badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
+.review{display:flex; flex-direction:column; gap:10px; margin-top:10px}
+.rev{border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns:auto 1fr; gap:4px 12px}
+.rev .dot{width:10px; height:10px; border-radius:50%; margin-top:7px}
+.rev .dot.best{background:var(--good)} .rev .dot.ok{background:var(--warn)} .rev .dot.bad{background:var(--bad)}
+.rev b{font-size:14px}
+.rev p{grid-column:2; margin:0; font-size:14px; color:var(--muted)}
+.section-h{font-family:var(--display); font-size:17px; font-weight:700; margin:22px 0 8px}
+/* glossary */
+.term{display:inline; padding:0; margin:0; background:none; border:0; font:inherit; color:inherit; cursor:help; text-decoration:underline; text-decoration-style:dotted; text-decoration-color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px}
+.term:hover{background:var(--accent-soft); border-radius:3px}
+#pop{position:fixed; z-index:60; width:340px; max-width:calc(100vw - 24px); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; box-shadow:0 18px 40px -18px rgba(0,0,0,.45); animation:fadeIn .16s ease both}
+#pop.sheet{left:0 !important; right:0; top:auto !important; bottom:0; width:auto; max-width:none; border-radius:16px 16px 0 0; padding-bottom:calc(18px + env(safe-area-inset-bottom, 0px))}
+#pop h4, .gitem h4{font-family:var(--display); font-size:16px; font-weight:700; margin:0 0 2px}
+.term-sub{font-size:12px; color:var(--muted); margin-bottom:8px}
+#pop p, .gitem p{margin:0 0 8px; font-size:14px}
+.term-f{font-family:var(--mono); font-size:12.5px; background:var(--surface2); border:1px solid var(--line); border-radius:8px; padding:7px 10px}
+.term-close{position:absolute; top:8px; right:10px; background:none; border:0; font-size:20px; line-height:1; color:var(--muted); cursor:pointer}
+#pop[hidden], #sheet[hidden]{display:none !important}
+#sheet{position:fixed; inset:0; z-index:70; background:rgba(10,14,18,.45); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px}
+.sheet-panel{background:var(--bg); border:1px solid var(--line); border-radius:18px; width:min(880px,100%); max-height:100%; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.sheet-head{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 18px 12px}
+.sheet-head b{font-size:19px}
+#gsearch{margin:0 18px 12px; padding:10px 14px; border-radius:11px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit}
+.sheet-body{overflow-y:auto; padding:0 18px 20px; display:flex; flex-direction:column; gap:18px}
+.gsec-h{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:10px}
+.gitem{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px}
+.hud-btn{padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-size:13px; font-weight:600}
+.hud-btn:hover{border-color:var(--accent); color:var(--accent)}
+.fade{animation:fadeIn .35s ease both}
+@keyframes fadeIn{from{transform:translateY(6px)} to{transform:none}}
+@media (prefers-reduced-motion: reduce){ .fade,.seg.now{animation:none} .bar i{transition:none} }
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="hud" id="hud"></header>
+  <div class="grid">
+    <main class="stage" id="stage" aria-live="polite"></main>
+    <aside class="dash" id="dash"></aside>
+  </div>
+</div>
+
+<script>
+/* ============ constants ============ */
+const MONTHS = 10, TEAM_COST = 35000, MARGIN = 0.7, SAVE_KEY = 'ritm-pm-sim-v1';
+const DOMAINS = {
+  disc:{name:'Discovery', full:'Discovery и CustDev'},
+  prio:{name:'Приоритизация', full:'Приоритизация и роадмап'},
+  metr:{name:'Метрики', full:'Метрики и юнит-экономика'},
+  exp:{name:'Эксперименты', full:'A/B-тесты и аналитика'}
+};
+const PEOPLE = {
+  ceo:{name:'Андрей', role:'CEO и сооснователь', ini:'АН', color:'#3B4A63'},
+  mkt:{name:'Лена', role:'Маркетинг', ini:'ЛЕ', color:'#C2527A'},
+  tech:{name:'Тимур', role:'Техлид', ini:'ТИ', color:'#2E7D6B'},
+  sup:{name:'Оля', role:'Поддержка', ini:'ОЛ', color:'#B7791F'},
+  data:{name:'Дима', role:'Продуктовый аналитик', ini:'ДИ', color:'#4B5BD6'},
+  inv:{name:'Фонд «Север»', role:'Инвестор', ini:'ФС', color:'#6B5B4B'}
+};
+const QUAL = {
+  best:{label:'Сильное решение', xp:30, pts:2},
+  ok:{label:'Рабочий вариант, но есть лучше', xp:15, pts:1},
+  bad:{label:'Слабое решение', xp:5, pts:0}
+};
+const FX_META = {
+  ret:{label:'Retention', fmt:v=>(v>0?'+':'')+(v*100).toFixed(1)+' п.п.', inv:false},
+  conv:{label:'Конверсия в оплату', fmt:v=>(v>0?'+':'')+(v*100).toFixed(1)+' п.п.', inv:false},
+  arppu:{label:'ARPPU', fmt:v=>(v>0?'+$':'−$')+Math.abs(v).toFixed(1), inv:false},
+  cac:{label:'CAC установки', fmt:v=>(v>0?'+$':'−$')+Math.abs(v).toFixed(2), inv:true},
+  viral:{label:'Органика', fmt:v=>(v>0?'+':'')+(v*100).toFixed(1)+' п.п.', inv:false},
+  cash:{label:'Кэш', fmt:v=>(v>0?'+':'−')+money(Math.abs(v)), inv:false},
+  trust:{label:'Доверие', fmt:v=>(v>0?'+':'')+Math.round(v), inv:false},
+  morale:{label:'Мораль', fmt:v=>(v>0?'+':'')+Math.round(v), inv:false},
+  debt:{label:'Техдолг', fmt:v=>(v>0?'+':'')+Math.round(v), inv:true}
+};
+const CHAL_BONUS = {
+  disc:{fx:{ret:0.004}, why:'лучше понимаешь пользователей'},
+  prio:{fx:{debt:-4, morale:3}, why:'команда работает над правильным'},
+  metr:{fx:{cac:-0.1}, why:'бюджет тратится точнее'},
+  exp:{fx:{conv:0.002}, why:'эксперименты дают честный результат'}
+};
+
+/* ============ scenarios ============ */
+const SCEN = [
+ {id:'s1', d:'disc', from:'ceo', title:'«Давай сделаем ленту друзей»',
+  text:'У конкурента вышла социальная лента, где друзья видят прогресс друг друга. Андрей уверен, что Ритму нужна такая же: «Это 2 месяца разработки, но оно того стоит».',
+  options:[
+   {t:'Берём в работу: CEO видит рынок, значит, это важно.', q:'bad', fx:{trust:5, morale:-5, debt:10}, later:{in:2, fx:{ret:0.003}, note:'Лента вышла — пользуются единицы, удержание почти не изменилось.'},
+    fb:'Строить фичу без проверки проблемы — самый дорогой способ проверить гипотезу. Два месяца команды ушли на решение, которое никто не валидировал.'},
+   {t:'Сначала 8–10 проблемных интервью и данные: делятся ли пользователи прогрессом сейчас и зачем.', q:'best', fx:{trust:-2}, later:{in:1, fx:{ret:0.015}, note:'Интервью показали: людям нужна не лента, а поддержка одного близкого человека. Сделали лёгкого «напарника по привычке» — удержание выросло.'},
+    fb:'Ты проверяешь проблему, а не решение. Вместо дорогой ленты находится узкая, дешёвая фича, которая бьёт в реальную боль.'},
+   {t:'Fake door: добавить в меню кнопку «Друзья» и посчитать клики за неделю.', q:'ok', fx:{trust:2}, later:{in:1, fx:{ret:0.006}, note:'Fake door показал умеренный интерес — сделали упрощённую версию.'},
+    fb:'Fake door быстро меряет интерес, но не объясняет «зачем». Хорош как первый шаг; в паре с интервью было бы идеально.'},
+   {t:'Отказать: у нас другие приоритеты.', q:'bad', fx:{trust:-10},
+    fb:'Отказ без данных портит отношения со стейкхолдером. Лучше предложить быстрый и дешёвый способ проверить идею.'}
+  ], lesson:'Валидируй проблему до решения: интервью, данные, fake door — дешевле двух месяцев разработки.'},
+ {id:'s2', d:'disc', from:'sup', title:'200 отзывов про тёмную тему',
+  text:'Оля присылает выгрузку: за месяц больше 200 отзывов с просьбой о тёмной теме, некоторые с одной звездой. «Люди злятся, давайте просто сделаем».',
+  options:[
+   {t:'Делаем тёмную тему в этом спринте.', q:'ok', fx:{ret:0.004, trust:3},
+    fb:'Иногда запрос буквален, и сделать его — нормально. Но массовый запрос — повод выяснить, какая задача пользователя за ним стоит.'},
+   {t:'Созвониться с 6 авторами отзывов: когда, где и зачем они открывают приложение.', q:'best', later:{in:1, fx:{ret:0.012, conv:0.003}, note:'Выяснили: привычки отмечают в кровати перед сном. Сделали вечерний режим — тёмная тема, тихие напоминания, отметка одним тапом.'},
+    fb:'Jobs To Be Done: за «тёмной темой» стояла работа «быстро отметить день перед сном, не проснувшись окончательно». Решение получилось шире и ценнее запроса.'},
+   {t:'Игнорировать — это косметика.', q:'bad', fx:{trust:-5, ret:-0.004},
+    fb:'Повторяющийся сигнал из поддержки — ценный вход для discovery, даже если пользователи формулируют его как готовое решение.'}
+  ], lesson:'Пользователи приносят решения; задача PM — докопаться до работы (JTBD), которую они пытаются сделать.'},
+ {id:'s3', d:'disc', from:'data', title:'58% уходят после первого дня',
+  text:'Дима показывает: 58% новых пользователей не возвращаются на второй день. «Где-то в онбординге дыра, но где — непонятно».',
+  options:[
+   {t:'Полный редизайн приложения — текущий дизайн устарел.', q:'bad', fx:{morale:-8, debt:8, cash:-30000}, later:{in:3, fx:{ret:0.005}, note:'Редизайн вышел. D1 почти не сдвинулся — проблема была не в визуале.'},
+    fb:'Редизайн без диагноза — выстрел наугад. Сначала найди, где именно и почему ломается путь пользователя.'},
+   {t:'Разобрать воронку онбординга по шагам и провести 5 юзабилити-тестов.', q:'best', later:{in:1, fx:{ret:0.02}, note:'Нашли: шаг «выберите 5 привычек» пугает. Сократили до одной — D1 заметно вырос.'},
+    fb:'Количественные данные показывают, где проблема, качественные — почему. Связка «воронка + юзабилити» — основа discovery.'},
+   {t:'Ежедневные пуши, чтобы возвращать людей.', q:'bad', fx:{ret:0.008, trust:-3}, later:{in:2, fx:{ret:-0.015}, note:'Пуш-спам: пользователи отключают уведомления и удаляют приложение.'},
+    fb:'Краткосрочный рост ценой долгосрочного удержания и рейтинга. Лечишь симптом, а не причину.'}
+  ], lesson:'Данные говорят «где», разговоры с пользователями — «почему». Не выбирай решение до диагноза.'},
+ {id:'s4', d:'disc', from:'mkt', title:'Ритм для корпораций?',
+  text:'Лена загорелась: «Мой знакомый HR в банке хочет Ритм для сотрудников. Давайте сделаем корпоративную версию с админкой и отчётами!»',
+  options:[
+   {t:'Сразу строим B2B-версию: админка, отчёты, SSO.', q:'bad', fx:{debt:12, morale:-5, cash:-40000},
+    fb:'Один знакомый HR — не рынок. Новый сегмент требует своего discovery: чья боль, кто платит, какой цикл сделки.'},
+   {t:'10 интервью с HR-директорами и один пилот, который обслуживаем вручную (concierge MVP).', q:'best', fx:{trust:5, cash:8000},
+    fb:'Concierge MVP: продаёшь и обслуживаешь руками, прежде чем писать код. Если за ручной сервис платят — есть смысл автоматизировать.'},
+   {t:'Отложить: сначала закрепиться в B2C.', q:'ok', fx:{trust:-2},
+    fb:'Фокус — законный выбор. Но без быстрой и дешёвой проверки ты не узнаешь цену упущенной возможности.'}
+  ], lesson:'Новый сегмент проверяй вручную (concierge / wizard of Oz), а не разработкой.'},
+ {id:'s5', d:'prio', from:'ceo', title:'Три «срочных» запроса в один спринт',
+  text:'Андрей хочет геймификацию, Лена — реферальную программу, Оля — починить синхронизацию между устройствами: на неё жалуются 12% платящих. Капасити хватит на что-то одно.',
+  options:[
+   {t:'Делаем все три параллельно — команда справится.', q:'bad', fx:{morale:-12, debt:15},
+    fb:'Параллельная работа над всем означает, что ничего не доведено до конца. Капасити конечна, а переключения дорогие.'},
+   {t:'Оценить по RICE, открыто показать расчёт всем; первой — синхронизация.', q:'best', fx:{trust:6, ret:0.01, conv:0.002},
+    fb:'Прозрачная приоритизация снимает конфликт: спорят с формулой, а не с тобой. Баг у 12% платящих бьёт по удержанию сильнее, чем новые фичи.'},
+   {t:'Геймификацию — это же CEO просит.', q:'bad', fx:{trust:4, ret:-0.006},
+    fb:'HiPPO (highest paid person’s opinion) — не метод приоритизации. Проблема платящих осталась нерешённой.'}
+  ], lesson:'Приоритизируй по прозрачному фреймворку (RICE/ICE) и показывай расчёт стейкхолдерам.'},
+ {id:'s6', d:'prio', from:'tech', title:'Техдолг душит релизы',
+  text:'Тимур: «Каждый релиз что-то ломает. Дай целый спринт на рефакторинг». До большой маркетинговой кампании — месяц.',
+  options:[
+   {t:'Отказать: кампания важнее.', q:'bad', fx:{debt:12, morale:-10},
+    fb:'Техдолг работает как кредит: каждый спринт без обслуживания делает следующие дороже и рискованнее.'},
+   {t:'Договориться о постоянных 20% капасити на техдолг.', q:'best', fx:{debt:-15, morale:8},
+    fb:'Регулярная гигиена лучше редких героических спринтов: бизнесу предсказуемо, риск снижается постоянно.'},
+   {t:'Целый спринт рефакторинга прямо сейчас.', q:'ok', fx:{debt:-25, trust:-6, morale:5},
+    fb:'Сильно снижает долг, но заморозка фич перед кампанией бьёт по доверию бизнеса.'}
+  ], lesson:'Закладывай постоянную долю капасити на техдолг, а не копи его до кризиса.'},
+ {id:'s7', d:'prio', from:'sup', title:'Пятница, 19:40. Оплата сломалась',
+  text:'После вчерашнего релиза у 6% пользователей не проходит оплата подписки. Команда уже расходится по домам.',
+  options:[
+   {t:'Откатить релиз, написать затронутым пользователям, разбор без поиска виноватых в понедельник.', q:'best', fx:{trust:5, cash:-2000},
+    fb:'Откат — самый быстрый способ остановить ущерб. Честная коммуникация сохраняет доверие, blameless postmortem предотвращает повтор.'},
+   {t:'Подождать до понедельника — там разберёмся.', q:'bad', fx:{cash:-15000, trust:-10, conv:-0.003},
+    fb:'Каждый час сломанной оплаты — прямые потери выручки и отток платящих.'},
+   {t:'Всей командой чинить хотфиксом ночью.', q:'ok', fx:{morale:-8, debt:5},
+    fb:'Может сработать, но чинить вперёд под давлением рискованно. Откат обычно безопаснее и быстрее.'}
+  ], lesson:'При инциденте сначала останови ущерб (откат), потом коммуникация, потом разбор.'},
+ {id:'s8', d:'prio', from:'ceo', title:'Конкурент выпустил AI-коуча',
+  text:'В профильных чатах шум: у конкурента AI-коуч, который подбирает привычки. Андрей нервничает: «Мы отстаём!»',
+  options:[
+   {t:'Срочно копируем, всё остальное на паузу.', q:'bad', fx:{morale:-8, debt:10, cash:-25000}, later:{in:2, fx:{conv:0.002}, note:'Сырой AI-коуч вышел. Эффект есть, но небольшой.'},
+    fb:'Реактивное копирование уводит от своей стратегии. Сначала пойми, угрожает ли это задаче, ради которой пользователи выбирают тебя.'},
+   {t:'Проверить отток к конкуренту в данных и провести 5 интервью; решение — через 2 недели.', q:'best', fx:{trust:2}, later:{in:1, fx:{ret:0.006}, note:'Выяснили: уходят не из-за AI, а из-за сложной настройки. Сделали персональные подсказки — дешевле и точнее.'},
+    fb:'Конкурентный анализ через призму своих пользователей: что они «нанимают» и почему уходят.'},
+   {t:'Игнорировать — у нас своя стратегия.', q:'ok', fx:{trust:-5},
+    fb:'Спокойствие — это хорошо, но игнорирование без данных оставляет риск и тревогу стейкхолдеров.'}
+  ], lesson:'На ход конкурента отвечай данными о своих пользователях, а не копированием.'},
+ {id:'s9', d:'prio', from:'inv', title:'Роадмап на год «с датами»',
+  text:'Фонд «Север» перед следующим траншем просит роадмап на 12 месяцев с конкретными датами релизов каждой фичи.',
+  options:[
+   {t:'Таблица фич с датами на 12 месяцев.', q:'bad', fx:{trust:4}, later:{in:3, fx:{trust:-12}, note:'Две даты из роадмапа сорвались. Инвестор разочарован.'},
+    fb:'Фичи с датами на год — обещания, которые почти всегда срываются: неопределённость растёт с горизонтом.'},
+   {t:'Now / Next / Later с целями по метрикам; даты — только на ближайший квартал.', q:'best', fx:{trust:8},
+    fb:'Outcome-роадмап показывает, какие результаты ты двигаешь, и оставляет свободу в выборе решений.'},
+   {t:'Отказать: мы же agile.', q:'bad', fx:{trust:-12},
+    fb:'Agile не отменяет планирования. Стейкхолдерам нужна предсказуемость направления.'}
+  ], lesson:'Роадмап — про результаты (outcomes), а не про список фич с датами.'},
+ {id:'s10', d:'metr', from:'ceo', title:'Какая у нас North Star?',
+  text:'Андрей хочет одну главную метрику, по которой будет жить вся команда. Варианты на доске:',
+  options:[
+   {t:'Число установок приложения.', q:'bad', fx:{morale:-3},
+    fb:'Установки — vanity-метрика: растут от маркетинга и ничего не говорят о ценности продукта.'},
+   {t:'MAU — ежемесячная аудитория.', q:'ok', fx:{ret:0.003},
+    fb:'Лучше установок, но не показывает, получают ли люди ценность: можно открыть и ничего не сделать.'},
+   {t:'Число пользователей, отметивших привычки 3+ дня за неделю.', q:'best', fx:{ret:0.01, morale:5},
+    fb:'Хорошая North Star отражает ценность для пользователя и предсказывает выручку. Регулярные отметки — ядро ценности трекера.'},
+   {t:'Выручка.', q:'ok', fx:{conv:0.002},
+    fb:'Выручка — результат, а не драйвер: запаздывает и плохо подсказывает команде, что делать завтра.'}
+  ], lesson:'North Star отражает ценность для пользователя и опережает выручку.'},
+ {id:'s11', d:'metr', from:'mkt', title:'«CAC упал в два раза!»',
+  text:'Лена сияет: перевела бюджет в мотивированный трафик (установки за бонусы в других приложениях), и стоимость установки упала вдвое.',
+  options:[
+   {t:'Отлично, удваиваем бюджет в этот канал.', q:'bad', fx:{cac:-0.6, ret:-0.02, conv:-0.006},
+    fb:'Дешёвая установка ≠ дешёвый клиент. Мотивированный трафик почти не удерживается и не платит — CAC платящего вырос.'},
+   {t:'Сравнить когортный retention и конверсию в оплату по каналам.', q:'best', fx:{conv:0.002}, later:{in:1, fx:{cac:-0.25}, note:'Отключили «мусорный» канал, перераспределили бюджет — CAC платящего снизился.'},
+    fb:'Юнит-экономика считается по каналу целиком: CAC ÷ конверсия в оплату, против LTV именно этой когорты.'},
+   {t:'Запретить маркетингу менять каналы без согласования.', q:'bad', fx:{trust:-5, morale:-4},
+    fb:'Контроль вместо анализа убивает эксперименты. Нужна общая метрика (CAC платящего), а не запреты.'}
+  ], lesson:'Смотри на CAC платящего и удержание по каналам, а не на цену установки.'},
+ {id:'s12', d:'metr', from:'ceo', title:'Поднимем цену с $9 до $13?',
+  text:'Андрей считает, что Ритм стоит дороже: «Поднимем подписку до $13 — выручка вырастет на 44%».',
+  options:[
+   {t:'Поднять всем сразу, включая текущих подписчиков.', q:'bad', fx:{arppu:3, conv:-0.012, ret:-0.02, trust:-4},
+    fb:'Резкое повышение для текущих — риск оттока и волны негатива. Эластичность спроса неизвестна.'},
+   {t:'A/B-тест цены на новых пользователях; текущим сохранить старую цену.', q:'best', later:{in:1, fx:{arppu:1.5, conv:-0.002}, note:'Тест показал: при $12 выручка на пользователя выше, конверсия почти не упала. Раскатили на новых.'},
+    fb:'Цена — самый сильный рычаг выручки. Проверяй эластичность на новых пользователях, лояльных защищай (grandfathering).'},
+   {t:'Наоборот, снизить до $6, чтобы платили больше людей.', q:'bad', fx:{arppu:-3, conv:0.01},
+    fb:'Скидка поднимает конверсию, но не обязательно выручку. Считай ARPU = конверсия × ARPPU: здесь он упал.'}
+  ], lesson:'Цену проверяй экспериментом; смотри на ARPU, а не только на конверсию.'},
+ {id:'s13', d:'metr', from:'data', title:'Годовая подписка со скидкой',
+  text:'Дима предлагает годовой план со скидкой 35% к помесячной цене и спрашивает твоё мнение.',
+  options:[
+   {t:'Запустить и сделать годовой план выбором по умолчанию на пейволе.', q:'best', fx:{cash:40000, arppu:-0.8, ret:0.01},
+    fb:'Годовой план приносит деньги вперёд (кэш!) и снижает отток. Цена — чуть ниже средний чек в месяц.'},
+   {t:'Не надо, мы теряем деньги на скидке.', q:'ok',
+    fb:'Скидка действительно снижает чек, но ты упускаешь предоплату и более низкий отток годовых подписчиков.'},
+   {t:'Вместо этого — пожизненная подписка за $30.', q:'bad', fx:{cash:60000, arppu:-2.5},
+    fb:'Lifetime-план даёт разовый приток кэша, но съедает рекуррентную выручку: LTV обрезается навсегда.'}
+  ], lesson:'Годовые планы улучшают кэш-флоу и retention; пожизненные — съедают LTV.'},
+ {id:'s14', d:'exp', from:'data', title:'4 дня теста, p = 0.03. Катим?',
+  text:'Тест нового пейвола запланирован на 14 дней. На четвёртый день Дима пишет: «+11% к конверсии, p = 0.03! Раскатываем?»',
+  options:[
+   {t:'Катим — значимость есть.', q:'bad', fx:{conv:0.002}, later:{in:1, fx:{conv:-0.002}, note:'Эффект «сдулся» — это был шум, пойманный подглядыванием.'},
+    fb:'Peeking: если смотреть p-value каждый день и останавливаться при первой значимости, доля ложных срабатываний растёт в разы.'},
+   {t:'Ждём заранее рассчитанные 14 дней — это два полных недельных цикла.', q:'best', later:{in:1, fx:{conv:0.004}, note:'Тест добежал: эффект подтвердился, но скромнее — около +6%.'},
+    fb:'Длительность и размер выборки фиксируются заранее. Полные недели убирают эффект дня недели.'},
+   {t:'Остановить тест — и так понятно, что новый лучше.', q:'bad', fx:{conv:0.001},
+    fb:'Без завершённого теста ты не знаешь размер эффекта и можешь раскатить ухудшение.'}
+  ], lesson:'Не подглядывай: заранее рассчитай выборку и дождись её.'},
+ {id:'s15', d:'exp', from:'data', title:'Конверсия +15%, но возвраты ×2',
+  text:'Новый пейвол поднял конверсию в оплату на 15%. Через неделю: запросы на возврат выросли вдвое, в отзывах — «скрытая подписка».',
+  options:[
+   {t:'Катим — основная метрика выросла.', q:'bad', fx:{conv:0.008, trust:-8}, later:{in:1, fx:{ret:-0.02, conv:-0.006}, note:'Волна отписок и возвратов, рейтинг в сторе упал.'},
+    fb:'Guardrail-метрики (возвраты, жалобы, отток) защищают от «побед», которые вредят бизнесу.'},
+   {t:'Посчитать выручку на пользователя за 30 дней с учётом возвратов, убрать тёмные паттерны и перезапустить.', q:'best', fx:{conv:0.003, trust:3},
+    fb:'Смотришь на итоговую ценность, а не на промежуточную метрику, и чинишь причину — вводящий в заблуждение дизайн.'},
+   {t:'Откатить и больше не трогать пейвол.', q:'ok',
+    fb:'Безопасно, но ты выбрасываешь то, что в варианте сработало. Лучше разобраться, что именно дало рост.'}
+  ], lesson:'У каждого теста должны быть guardrail-метрики.'},
+ {id:'s16', d:'exp', from:'mkt', title:'20 вариантов пуша и один «победитель»',
+  text:'Лена запустила 20 вариантов текста напоминания одновременно. Один показал p = 0.04. «У нас победитель!»',
+  options:[
+   {t:'Раскатить победителя на всех.', q:'bad',
+    fb:'При 20 сравнениях с α = 0.05 примерно один «значимый» результат ожидаем чисто случайно. Это ловушка множественных сравнений.'},
+   {t:'Перепроверить победителя отдельным тестом против контроля.', q:'best', later:{in:1, fx:{ret:0.004}, note:'Повторный тест: «победитель» не подтвердился, зато нашли другой рабочий вариант.'},
+    fb:'Повторный тест — самый надёжный способ отделить сигнал от шума.'},
+   {t:'Взять 3 лучших и тестировать дальше с поправкой на множественные сравнения.', q:'ok', later:{in:1, fx:{ret:0.002}, note:'С поправкой Бонферрони ни один вариант не прошёл порог — но сузили поиск.'},
+    fb:'Правильная идея (Бонферрони / FDR), но с поправкой нужна большая выборка — тест затянется.'}
+  ], lesson:'Много сравнений → много ложных находок. Поправка или повторный тест.'},
+ {id:'s17', d:'exp', from:'ceo', title:'«Зачем нам эти тесты?»',
+  text:'Андрей раздражён: «Тесты тормозят. Я и так знаю, что нужно пользователям. Давайте выкатывать сразу».',
+  options:[
+   {t:'Согласиться: скорость важнее.', q:'bad', fx:{trust:3}, later:{in:2, fx:{conv:-0.004}, note:'Одно из «очевидных» изменений тихо снизило конверсию — заметили только через месяц.'},
+    fb:'Без экспериментов ты не отличаешь эффект своих изменений от сезонности и шума.'},
+   {t:'Показать 3 прошлых решения, где интуиция ошиблась, и договориться: тестируем то, что дорого откатить или бьёт по деньгам.', q:'best', fx:{trust:6, morale:3},
+    fb:'Договорённость о том, что тестировать, снимает конфликт скорости и качества.'},
+   {t:'Тестировать вообще всё, даже цвет кнопок.', q:'bad', fx:{trust:-6, morale:-4},
+    fb:'Тестировать мелочи с маленьким эффектом — дорого: не хватает трафика, команда тормозит.'}
+  ], lesson:'Тестируй то, что дорого, рискованно или неочевидно; мелочи выкатывай и мониторь.'}
+];
+
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const rnd = (a,b) => a + Math.random()*(b-a);
+const ri = (a,b) => Math.floor(rnd(a, b+1));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => { const a = arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+const nf = new Intl.NumberFormat('ru-RU');
+const int = v => nf.format(Math.round(v));
+function money(v){ const s = v<0?'−':''; v=Math.abs(v); if(v>=1e6) return s+'$'+(v/1e6).toFixed(2)+'M'; if(v>=1e4) return s+'$'+(v/1e3).toFixed(1)+'k'; return s+'$'+int(v); }
+const pct = (v,d=1) => (v*100).toFixed(d).replace('.',',')+'%';
+const dec = (v,d=1) => v.toFixed(d).replace('.',',');
+function erf(x){ const t=1/(1+0.3275911*Math.abs(x)); const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x); return x>=0?y:-y; }
+const Phi = z => 0.5*(1+erf(z/Math.SQRT2));
+function nice(n){ const p = Math.pow(10, Math.floor(Math.log10(n))-1); return Math.round(n/p)*p; }
+
+/* ============ challenges ============ */
+const CHAL = {
+ ltv:{d:'metr', gen(){
+   const arppu = ri(7,15), churn = pick([0.05,0.06,0.08,0.1,0.12,0.15]);
+   const ltv = arppu*MARGIN/churn;
+   return {title:'Посчитай LTV платящего', type:'number', unit:'$',
+    prompt:`<p>Подписка Ритма. Магазин приложений забирает 30%, значит, валовая маржа — 70%.</p>
+     <div class="kv"><div><small>ARPPU в месяц</small><b>$${arppu}</b></div><div><small>Маржа</small><b>70%</b></div><div><small>Месячный отток платящих</small><b>${pct(churn,0)}</b></div></div>`,
+    question:'Какой LTV одного платящего пользователя (в $)?', answer:ltv, tol:0.05,
+    explain:`LTV = ARPPU × маржа ÷ отток = ${arppu} × 0,7 ÷ ${dec(churn,2)} ≈ <b>$${dec(ltv,0)}</b>. Средняя «жизнь» платящего — 1 ÷ отток ≈ ${dec(1/churn,1)} мес.`};
+ }},
+ payback:{d:'metr', gen(){
+   const cac = ri(6,18)*5, arppu = ri(7,14);
+   const m = cac/(arppu*MARGIN);
+   return {title:'Срок окупаемости CAC', type:'number', unit:'мес.',
+    prompt:`<p>Ты платишь за привлечение одного платящего пользователя и хочешь понять, через сколько месяцев он окупится.</p>
+     <div class="kv"><div><small>CAC платящего</small><b>$${cac}</b></div><div><small>ARPPU в месяц</small><b>$${arppu}</b></div><div><small>Маржа</small><b>70%</b></div></div>`,
+    question:'Через сколько месяцев окупится CAC?', answer:m, tol:0.07,
+    explain:`Payback = CAC ÷ (ARPPU × маржа) = ${cac} ÷ (${arppu} × 0,7) ≈ <b>${dec(m,1)} мес.</b> Для подписок хорошим считается срок до 12 месяцев, отличным — до 6.`};
+ }},
+ ltvcac:{d:'metr', gen(){
+   let cacI, conv, ltv, r;
+   do { cacI = ri(10,40)/10; conv = ri(20,80)/1000; ltv = ri(3,30)*5; r = ltv/(cacI/conv); } while((r>0.85&&r<1.15)||(r>2.7&&r<3.3)||r>8);
+   const cp = cacI/conv, ans = r<1?0:(r<3?1:2);
+   return {title:'Масштабировать канал?', type:'choice',
+    prompt:`<p>Новый рекламный канал отработал месяц. Решаем, что с ним делать.</p>
+     <div class="kv"><div><small>Стоимость установки</small><b>$${dec(cacI,2)}</b></div><div><small>Конверсия в оплату</small><b>${pct(conv)}</b></div><div><small>LTV платящего</small><b>$${ltv}</b></div></div>`,
+    question:'Что делать с каналом?',
+    options:['Отключить или радикально оптимизировать: он убыточен','Оставить и оптимизировать: окупается, но с тонкой маржой','Масштабировать: экономика здоровая'],
+    answer:ans,
+    explain:`CAC платящего = $${dec(cacI,2)} ÷ ${pct(conv)} ≈ $${dec(cp,0)}. LTV / CAC = ${ltv} ÷ ${dec(cp,0)} ≈ <b>${dec(r,1)}</b>. Ориентиры: < 1 — канал сжигает деньги, 1–3 — окупается впритык, > 3 — можно масштабировать.`};
+ }},
+ ab:{d:'exp', gen(){
+   let n,c1,c2,z;
+   do { n = ri(20,100)*100; const p1 = ri(40,100)/1000; const lift = rnd(-0.05,0.3); c1 = Math.round(n*p1); c2 = Math.round(n*p1*(1+lift)); const pp=(c1+c2)/(2*n); z = (c2/n-c1/n)/Math.sqrt(pp*(1-pp)*2/n); } while(Math.abs(z)>1.65 && Math.abs(z)<2.3 || c1===c2);
+   const p = 2*(1-Phi(Math.abs(z))), sig = Math.abs(z)>=1.96;
+   return {title:'Значим ли результат A/B-теста?', type:'choice',
+    prompt:`<p>Тест новой кнопки «Отметить» на главном экране. Метрика — конверсия в оплату триала.</p>
+     <div class="task-box" style="margin:0"><table class="t"><thead><tr><th>Группа</th><th>Пользователей</th><th>Оплат</th><th>Конверсия</th></tr></thead><tbody>
+     <tr><td>A (контроль)</td><td>${int(n)}</td><td>${int(c1)}</td><td>${pct(c1/n,2)}</td></tr>
+     <tr><td>B (новая кнопка)</td><td>${int(n)}</td><td>${int(c2)}</td><td>${pct(c2/n,2)}</td></tr></tbody></table></div>`,
+    question:'Разница статистически значима при α = 0,05 (двусторонний тест)?',
+    options:['Да, значима — можно раскатывать','Нет, не значима — это может быть шум'], answer:sig?0:1,
+    explain:`Z-тест для двух долей: объединённая конверсия p = ${pct((c1+c2)/(2*n),2)}, стандартная ошибка = √(p(1−p)·2/n). z ≈ <b>${dec(z,2)}</b>, p-value ≈ <b>${dec(p,3)}</b>. Порог для α = 0,05 — |z| ≥ 1,96. Относительная разница: ${(c2/c1-1)>=0?'+':''}${pct(c2/c1-1)}.`};
+ }},
+ sample:{d:'exp', gen(){
+   const p = pick([0.05,0.1,0.2]), mde = pick([0.1,0.2]);
+   const delta = p*mde, n = nice(16*p*(1-p)/(delta*delta));
+   const opts = shuffle([n, nice(n/4), nice(n*4), nice(n/12)]);
+   return {title:'Сколько пользователей нужно в тест?', type:'choice',
+    prompt:`<p>Хочешь проверить новый онбординг. Стандартные параметры: α = 0,05, мощность 80%.</p>
+     <div class="kv"><div><small>Базовая конверсия</small><b>${pct(p,0)}</b></div><div><small>Минимальный эффект (MDE)</small><b>+${pct(mde,0)} отн.</b></div><div><small>Абсолютный сдвиг</small><b>${dec(delta*100,1)} п.п.</b></div></div>`,
+    question:'Примерно сколько пользователей нужно в каждую группу?',
+    options:opts.map(v=>'≈ '+int(v)), answer:opts.indexOf(n),
+    explain:`Эвристика Лера: n ≈ 16 · p(1−p) / δ² = 16 · ${dec(p,2)} · ${dec(1-p,2)} / ${dec(delta,3)}² ≈ <b>${int(n)}</b> на группу. Запомни: уменьшил MDE вдвое — выборка выросла в 4 раза.`};
+ }},
+ rice:{d:'prio', gen(){
+   const names = shuffle(['Напоминание по геолокации','Виджет на главный экран','Синхронизация с Apple Health','Челленджи с друзьями','Статистика за год','Шаблоны привычек','Голосовая отметка','Серии и заморозка серии']).slice(0,4);
+   let rows;
+   do { rows = names.map(nm=>{ const R=ri(5,80)*100, I=pick([0.25,0.5,1,2,3]), C=pick([0.5,0.8,1]), E=ri(1,8); return {nm,R,I,C,E,s:R*I*C/E}; }); const s = rows.map(r=>r.s).sort((a,b)=>b-a); if(s[0]>=s[1]*1.2) break; } while(true);
+   const best = rows.reduce((b,r,i)=>r.s>rows[b].s?i:b,0);
+   return {title:'Что делать первым по RICE?', type:'choice',
+    prompt:`<p>Бэклог на квартал. Reach — пользователей за квартал, Impact — по шкале 0,25–3, Confidence — уверенность в оценках, Effort — человеко-недели.</p>
+     <div class="task-box" style="margin:0"><table class="t"><thead><tr><th>Фича</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th></tr></thead><tbody>
+     ${rows.map(r=>`<tr><td>${r.nm}</td><td>${int(r.R)}</td><td>${dec(r.I,2).replace(',00','')}</td><td>${Math.round(r.C*100)}%</td><td>${r.E}</td></tr>`).join('')}</tbody></table></div>`,
+    question:'Какая фича получает наивысший RICE-приоритет?', options:rows.map(r=>r.nm), answer:best,
+    explain:`RICE = Reach × Impact × Confidence ÷ Effort. ${rows.map(r=>`${r.nm}: <b>${int(r.s)}</b>`).join('; ')}.`};
+ }},
+ custdev:{d:'disc', gen(){
+   const sets = [
+    {goal:'понять, почему люди бросают трекеры привычек', good:'Расскажите, когда вы в последний раз бросили трекер привычек. Что тогда происходило?',
+     bad:['Вы бы пользовались приложением, если бы в нём был AI-коуч?','Правда ведь, что напоминания раздражают?','Сколько бы вы заплатили за идеальный трекер?']},
+    {goal:'понять готовность платить', good:'На какие приложения для здоровья и привычек вы тратили деньги за последние полгода? Почему именно на них?',
+     bad:['Купили бы вы подписку за $9 в месяц?','Вам нравится наша идея?','Какие функции вы хотели бы видеть в платной версии?']},
+    {goal:'разобраться в утренней рутине пользователей', good:'Опишите, что вы делали вчера утром — с момента, как проснулись.',
+     bad:['Вы ведь обычно делаете зарядку по утрам?','Хотели бы вы вести утренние привычки в приложении?','Как выглядит ваше идеальное утро?']}
+   ];
+   const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
+   return {title:'Выбери лучший вопрос для интервью', type:'choice',
+    prompt:`<p>Цель проблемного интервью — ${s.goal}. У тебя время на один главный вопрос.</p>`,
+    question:'Какой вопрос даст самые надёжные ответы?', options:opts, answer:opts.indexOf(s.good),
+    explain:'Хороший вопрос спрашивает о <b>конкретном прошлом поведении</b>, не подсказывает ответ и не просит фантазировать о будущем или оценивать твою идею. Остальные варианты — гипотетические («купили бы…»), наводящие («правда ведь…») или про решение, а не про проблему (метод «The Mom Test»).'};
+ }},
+ funnel:{d:'metr', gen(){
+   const steps = ['Установка','Регистрация','Выбор первой привычки','Первая отметка','Старт триала','Оплата'];
+   const ranges = [[0.72,0.9],[0.62,0.85],[0.55,0.8],[0.3,0.5],[0.38,0.6]];
+   const badI = ri(0,4);
+   let conv = ranges.map(([a,b])=>rnd(a,b)); conv[badI] = rnd(0.16,0.26);
+   const counts=[ri(8,20)*1000]; conv.forEach((c,i)=>counts.push(Math.round(counts[i]*c)));
+   const real = conv.map((c,i)=>counts[i+1]/counts[i]); const minI = real.indexOf(Math.min(...real));
+   return {title:'Где главная дыра в воронке?', type:'choice',
+    prompt:`<p>Воронка новых пользователей за месяц (абсолютные числа).</p>
+     <div class="task-box" style="margin:0"><table class="t"><thead><tr><th>Шаг</th><th>Пользователей</th></tr></thead><tbody>
+     ${steps.map((s,i)=>`<tr><td>${s}</td><td>${int(counts[i])}</td></tr>`).join('')}</tbody></table></div>`,
+    question:'На каком переходе самая низкая конверсия шага?', options:steps.slice(0,5).map((s,i)=>`${s} → ${steps[i+1]}`), answer:minI,
+    explain:`Конверсии шагов: ${real.map((c,i)=>`${steps[i]} → ${steps[i+1]}: <b>${pct(c,0)}</b>`).join('; ')}. Сравнивай относительную конверсию каждого шага, а не абсолютные потери.`};
+ }},
+ vanity:{d:'metr', gen(){
+   const sets = [
+    {v:'Общее число скачиваний за всё время', o:['Доля пользователей, вернувшихся на 7-й день','Конверсия триала в оплату','Средняя выручка на платящего']},
+    {v:'Количество подписчиков в Instagram', o:['Доля платящих, продливших подписку','Число пользователей с 3+ отметками в неделю','CAC платящего пользователя']},
+    {v:'Суммарное число просмотров экранов', o:['D30 retention новых когорт','LTV / CAC','Доля выручки от годовых планов']}
+   ];
+   const s = pick(sets); const opts = shuffle([s.v, ...s.o]);
+   return {title:'Найди vanity-метрику', type:'choice',
+    prompt:'<p>Команда собирает дашборд для еженедельного продуктового ревью. Одна из метрик хорошо смотрится в отчётах, но не помогает принимать решения.</p>',
+    question:'Какая метрика — vanity?', options:opts, answer:opts.indexOf(s.v),
+    explain:`«${s.v}» только растёт, не нормирована и не связана с ценностью или деньгами — по ней нельзя понять, стало ли лучше. Actionable-метрики — доли, конверсии, удержание, экономика на пользователя.`};
+ }},
+ cohort:{d:'metr', gen(){
+   const mons = ['Янв','Фев','Мар','Апр'];
+   const variant = pick(['bad','improve']); const badI = ri(1,3);
+   const rows = mons.map((m,i)=>{
+     let b = [100, ri(42,47), ri(33,37), ri(29,32)];
+     if(variant==='improve'){ b = [100, 38+i*5+ri(0,1), 29+i*4+ri(0,1), 25+i*4]; }
+     if(variant==='bad' && i===badI){ b = [100, ri(23,27), ri(15,18), ri(12,14)]; }
+     return {m, v:b.slice(0, 4-i)};
+   });
+   const o = [`Проблема в когорте «${mons[badI]}»: что-то изменилось в привлечении или продукте именно в этом месяце`,
+              'Удержание улучшается от когорты к когорте — изменения в продукте работают',
+              'Продукт в целом не удерживает: кривые не выходят на плато',
+              'Все когорты ведут себя одинаково, выводов нет'];
+   const opts = shuffle(o); const ans = opts.indexOf(variant==='bad'?o[0]:o[1]);
+   return {title:'Прочитай когортную таблицу', type:'choice',
+    prompt:`<p>Retention по месячным когортам (% пользователей когорты, активных в месяц N).</p>
+     <div class="task-box" style="margin:0"><table class="t"><thead><tr><th>Когорта</th><th>M0</th><th>M1</th><th>M2</th><th>M3</th></tr></thead><tbody>
+     ${rows.map(r=>`<tr><td>${r.m}</td>${[0,1,2,3].map(k=>`<td>${r.v[k]!==undefined?r.v[k]+'%':'—'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`,
+    question:'Какой вывод верный?', options:opts, answer:ans,
+    explain: variant==='bad' ? `Когорта «${mons[badI]}» резко проседает уже на M1, а соседние ведут себя нормально и выходят на плато. Значит, проблема локальна: новый канал привлечения, релиз или сезон. Сравнивай когорты по столбцам, а не только по строкам.` : 'Каждая следующая когорта удерживается лучше на одном и том же «возрасте» (сравни столбец M1 сверху вниз). Это признак того, что продуктовые изменения работают.'};
+ }},
+ mrr:{d:'metr', gen(){
+   const u = ri(20,90)*1000, c = ri(20,80)/10, a = ri(6,15), mrr = u*c/100*a;
+   return {title:'Посчитай MRR', type:'number', unit:'$',
+    prompt:`<div class="kv"><div><small>Активных пользователей</small><b>${int(u)}</b></div><div><small>Доля платящих</small><b>${dec(c,1)}%</b></div><div><small>ARPPU в месяц</small><b>$${a}</b></div></div>`,
+    question:'Какой ежемесячная рекуррентная выручка (MRR) в $?', answer:mrr, tol:0.02,
+    explain:`MRR = пользователи × доля платящих × ARPPU = ${int(u)} × ${dec(c/100,3)} × ${a} = <b>$${int(mrr)}</b>. Тот же расчёт через ARPU: ARPU = ${dec(c/100*a,2)} $ на пользователя.`};
+ }},
+ jtbd:{d:'disc', gen(){
+   const good = 'Когда я прихожу домой уставшим, я хочу за минуту понять, выполнил ли я план на день, чтобы лечь спать без чувства вины';
+   const opts = shuffle([good,'Пользователь хочет большую кнопку отметки на главном экране','Женщины 25–35 лет из крупных городов, интересующиеся ЗОЖ','Людям нужно лучшее приложение для привычек']);
+   return {title:'Сформулируй работу (JTBD)', type:'choice',
+    prompt:'<p>По итогам интервью команда пишет job story для следующего квартала.</p>',
+    question:'Какая формулировка — правильная job story?', options:opts, answer:opts.indexOf(good),
+    explain:'Job story: <b>«Когда [ситуация], я хочу [мотивация], чтобы [ожидаемый результат]»</b>. Остальные варианты — это готовое решение (кнопка), сегмент (демография) и размытое пожелание без контекста.'};
+ }},
+ moscow:{d:'prio', gen(){
+   const good = 'Пригласить напарника и видеть его отметки за день';
+   const opts = shuffle([good,'Чат с голосовыми сообщениями между напарниками','Общий рейтинг всех пар напарников','Настраиваемые аватары и рамки профиля']);
+   return {title:'Что обязательно в MVP?', type:'choice',
+    prompt:'<p>Запускаешь MVP «напарника по привычке». Гипотеза: поддержка одного человека повышает удержание. Нужно выпустить за 2 недели.</p>',
+    question:'Что из этого — Must have для проверки гипотезы?', options:opts, answer:opts.indexOf(good),
+    explain:'MVP проверяет гипотезу минимальным набором. Must have — то, без чего гипотезу не проверить: связь с напарником и видимость его прогресса. Чат, рейтинг и аватары — Could/Won’t на первом шаге.'};
+ }},
+ kano:{d:'prio', gen(){
+   const items = [
+    {t:'Синхронизация между устройствами: когда работает, никто не хвалит; когда ломается — шквал жалоб.', a:0},
+    {t:'Скорость открытия приложения: чем быстрее, тем довольнее пользователи — зависимость почти линейная.', a:1},
+    {t:'Анимация-салют после 30 дней серии: пользователи в восторге и делятся скриншотами, хотя раньше её никто не просил.', a:2}
+   ];
+   const it = pick(items);
+   const opts = ['Обязательная (must-be)','Одномерная (performance)','Привлекательная (delighter)','Безразличная (indifferent)'];
+   return {title:'Классифицируй по модели Кано', type:'choice',
+    prompt:`<p>${it.t}</p>`, question:'К какой категории модели Кано относится функция?', options:opts, answer:it.a,
+    explain:'Обязательные — их отсутствие злит, наличие не радует. Одномерные — удовлетворённость растёт пропорционально качеству. Привлекательные — неожиданно радуют, но их отсутствие не замечают. Со временем «привлекательные» превращаются в «обязательные».'};
+ }},
+ method:{d:'disc', gen(){
+   const good = 'Отобрать тех, кто ушёл после триала, провести 6–8 интервью и параллельно посмотреть их путь в аналитике';
+   const opts = shuffle([good,'Разослать NPS-опрос всей базе','Сразу запустить A/B-тест скидки на триал','Спросить у команды поддержки, что они думают']);
+   return {title:'Выбери метод исследования', type:'choice',
+    prompt:'<p>Треть пользователей уходит сразу после окончания триала, не оплатив. Нужно понять почему.</p>',
+    question:'Какой первый шаг лучше всего?', options:opts, answer:opts.indexOf(good),
+    explain:'Нужны ответы от <b>тех самых</b> пользователей, у которых проблема: интервью объяснят «почему», аналитика подтвердит масштаб. NPS по всей базе размыт, A/B-тест скидки — решение до диагноза, мнение поддержки — полезный, но вторичный источник.'};
+ }},
+ hypo:{d:'exp', gen(){
+   const good = 'Если сократить онбординг с 5 шагов до 2, то D1 retention вырастет на 5 п.п., потому что в интервью пользователи жалуются на долгую настройку. Проверим A/B-тестом за 2 недели';
+   const opts = shuffle([good,'Новый онбординг будет лучше старого','Сделаем онбординг короче и посмотрим, что получится','Пользователям нравится короткий онбординг, поэтому его надо сделать']);
+   return {title:'Какая гипотеза сформулирована правильно?', type:'choice',
+    prompt:'<p>Перед тестом нового онбординга команда записывает гипотезу в трекер экспериментов.</p>',
+    question:'Выбери корректную формулировку.', options:opts, answer:opts.indexOf(good),
+    explain:'Проверяемая гипотеза: <b>изменение → ожидаемый эффект на конкретную метрику (с величиной) → обоснование → способ и срок проверки</b>. Без метрики и порога невозможно понять, подтвердилась ли гипотеза.'};
+ }},
+ primary:{d:'exp', gen(){
+   const good = 'Доля новых пользователей, отметивших привычку 3+ дня за первую неделю';
+   const opts = shuffle([good,'Число отправленных пушей','Число открытий приложения в день','Выручка за квартал']);
+   return {title:'Основная метрика теста', type:'choice',
+    prompt:'<p>Тестируешь новую систему умных напоминаний на новых пользователях. Тест длится 2 недели.</p>',
+    question:'Что выбрать основной метрикой теста?', options:opts, answer:opts.indexOf(good),
+    explain:'Основная метрика должна отражать ценность, быстро реагировать на изменение и быть чувствительной за срок теста. Пуши — это то, что ты сам меняешь; открытия легко «накрутить» тем же пушем; выручка за квартал слишком запаздывает и шумит.'};
+ }}
+};
+
+/* ============ glossary ============ */
+const GLOSS = [
+ {k:'mrr', t:'MRR', en:'Monthly Recurring Revenue', ru:'Ежемесячная регулярная выручка', g:'Деньги',
+  d:'Сколько денег продукт получает от подписок за месяц. Разовые платежи в MRR не входят — только то, что повторяется каждый месяц.', f:'MRR = платящие × ARPPU', a:['MRR']},
+ {k:'arr', t:'ARR', en:'Annual Recurring Revenue', ru:'Годовая регулярная выручка', g:'Деньги',
+  d:'То же, что MRR, но в годовом выражении. Обычно им меряют размер бизнеса в переговорах с инвесторами.', f:'ARR = MRR × 12', a:['ARR']},
+ {k:'arppu', t:'ARPPU', en:'Average Revenue Per Paying User', ru:'Средняя выручка на платящего', g:'Деньги',
+  d:'Сколько в среднем приносит один платящий пользователь за месяц. Важно: считается только по тем, кто платит, а не по всей базе.', f:'ARPPU = выручка ÷ число платящих', a:['ARPPU']},
+ {k:'arpu', t:'ARPU', en:'Average Revenue Per User', ru:'Средняя выручка на пользователя', g:'Деньги',
+  d:'Выручка в расчёте на всех активных пользователей, включая тех, кто не платит. Удобно сравнивать с CAC установки.', f:'ARPU = конверсия в оплату × ARPPU', a:['ARPU']},
+ {k:'cac', t:'CAC', en:'Customer Acquisition Cost', ru:'Стоимость привлечения клиента', g:'Деньги',
+  d:'Сколько стоит привести одного пользователя. Различай CAC установки (дешёвый) и CAC платящего — именно второй сравнивают с LTV.', f:'CAC платящего = CAC установки ÷ конверсия в оплату', a:['CAC']},
+ {k:'ltv', t:'LTV', en:'Lifetime Value', ru:'Пожизненная ценность клиента', g:'Деньги',
+  d:'Сколько денег принесёт один платящий пользователь за всё время, пока остаётся с продуктом, за вычетом комиссий.', f:'LTV = ARPPU × маржа ÷ месячный отток', a:['LTV']},
+ {k:'ltvcac', t:'LTV / CAC', en:'—', ru:'Отношение ценности клиента к стоимости привлечения', g:'Деньги',
+  d:'Главный показатель здоровья юнит-экономики. Меньше 1 — канал сжигает деньги, 1–3 — окупается впритык, больше 3 — можно масштабировать.', f:'LTV ÷ CAC платящего', a:['LTV / CAC','LTV/CAC']},
+ {k:'payback', t:'Payback', en:'CAC payback period', ru:'Срок окупаемости привлечения', g:'Деньги',
+  d:'Через сколько месяцев пользователь вернёт деньги, потраченные на его привлечение. Для подписок норма — до 12 месяцев.', f:'Payback = CAC ÷ (ARPPU × маржа)', a:['Payback','payback','окупаемость CAC','Срок окупаемости','срок окупаемости']},
+ {k:'unit', t:'Юнит-экономика', en:'Unit economics', ru:'Экономика одного пользователя', g:'Деньги',
+  d:'Расчёт прибыльности в пересчёте на одного пользователя или одну сделку. Отвечает на вопрос: зарабатываем мы или теряем на каждом новом клиенте.', f:'Прибыль с юнита = LTV − CAC', a:['Юнит-экономика','юнит-экономика','юнит-экономику','юнит-экономики']},
+ {k:'margin', t:'Маржа', en:'Gross margin', ru:'Валовая маржа', g:'Деньги',
+  d:'Доля выручки, которая остаётся после прямых расходов. В мобильных приложениях главный вычет — комиссия магазина (обычно 30%).', f:'Маржа = (выручка − прямые расходы) ÷ выручка', a:['Маржа','маржа','маржой','маржи','валовая маржа']},
+ {k:'runway', t:'Runway', en:'Runway', ru:'Запас хода', g:'Деньги',
+  d:'На сколько месяцев хватит денег на счету при текущей скорости их траты. Ключевая цифра для любого стартапа.', f:'Runway = кэш ÷ (расходы − выручка)', a:['Runway','runway','запас хода']},
+ {k:'burn', t:'Burn rate', en:'Burn rate', ru:'Скорость сжигания денег', g:'Деньги',
+  d:'Сколько денег компания теряет за месяц: расходы минус выручка.', f:'Burn = расходы − валовая выручка', a:['Burn rate','burn rate','сжигания денег']},
+
+ {k:'retention', t:'Retention', en:'Retention', ru:'Удержание', g:'Метрики',
+  d:'Доля пользователей, которые вернулись через заданный срок. Главная метрика здоровья продукта: без удержания рост через рекламу превращается в «дырявое ведро».', f:'Retention = вернувшиеся ÷ размер когорты', a:['Retention','retention','удержание','удержания','Удержание']},
+ {k:'churn', t:'Отток', en:'Churn', ru:'Отток', g:'Метрики',
+  d:'Обратная сторона удержания: доля пользователей (или подписчиков), которые ушли за период.', f:'Отток = 1 − retention', a:['Отток','отток','оттока','оттоку','churn','Churn']},
+ {k:'d1', t:'D1 / D7 / D30', en:'Day-1 retention', ru:'Удержание на 1-й, 7-й, 30-й день', g:'Метрики',
+  d:'Доля новых пользователей, вернувшихся на следующий день (D1), через неделю (D7), через месяц (D30). Стандарт для мобильных продуктов.', f:'', a:['D1','D7','D30','D1 retention','D30 retention']},
+ {k:'mau', t:'MAU / DAU', en:'Monthly / Daily Active Users', ru:'Активные пользователи за месяц / за день', g:'Метрики',
+  d:'Сколько уникальных людей пользовались продуктом за месяц или за день. Отношение DAU/MAU показывает, насколько продукт «ежедневный».', f:'Липкость = DAU ÷ MAU', a:['MAU','DAU']},
+ {k:'cohort', t:'Когорта', en:'Cohort', ru:'Когорта', g:'Метрики',
+  d:'Группа пользователей, пришедших в один период. Когортный анализ сравнивает такие группы на одном «возрасте» — так видно, улучшается продукт или нет.', f:'', a:['Когортный анализ','когортный анализ','когортной','когортную','Когорта','когорта','когорты','когорте','когорт','когортам','когортах','когортный']},
+ {k:'funnel', t:'Воронка', en:'Funnel', ru:'Воронка', g:'Метрики',
+  d:'Последовательность шагов пользователя до целевого действия. Ищи шаг с самой низкой относительной конверсией — там главная потеря.', f:'Конверсия шага = следующий шаг ÷ предыдущий', a:['Воронка','воронка','воронке','воронки','воронку']},
+ {k:'conv', t:'Конверсия', en:'Conversion rate', ru:'Конверсия', g:'Метрики',
+  d:'Доля людей, совершивших нужное действие. Всегда уточняй: конверсия из чего во что и за какой срок.', f:'CR = совершили действие ÷ всего', a:['Конверсия','конверсия','конверсию','конверсии','конверсией']},
+ {k:'ns', t:'North Star', en:'North Star Metric', ru:'Путеводная метрика', g:'Метрики',
+  d:'Одна главная метрика, которая отражает получаемую пользователем ценность и опережает выручку. По ней команда сверяет все решения.', f:'', a:['North Star','North Star Metric','путеводная метрика']},
+ {k:'vanity', t:'Vanity-метрика', en:'Vanity metric', ru:'Метрика тщеславия', g:'Метрики',
+  d:'Красивая, но бесполезная метрика: только растёт, ни с чем не нормирована и не подсказывает решений. Классика — «всего скачиваний».', f:'', a:['Vanity-метрика','vanity-метрика','vanity-метрику','vanity','Vanity']},
+ {k:'nps', t:'NPS', en:'Net Promoter Score', ru:'Индекс готовности рекомендовать', g:'Метрики',
+  d:'Опрос «насколько вероятно, что вы порекомендуете нас» по шкале 0–10. Даёт общий сигнал настроения, но плохо объясняет причины.', f:'NPS = % промоутеров − % критиков', a:['NPS','NPS-опрос']},
+ {k:'guardrail', t:'Guardrail-метрика', en:'Guardrail metric', ru:'Защитная метрика', g:'Метрики',
+  d:'Метрика, которая не должна ухудшиться, пока ты растишь основную: возвраты, жалобы, отток, скорость работы.', f:'', a:['Guardrail-метрики','guardrail-метрики','Guardrail-метрика','guardrail-метрика','guardrail','Guardrail']},
+
+ {k:'ab', t:'A/B-тест', en:'A/B test', ru:'Сплит-тест', g:'Эксперименты',
+  d:'Пользователей случайно делят на группы, одной показывают новый вариант, другой — старый, и сравнивают метрику. Единственный надёжный способ измерить эффект изменения.', f:'', a:['A/B-тест','A/B-тесте','A/B-тесты','A/B-теста','A/B-тестом','A/B тест','сплит-тест']},
+ {k:'pvalue', t:'p-value', en:'p-value', ru:'Уровень значимости результата', g:'Эксперименты',
+  d:'Вероятность увидеть такую же или большую разницу между группами, если на самом деле разницы нет. Чем меньше p, тем меньше похоже на случайность.', f:'Порог обычно p < 0,05', a:['p-value','p = 0.03','p = 0.04','p-value']},
+ {k:'alpha', t:'α (альфа)', en:'Significance level', ru:'Допустимая доля ложных срабатываний', g:'Эксперименты',
+  d:'Порог, ниже которого p-value считается значимым. α = 0,05 означает: в 5% случаев мы примем шум за эффект.', f:'α = 0,05 → |z| ≥ 1,96', a:['α = 0,05','α = 0.05','α']},
+ {k:'power', t:'Мощность', en:'Statistical power', ru:'Мощность теста', g:'Эксперименты',
+  d:'Вероятность заметить эффект, если он реально есть. Стандарт — 80%: в одном случае из пяти настоящий эффект всё равно останется незамеченным.', f:'', a:['Мощность','мощность','мощности']},
+ {k:'mde', t:'MDE', en:'Minimum Detectable Effect', ru:'Минимальный различимый эффект', g:'Эксперименты',
+  d:'Самое маленькое изменение метрики, которое тест в принципе способен заметить. Чем меньше MDE, тем больше нужна выборка.', f:'Уменьшил MDE вдвое → выборка ×4', a:['MDE']},
+ {k:'sample', t:'Размер выборки', en:'Sample size', ru:'Размер выборки', g:'Эксперименты',
+  d:'Сколько пользователей нужно в каждую группу, чтобы тест был способен различить эффект. Считается до запуска, а не после.', f:'n ≈ 16 · p(1−p) ÷ δ²', a:['Размер выборки','размер выборки','размера выборки','выборка','выборки','выборку']},
+ {k:'peek', t:'Peeking', en:'Peeking', ru:'Подглядывание в тест', g:'Эксперименты',
+  d:'Привычка смотреть результаты каждый день и останавливать тест на первой значимости. Резко увеличивает долю ложных находок.', f:'', a:['Peeking','peeking','подглядывание','подглядываний','Подглядывания']},
+ {k:'multi', t:'Множественные сравнения', en:'Multiple comparisons', ru:'Проблема множественных сравнений', g:'Эксперименты',
+  d:'Чем больше вариантов сравниваешь, тем выше шанс случайно получить «значимый» результат. При 20 сравнениях один ложный ожидаем сам собой.', f:'Поправка Бонферрони: α ÷ число сравнений', a:['множественные сравнения','множественных сравнений','Бонферрони','поправка Бонферрони','FDR']},
+ {k:'hypo', t:'Гипотеза', en:'Hypothesis', ru:'Проверяемая гипотеза', g:'Эксперименты',
+  d:'Формулировка вида: если сделать X, то метрика Y изменится на Z, потому что [причина]; проверим так-то и за такой срок.', f:'', a:['Гипотеза','гипотеза','гипотезу','гипотезы','гипотез']},
+
+ {k:'rice', t:'RICE', en:'Reach · Impact · Confidence · Effort', ru:'Фреймворк приоритизации', g:'Приоритизация',
+  d:'Оценка задач по охвату, силе эффекта, уверенности в оценке и трудозатратам. Даёт сравнимые числа и снимает спор «кто главнее».', f:'RICE = Reach × Impact × Confidence ÷ Effort', a:['RICE','RICE-приоритет']},
+ {k:'ice', t:'ICE', en:'Impact · Confidence · Ease', ru:'Упрощённый RICE', g:'Приоритизация',
+  d:'Более быстрая версия приоритизации: эффект, уверенность, лёгкость реализации.', f:'ICE = Impact × Confidence × Ease', a:['ICE']},
+ {k:'moscow', t:'MoSCoW', en:'Must · Should · Could · Won’t', ru:'Метод разделения объёма работ', g:'Приоритизация',
+  d:'Разделение требований на обязательные, желательные, возможные и отложенные. Помогает договориться, что именно входит в MVP.', f:'', a:['MoSCoW','Must have','Must','Could','Won’t']},
+ {k:'kano', t:'Модель Кано', en:'Kano model', ru:'Модель Кано', g:'Приоритизация',
+  d:'Делит функции на обязательные (их отсутствие злит), одномерные (чем лучше, тем довольнее) и привлекательные (радуют неожиданно).', f:'', a:['модели Кано','Модель Кано','модель Кано','Кано']},
+ {k:'roadmap', t:'Роадмап', en:'Roadmap', ru:'Дорожная карта продукта', g:'Приоритизация',
+  d:'План развития продукта. Хороший роадмап описывает результаты (outcomes) и горизонты Now / Next / Later, а не список фич с датами.', f:'', a:['Роадмап','роадмап','роадмапа','роадмапе','Now / Next / Later','outcome-роадмап','Outcome-роадмап']},
+ {k:'outcome', t:'Outcome', en:'Outcome vs output', ru:'Результат, а не объём работ', g:'Приоритизация',
+  d:'Outcome — изменение в поведении пользователей или метриках. Output — количество выпущенных фич. Команды оценивают по первому.', f:'', a:['outcomes','outcome','Outcome']},
+ {k:'debt', t:'Техдолг', en:'Technical debt', ru:'Технический долг', g:'Приоритизация',
+  d:'Накопленные упрощения в коде, которые делают каждое следующее изменение дороже и рискованнее. Обслуживается регулярно, а не разово.', f:'', a:['Техдолг','техдолг','техдолга','техдолгом','Технический долг']},
+ {k:'capacity', t:'Капасити', en:'Capacity', ru:'Ёмкость команды', g:'Приоритизация',
+  d:'Сколько работы команда реально может сделать за спринт. Конечный ресурс: взяв всё сразу, не доведёшь до конца ничего.', f:'', a:['Капасити','капасити','капасити.']},
+ {k:'hippo', t:'HiPPO', en:'Highest Paid Person’s Opinion', ru:'Мнение самого высокооплачиваемого', g:'Приоритизация',
+  d:'Ситуация, когда решение принимается по статусу говорящего, а не по данным. Признак незрелого продуктового процесса.', f:'', a:['HiPPO']},
+ {k:'postmortem', t:'Постмортем', en:'Blameless postmortem', ru:'Разбор инцидента без поиска виноватых', g:'Приоритизация',
+  d:'Встреча после сбоя: восстанавливают хронологию, ищут причины в процессах и системе, а не в людях, и фиксируют, что изменить.', f:'', a:['postmortem','Postmortem','постмортем','blameless postmortem']},
+
+ {k:'jtbd', t:'JTBD', en:'Jobs To Be Done', ru:'Работа, которую «нанимают» сделать', g:'Discovery',
+  d:'Подход: люди не покупают продукт, а «нанимают» его на работу в конкретной ситуации. Job story: когда [ситуация], я хочу [мотивация], чтобы [результат].', f:'', a:['JTBD','Jobs To Be Done','job story','Job story']},
+ {k:'custdev', t:'CustDev', en:'Customer Development', ru:'Развитие клиента', g:'Discovery',
+  d:'Практика проверки гипотез разговором с пользователями до разработки. Проблемное интервью спрашивает о прошлом опыте, а не о будущих намерениях.', f:'', a:['CustDev','Customer Development','проблемного интервью','проблемные интервью','проблемных интервью','интервью']},
+ {k:'momtest', t:'The Mom Test', en:'The Mom Test', ru:'Правило честного интервью', g:'Discovery',
+  d:'Книга-метод Роба Фицпатрика: спрашивай о конкретном прошлом поведении и фактах, не рассказывай свою идею и не проси оценить её.', f:'', a:['The Mom Test']},
+ {k:'discovery', t:'Discovery', en:'Product discovery', ru:'Исследование до разработки', g:'Discovery',
+  d:'Этап, на котором проверяют, что проблема реальна, а решение сработает. Экономит месяцы разработки не того.', f:'', a:['Discovery','discovery','discovery-кейсы']},
+ {k:'mvp', t:'MVP', en:'Minimum Viable Product', ru:'Минимально жизнеспособный продукт', g:'Discovery',
+  d:'Самая маленькая версия, которой достаточно, чтобы проверить ключевую гипотезу на реальных пользователях.', f:'', a:['MVP','MVP.']},
+ {k:'fakedoor', t:'Fake door', en:'Fake door test', ru:'Тест «ложная дверь»', g:'Discovery',
+  d:'Кнопка или экран несуществующей функции, чтобы измерить интерес до разработки. Показывает спрос, но не объясняет мотивы.', f:'', a:['Fake door','fake door']},
+ {k:'concierge', t:'Concierge MVP', en:'Concierge MVP', ru:'Ручной MVP', g:'Discovery',
+  d:'Услуга оказывается вручную, без кода: так проверяют, готовы ли люди платить, прежде чем что-то автоматизировать.', f:'', a:['Concierge MVP','concierge MVP','concierge']},
+ {k:'usability', t:'Юзабилити-тест', en:'Usability testing', ru:'Тест удобства', g:'Discovery',
+  d:'Наблюдение за тем, как человек выполняет задачу в интерфейсе. 5 сессий обычно вскрывают большинство проблем.', f:'', a:['юзабилити-тестов','юзабилити-тест','юзабилити']},
+ {k:'segment', t:'Сегмент', en:'Segment', ru:'Сегмент', g:'Discovery',
+  d:'Группа пользователей со схожим поведением или задачей. Сегмент описывается поведением, а не только демографией.', f:'', a:['Сегмент','сегмент','сегмента','сегменте']},
+
+ {k:'trial', t:'Триал', en:'Free trial', ru:'Пробный период', g:'Подписки',
+  d:'Бесплатный доступ на срок, после которого списывается оплата. Ключевая метрика — конверсия триала в оплату.', f:'', a:['Триал','триал','триала','триале','триалом']},
+ {k:'paywall', t:'Пейвол', en:'Paywall', ru:'Экран оплаты', g:'Подписки',
+  d:'Экран, на котором пользователю предлагают подписку. Один из самых влияющих на выручку элементов продукта.', f:'', a:['Пейвол','пейвол','пейвола','пейволе','пейвол.']},
+ {k:'grand', t:'Grandfathering', en:'Grandfathering', ru:'Сохранение старой цены', g:'Подписки',
+  d:'Практика оставлять текущим подписчикам прежнюю цену при повышении тарифа. Снижает отток и негатив.', f:'', a:['grandfathering','Grandfathering']},
+ {k:'elastic', t:'Эластичность', en:'Price elasticity', ru:'Чувствительность спроса к цене', g:'Подписки',
+  d:'Насколько падает спрос при росте цены. Если конверсия падает слабее, чем растёт цена, выручка увеличивается.', f:'', a:['Эластичность','эластичность','эластичности']},
+ {k:'organic', t:'Органика', en:'Organic traffic', ru:'Бесплатные пользователи', g:'Подписки',
+  d:'Пользователи, пришедшие без оплаты рекламы: поиск в сторе, рекомендации, сарафан.', f:'', a:['Органика','органика','органически','органическая']},
+ {k:'motivated', t:'Мотивированный трафик', en:'Incentivized traffic', ru:'Установки за вознаграждение', g:'Подписки',
+  d:'Пользователи, которым заплатили (бонусами в других приложениях) за установку. Дёшево в установках, почти не удерживается и не платит.', f:'', a:['мотивированный трафик','Мотивированный трафик','мотивированного трафика']},
+ {k:'stakeholder', t:'Стейкхолдер', en:'Stakeholder', ru:'Заинтересованная сторона', g:'Подписки',
+  d:'Любой, на кого влияет продукт и кто влияет на решения: CEO, маркетинг, поддержка, инвестор, команда разработки.', f:'', a:['Стейкхолдер','стейкхолдер','стейкхолдеры','стейкхолдерам','стейкхолдерами','стейкхолдеров','стейкхолдером']}
+];
+const GMAP = {}; GLOSS.forEach(g=>GMAP[g.k]=g);
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const ALIASES = GLOSS.flatMap(g=>g.a.map(a=>({a, k:g.k}))).sort((x,y)=>y.a.length-x.a.length);
+let TERM_RE = null;
+try { TERM_RE = new RegExp('(?<![\\p{L}\\d-])(' + ALIASES.map(x=>esc(x.a)).join('|') + ')(?![\\p{L}\\d-])','gu'); }
+catch(e){ TERM_RE = new RegExp('(' + ALIASES.map(x=>esc(x.a)).join('|') + ')','g'); }
+const ALIAS_KEY = {}; ALIASES.forEach(x=>{ if(!(x.a in ALIAS_KEY)) ALIAS_KEY[x.a]=x.k; });
+
+function annotate(root){
+  if(!root || !TERM_RE) return;
+  const count = {};
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(n){
+      if(!n.nodeValue || n.nodeValue.trim().length<2) return NodeFilter.FILTER_REJECT;
+      const p = n.parentElement;
+      if(!p || p.closest('.term, .opt, kbd, .lvl, .pill, script, style, .badge, .segs')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = []; let n; while((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node=>{
+    const text = node.nodeValue; TERM_RE.lastIndex = 0;
+    if(!TERM_RE.test(text)) return; TERM_RE.lastIndex = 0;
+    const frag = document.createDocumentFragment(); let last = 0, m;
+    while((m = TERM_RE.exec(text))){
+      const key = ALIAS_KEY[m[0]];
+      if(!key || (count[key]||0) >= 2) continue;
+      count[key] = (count[key]||0)+1;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      const b = document.createElement('span');
+      b.className = 'term'; b.tabIndex = 0; b.setAttribute('role','button'); b.dataset.term = key; b.textContent = m[0];
+      b.setAttribute('aria-label', m[0]+' — что это значит');
+      frag.appendChild(b); last = m.index + m[0].length;
+    }
+    if(!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+function termCard(g){
+  return `<h4>${g.t}</h4><div class="term-sub">${g.en!=='—'?g.en+' · ':''}${g.ru}</div><p>${g.d}</p>${g.f?`<div class="term-f">${g.f}</div>`:''}`;
+}
+function openTerm(btn){
+  const g = GMAP[btn.dataset.term]; if(!g) return;
+  let pop = document.getElementById('pop');
+  if(!pop){ pop = document.createElement('div'); pop.id = 'pop'; pop.setAttribute('role','dialog'); document.body.appendChild(pop); }
+  pop.innerHTML = termCard(g) + '<button class="term-close" data-act="popClose" aria-label="Закрыть">×</button>';
+  pop.hidden = false; pop.classList.remove('sheet');
+  const narrow = window.innerWidth < 620;
+  if(narrow){ pop.classList.add('sheet'); pop.style.left = ''; pop.style.top = ''; }
+  else {
+    const r = btn.getBoundingClientRect(), w = 340;
+    let left = Math.min(Math.max(12, r.left), window.innerWidth - w - 12);
+    pop.style.left = left+'px';
+    pop.style.top = (r.bottom + 8)+'px';
+    requestAnimationFrame(()=>{ const pr = pop.getBoundingClientRect(); if(pr.bottom > window.innerHeight - 8) pop.style.top = Math.max(8, r.top - pr.height - 8)+'px'; });
+  }
+}
+function closeTerm(){ const p = document.getElementById('pop'); if(p) p.hidden = true; }
+function openSheet(){
+  let s = document.getElementById('sheet');
+  if(!s){ s = document.createElement('div'); s.id = 'sheet'; document.body.appendChild(s); }
+  const groups = [...new Set(GLOSS.map(g=>g.g))];
+  s.innerHTML = `<div class="sheet-panel" role="dialog" aria-label="Шпаргалка">
+    <div class="sheet-head"><b class="h-display">Шпаргалка продакта</b><button class="btn ghost" data-act="sheetClose">Закрыть</button></div>
+    <input id="gsearch" type="search" placeholder="Поиск: LTV, когорта, RICE…" autocomplete="off">
+    <div class="sheet-body">${groups.map(gr=>`<div class="gsec" data-group="${gr}"><div class="gsec-h">${gr}</div>${GLOSS.filter(g=>g.g===gr).map(g=>`<div class="gitem" data-find="${(g.t+' '+g.en+' '+g.ru+' '+g.d).toLowerCase()}">${termCard(g)}</div>`).join('')}</div>`).join('')}</div>
+  </div>`;
+  s.hidden = false;
+  setTimeout(()=>{ const i = document.getElementById('gsearch'); if(i && window.innerWidth>620) i.focus(); },20);
+}
+function closeSheet(){ const s = document.getElementById('sheet'); if(s) s.hidden = true; }
+function filterSheet(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#sheet .gitem').forEach(el=>{ el.hidden = q && !el.dataset.find.includes(q); });
+  document.querySelectorAll('#sheet .gsec').forEach(el=>{ el.hidden = !el.querySelector('.gitem:not([hidden])'); });
+}
+
+/* ============ state ============ */
+let S = null;
+function derive(m){
+  const debtPen = Math.max(0, m.debt-50)*0.0008;
+  const effRet = clamp(m.ret - debtPen + (m.morale-60)*0.0003, 0.4, 0.96);
+  const effCac = m.cac*(1+Math.max(0,m.budget-20000)/40000);
+  const payers = m.users*m.conv, mrr = payers*m.arppu, gross = mrr*MARGIN;
+  const burn = TEAM_COST + m.budget, net = gross - burn;
+  const payerRet = Math.min(0.97, effRet+0.10);
+  const ltv = m.arppu*MARGIN/(1-payerRet), cacPayer = effCac/m.conv;
+  return {effRet, effCac, payers, mrr, gross, burn, net, ltv, cacPayer, ratio:ltv/cacPayer, runway: net<0 ? m.cash/(-net) : Infinity, debtPen};
+}
+function pickBalanced(items, n){
+  const groups = {}; items.forEach(it=>{ (groups[it.d] = groups[it.d]||[]).push(it.id); });
+  Object.keys(groups).forEach(k=>groups[k]=shuffle(groups[k]));
+  const out=[]; while(out.length<n){ const ks = shuffle(Object.keys(groups).filter(k=>groups[k].length)); if(!ks.length) break; for(const k of ks){ if(out.length<n) out.push(groups[k].shift()); } }
+  return out;
+}
+function newGame(){
+  const m = {users:45000, ret:0.80, conv:0.05, arppu:9, cac:2.5, viral:0.03, cash:600000, trust:60, morale:62, debt:40, budget:20000};
+  const d = derive(m);
+  S = { v:1, month:1, phase:'scenario', m,
+    history:[{month:0, users:m.users, mrr:d.mrr, cash:m.cash, ratio:d.ratio, ret:d.effRet}],
+    queue:[], xp:{disc:0,prio:0,metr:0,exp:0}, acc:{disc:[0,0],prio:[0,0],metr:[0,0],exp:[0,0]},
+    scen:pickBalanced(SCEN.map(s=>({id:s.id,d:s.d})), MONTHS),
+    chal:pickBalanced(Object.keys(CHAL).map(k=>({id:k,d:CHAL[k].d})), MONTHS),
+    cur:{}, log:[], streak:0, bestStreak:0, fired:[], ended:false, initMrr:d.mrr };
+  startMonth();
+}
+function startMonth(){
+  S.phase = 'scenario';
+  S.cur = { scenId:S.scen[S.month-1], choice:null, chal:null, chalAns:null, chalOk:null, fxShown:null };
+  save(); render();
+}
+function applyFx(fx){
+  const m = S.m; if(!fx) return;
+  for(const k in fx){ m[k] = (m[k]||0) + fx[k]; }
+  m.ret = clamp(m.ret,0.4,0.95); m.conv = clamp(m.conv,0.005,0.2); m.arppu = clamp(m.arppu,3,30); m.cac = clamp(m.cac,0.8,10);
+  m.viral = clamp(m.viral,0,0.15); m.trust = clamp(m.trust,0,100); m.morale = clamp(m.morale,0,100); m.debt = clamp(m.debt,0,100);
+}
+function streakHit(ok){ S.streak = ok ? S.streak+1 : 0; S.bestStreak = Math.max(S.bestStreak, S.streak); }
+
+function chooseScenario(i){
+  if(S.cur.choice!==null) return;
+  const sc = SCEN.find(s=>s.id===S.cur.scenId), o = sc.options[i];
+  S.cur.choice = i; applyFx(o.fx);
+  if(o.later) S.queue.push({at:S.month+o.later.in-1, fx:o.later.fx, note:o.later.note});
+  S.xp[sc.d] += QUAL[o.q].xp; S.acc[sc.d][0] += QUAL[o.q].pts; S.acc[sc.d][1] += 2;
+  streakHit(o.q==='best');
+  S.log.push({kind:'scen', id:sc.id, d:sc.d, title:sc.title, q:o.q, pick:o.t, lesson:sc.lesson, best:sc.options.find(x=>x.q==='best').t});
+  S.phase = 'scenFeedback'; save(); render();
+}
+function toChallenge(){
+  const key = S.chal[S.month-1];
+  S.cur.chal = Object.assign({key, d:CHAL[key].d}, CHAL[key].gen());
+  S.phase = 'challenge'; save(); render();
+  setTimeout(()=>{ const inp = $('#ans-num'); if(inp) inp.focus(); }, 30);
+}
+function answerChallenge(val){
+  const c = S.cur.chal; if(S.cur.chalOk!==null) return;
+  let ok;
+  if(c.type==='number'){
+    const v = parseFloat(String(val).replace(/\s/g,'').replace('$','').replace(',','.'));
+    if(isNaN(v)){ const inp=$('#ans-num'); if(inp){ inp.setAttribute('aria-invalid','true'); inp.placeholder='Введи число'; inp.focus(); } return; }
+    ok = Math.abs(v-c.answer) <= Math.abs(c.answer)*c.tol; S.cur.chalAns = v;
+  } else { ok = val===c.answer; S.cur.chalAns = val; }
+  S.cur.chalOk = ok;
+  S.xp[c.d] += ok?40:10; S.acc[c.d][0] += ok?2:0; S.acc[c.d][1] += 2;
+  if(ok) applyFx(CHAL_BONUS[c.d].fx);
+  streakHit(ok);
+  S.log.push({kind:'chal', d:c.d, title:c.title, ok, explain:c.explain});
+  S.phase = 'chalFeedback'; save(); render();
+}
+function closeMonth(){
+  const m = S.m;
+  const fired = S.queue.filter(q=>q.at<=S.month); S.queue = S.queue.filter(q=>q.at>S.month);
+  fired.forEach(q=>applyFx(q.fx));
+  const before = derive(m); const prev = {users:m.users, mrr:before.mrr, cash:m.cash, ratio:before.ratio};
+  const d = derive(m);
+  const organic = m.users*m.viral, paid = m.budget/d.effCac;
+  m.users = m.users*d.effRet + organic + paid;
+  const after = derive(m);
+  m.cash += after.gross - after.burn;
+  m.debt = clamp(m.debt+3,0,100); m.morale += (60-m.morale)*0.12; m.trust += (55-m.trust)*0.08;
+  const fin = derive(m);
+  S.history.push({month:S.month, users:m.users, mrr:fin.mrr, cash:m.cash, ratio:fin.ratio, ret:fin.effRet});
+  S.summary = {prev, fired:fired.map(f=>f.note), newUsers:organic+paid, paid, organic, churned:prev.users*(1-d.effRet), debtWarn:d.debtPen>0};
+  S.phase = m.cash<0 ? 'end' : (S.month>=MONTHS ? 'end' : 'summary');
+  if(S.phase==='end') S.ended = true;
+  save(); render();
+}
+function nextMonth(){ S.month++; startMonth(); }
+
+/* ============ persistence ============ */
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(SAVE_KEY)); return s && s.v===1 ? s : null; }catch(e){ return null; } }
+function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+/* ============ scoring ============ */
+function totalXp(){ return Object.values(S.xp).reduce((a,b)=>a+b,0); }
+function rankFromXp(x){ const r=[[0,'Стажёр'],[120,'Junior PM'],[260,'Middle PM'],[420,'Senior PM'],[560,'Lead PM'],[660,'Head of Product']]; let t=r[0][1]; r.forEach(([v,n])=>{ if(x>=v) t=n; }); return t; }
+function finalScore(){
+  const sc = S.log.filter(l=>l.kind==='scen'), ch = S.log.filter(l=>l.kind==='chal');
+  const s1 = sc.length ? sc.reduce((a,l)=>a+QUAL[l.q].pts,0)/(2*sc.length) : 0;
+  const s2 = ch.length ? ch.filter(l=>l.ok).length/ch.length : 0;
+  const skill = (s1+s2)/2;
+  const d = derive(S.m), growth = d.mrr/S.initMrr;
+  const biz = 0.4*clamp((growth-0.8)/1.7,0,1) + 0.3*clamp((d.ratio-1)/3,0,1) + 0.15*(S.m.cash>0?1:0) + 0.15*S.m.trust/100;
+  const total = S.m.cash<0 ? Math.min(0.45, 0.6*skill+0.4*biz) : 0.6*skill+0.4*biz;
+  const grades = [[0,'Стажёр'],[0.35,'Junior PM'],[0.5,'Middle PM'],[0.65,'Senior PM'],[0.8,'Lead PM'],[0.9,'Head of Product']];
+  let g = grades[0][1]; grades.forEach(([v,n])=>{ if(total>=v) g=n; });
+  return {skill, biz, total, grade:g, growth, s1, s2};
+}
+function badges(){
+  const d = derive(S.m), sc = S.log.filter(l=>l.kind==='scen');
+  const disc = sc.filter(l=>l.d==='disc');
+  const s14 = sc.find(l=>l.id==='s14');
+  return [
+    {n:'Сначала проблема', t:'Все discovery-кейсы решены сильно', on: disc.length>=1 && disc.every(l=>l.q==='best')},
+    {n:'Здоровая экономика', t:'LTV / CAC ≥ 3 в конце игры', on: d.ratio>=3},
+    {n:'Без подглядываний', t:'Дождался конца A/B-теста', on: !!s14 && s14.q==='best'},
+    {n:'Серия ×5', t:'5 верных ответов подряд', on: S.bestStreak>=5},
+    {n:'Чистый код', t:'Техдолг ≤ 30 в конце', on: S.m.debt<=30},
+    {n:'Кэш жив', t:'Прошёл 10 месяцев, не обнулив счёт', on: S.m.cash>0 && S.month>=MONTHS}
+  ];
+}
+
+/* ============ rendering ============ */
+function spark(vals, w=120, h=34){
+  if(vals.length<2) vals = [vals[0], vals[0]];
+  const mn = Math.min(...vals), mx = Math.max(...vals), rg = (mx-mn)||1;
+  const pts = vals.map((v,i)=>[ (i/(vals.length-1))*(w-6)+3, h-4-((v-mn)/rg)*(h-10) ]);
+  const line = pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area = line+` L${pts[pts.length-1][0].toFixed(1)} ${h} L${pts[0][0].toFixed(1)} ${h} Z`;
+  const e = pts[pts.length-1];
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="${area}" fill="currentColor" opacity=".12"/><path d="${line}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${e[0].toFixed(1)}" cy="${e[1].toFixed(1)}" r="3" fill="currentColor"/></svg>`;
+}
+function fxChips(fx){
+  if(!fx) return '';
+  return `<div class="fx">${Object.keys(fx).map(k=>{ const v=fx[k], meta=FX_META[k]; const good = meta.inv ? v<0 : v>0; return `<span class="${good?'up':'down'}">${meta.label} ${meta.fmt(v)}</span>`; }).join('')}</div>`;
+}
+function renderHud(){
+  const month = S ? S.month : 0;
+  const segs = Array.from({length:MONTHS},(_,i)=>{ const n=i+1; let c='seg'; if(S && (n<month || (S.ended && n<=month) || (n===month && ['summary','end'].includes(S.phase)))) c+=' done'; else if(S && n===month) c+=' now'; return `<div class="${c}"></div>`; }).join('');
+  $('#hud').innerHTML = `
+    <div class="brand"><b>Ритм</b><span>симулятор продакт-менеджера</span></div>
+    <div class="track"><div class="track-label"><span>${S?`Месяц ${Math.min(month,MONTHS)} из ${MONTHS}`:'10 месяцев'}</span><span>${S?int(totalXp())+' XP':''}</span></div><div class="segs">${segs}</div></div>
+    <button class="hud-btn" data-act="sheet">Шпаргалка</button>
+    ${S?`<div class="rank"><i>${int(totalXp())} XP</i><b>${rankFromXp(totalXp())}</b></div>`:''}`;
+}
+function renderDash(){
+  if(!S){ $('#dash').innerHTML = ''; $('#dash').hidden = true; return; }
+  $('#dash').hidden = false;
+  const m = S.m, d = derive(m), H = S.history;
+  const rc = d.ratio>=3?'good':(d.ratio>=1?'warn':'bad');
+  const runway = d.runway===Infinity ? 'окупаемся' : dec(d.runway,1)+' мес.';
+  const rwc = d.runway===Infinity||d.runway>12 ? 'good' : (d.runway>6?'warn':'bad');
+  const lvl = x=>Math.floor(x/60)+1;
+  const bar = (v, inv)=>{ const good = inv ? v<40 : v>=60; const bad = inv ? v>=70 : v<35; return `<div class="bar"><i class="${good?'good':(bad?'bad':'warn')}" style="width:${Math.round(v)}%"></i></div>`; };
+  $('#dash').innerHTML = `
+   <section class="panel" aria-label="Метрики продукта">
+     <div class="panel-title"><span>Дашборд «Ритма»</span><span>после мес. ${H[H.length-1].month}</span></div>
+     <div class="hero-metric"><div><small>MRR — выручка в месяц</small><b>${money(d.mrr)}</b></div>${spark(H.map(h=>h.mrr))}</div>
+     <div class="tiles">
+       <div class="tile"><small>Активные пользователи</small><div class="row"><b>${int(m.users)}</b>${spark(H.map(h=>h.users),54,20)}</div></div>
+       <div class="tile"><small>Retention, мес.</small><div class="row"><b>${pct(d.effRet)}</b>${spark(H.map(h=>h.ret),54,20)}</div></div>
+       <div class="tile"><small>Конверсия в оплату</small><b>${pct(m.conv,2)}</b></div>
+       <div class="tile"><small>ARPPU</small><b>$${dec(m.arppu,2)}</b></div>
+       <div class="tile"><small>LTV платящего</small><b>$${dec(d.ltv,0)}</b></div>
+       <div class="tile"><small>CAC платящего</small><b>$${dec(d.cacPayer,0)}</b></div>
+       <div class="tile"><small>LTV / CAC</small><b>${dec(d.ratio,1)}</b> <span class="pill ${rc}">${rc==='good'?'здорово':(rc==='warn'?'впритык':'убыток')}</span></div>
+       <div class="tile"><small>Кэш · runway</small><b>${money(m.cash)}</b> <span class="pill ${rwc}">${runway}</span></div>
+     </div>
+   </section>
+   <section class="panel" aria-label="Команда">
+     <div class="panel-title"><span>Команда и стейкхолдеры</span></div>
+     <div class="bars">
+       <div class="bar-row"><span>Доверие</span>${bar(m.trust)}<b>${Math.round(m.trust)}</b></div>
+       <div class="bar-row"><span>Мораль</span>${bar(m.morale)}<b>${Math.round(m.morale)}</b></div>
+       <div class="bar-row"><span>Техдолг</span>${bar(m.debt,true)}<b>${Math.round(m.debt)}</b></div>
+     </div>
+   </section>
+   <section class="panel" aria-label="Навыки">
+     <div class="panel-title"><span>Навыки PM</span><span>точность</span></div>
+     ${Object.keys(DOMAINS).map(k=>{ const a=S.acc[k]; const x=S.xp[k]; return `<div class="skill"><span>${DOMAINS[k].full} <span class="lvl">ур. ${lvl(x)}</span></span><span class="lvl">${a[1]?Math.round(a[0]/a[1]*100)+'%':'—'}</span><div class="bar"><i style="width:${(x%60)/60*100}%"></i></div></div>`; }).join('')}
+   </section>`;
+  annotate($('#dash'));
+}
+function domainChip(d){ return `<span class="chip d-${d}">${DOMAINS[d].name}</span>`; }
+
+function renderIntro(){
+  const saved = load();
+  $('#stage').innerHTML = `<div class="fade">
+    <div class="intro-hero">
+      <div class="eyebrow"><span class="chip">Продуктовый симулятор</span><span>10 месяцев · ~25 минут</span></div>
+      <h1>Ты — новый продакт в «Ритме». У тебя $600k и 10 месяцев.</h1>
+      <p class="lead">«Ритм» — трекер привычек с подпиской за $9. 45 тысяч активных пользователей, выручка не покрывает расходы, инвестор ждёт роста. Каждый месяц — ситуация, в которой нужно принять решение, и задача на навык. Метрики реагируют на твои решения, иногда с задержкой — как в жизни.</p>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>Ситуация</b><span>Стейкхолдеры приносят проблемы. Выбираешь решение и получаешь разбор: почему так и что говорит практика.</span></div>
+      <div class="rule"><b>Задача месяца</b><span>Расчёт LTV, чтение A/B-теста, RICE, когорты, CustDev. Верный ответ даёт XP и бонус к метрикам.</span></div>
+      <div class="rule"><b>Итоги месяца</b><span>Модель пересчитывает пользователей, выручку и кэш. Ты задаёшь маркетинговый бюджет на следующий месяц.</span></div>
+    </div>
+    <p style="margin-bottom:6px"><b>Цели на игру</b></p>
+    <div class="goals"><span class="chip">MRR ×2</span><span class="chip">LTV / CAC ≥ 3</span><span class="chip">Кэш > 0</span><span class="chip">Доверие команды</span></div>
+    <p class="hint" style="margin-top:12px">Термины с пунктирным подчёркиванием можно нажать — покажу расшифровку и формулу. Полный список — кнопка «Шпаргалка» сверху или клавиша «?».</p>
+    <div class="actions">
+      ${saved && !saved.ended ? `<button class="btn primary" data-act="continue" data-primary>Продолжить · месяц ${saved.month}</button><button class="btn" data-act="new">Начать заново</button>` : `<button class="btn primary" data-act="new" data-primary>Начать игру</button>`}
+      <span class="hint">Кейсы и цифры каждый раз новые</span>
+    </div></div>`;
+}
+function renderScenario(){
+  const sc = SCEN.find(s=>s.id===S.cur.scenId), p = PEOPLE[sc.from];
+  const picked = S.cur.choice, done = picked!==null, o = done ? sc.options[picked] : null;
+  const days = ['пн','вт','ср','чт','пт'];
+  $('#stage').innerHTML = `<div class="fade">
+    <div class="eyebrow"><span>Месяц ${S.month} · Ситуация</span>${domainChip(sc.d)}</div>
+    <div class="msg-head"><div class="ava" style="background:${p.color}">${p.ini}</div><div class="msg-who"><b>${p.name}</b><span>${p.role} · ${days[(S.month*3)%5]}, ${9+(S.month*7)%9}:${String((S.month*17)%60).padStart(2,'0')}</span></div></div>
+    <h2 class="h-display">${sc.title}</h2>
+    <div class="msg-body">${sc.text}</div>
+    <div class="opts" role="list">${sc.options.map((op,i)=>{ let cls='opt'; if(done){ if(op.q==='best') cls+=' is-best'; else if(i===picked) cls+=' is-wrong'; if(i===picked) cls+=' picked'; } return `<button class="${cls}" data-act="scen" data-i="${i}" ${done?'disabled':''}><kbd>${i+1}</kbd><span>${op.t}</span></button>`; }).join('')}</div>
+    ${done ? `<div class="verdict ${o.q}"><h3>${QUAL[o.q].label}<span class="xp">+${QUAL[o.q].xp} XP</span></h3><p>${o.fb}</p>${o.q!=='best'?`<p><b>Сильнее:</b> ${sc.options.find(x=>x.q==='best').t}</p>`:''}<p><b>Принцип:</b> ${sc.lesson}</p>${fxChips(o.fx)}${o.later?`<div class="later">Часть эффекта проявится ${o.later.in===1?'по итогам месяца':'через '+o.later.in+' мес.'}</div>`:''}</div>
+      <div class="actions"><button class="btn primary" data-act="toChal" data-primary>К задаче месяца →</button></div>` : `<p class="hint" style="margin-top:14px">Можно выбрать клавишами 1–${sc.options.length}</p>`}
+  </div>`;
+}
+function renderChallenge(){
+  const c = S.cur.chal, done = S.cur.chalOk!==null;
+  let body = '';
+  if(c.type==='choice'){
+    body = `<div class="opts">${c.options.map((t,i)=>{ let cls='opt'; if(done){ if(i===c.answer) cls+=' is-best'; else if(i===S.cur.chalAns) cls+=' is-wrong'; } return `<button class="${cls}" data-act="chal" data-i="${i}" ${done?'disabled':''}><kbd>${i+1}</kbd><span>${t}</span></button>`; }).join('')}</div>`;
+  } else {
+    body = `<div class="num-row"><input id="ans-num" type="text" inputmode="decimal" autocomplete="off" placeholder="Ответ, ${c.unit}" ${done?`disabled value="${S.cur.chalAns}"`:''}><button class="btn primary" data-act="chalNum" ${done?'disabled':''}>Проверить</button></div><p class="hint" style="margin-top:8px">Допустимая погрешность — ${Math.round(c.tol*100)}%</p>`;
+  }
+  const b = CHAL_BONUS[c.d];
+  $('#stage').innerHTML = `<div class="fade">
+    <div class="eyebrow"><span>Месяц ${S.month} · Задача</span>${domainChip(c.d)}</div>
+    <h2 class="h-display">${c.title}</h2>
+    <div style="margin-bottom:16px">${c.prompt}</div>
+    <p><b>${c.question}</b></p>
+    ${body}
+    ${done ? `<div class="verdict ${S.cur.chalOk?'best':'bad'}"><h3>${S.cur.chalOk?'Верно':'Мимо'}<span class="xp">+${S.cur.chalOk?40:10} XP</span></h3>${c.type==='number'?`<p>Правильный ответ: <b class="num">${c.unit==='$'?'$'+int(c.answer):dec(c.answer,1)+' '+c.unit}</b>${S.cur.chalOk?'':` · твой: <span class="num">${S.cur.chalAns}</span>`}</p>`:''}<p>${c.explain}</p>${S.cur.chalOk?`<p class="hint">Бонус: ${b.why}.</p>${fxChips(b.fx)}`:''}</div>
+      <div class="actions"><button class="btn primary" data-act="close" data-primary>${S.month>=MONTHS?'Закрыть последний месяц →':'Закрыть месяц →'}</button></div>` : ''}
+  </div>`;
+}
+function deltaTile(label, now, prev, fmt, inv){
+  const diff = now - prev, rel = prev ? diff/Math.abs(prev) : 0;
+  const cls = Math.abs(rel)<0.005 ? 'flat' : ((inv ? diff<0 : diff>0) ? 'up' : 'down');
+  return `<div class="delta"><small>${label}</small><b>${fmt(now)}</b><em class="${cls}">${diff>=0?'▲':'▼'} ${fmt(Math.abs(diff))}</em></div>`;
+}
+function renderSummary(){
+  const s = S.summary, m = S.m, d = derive(m);
+  $('#stage').innerHTML = `<div class="fade">
+    <div class="eyebrow"><span>Итоги месяца ${S.month}</span></div>
+    <h2 class="h-display">${d.mrr>s.prev.mrr?'Выручка растёт':'Выручка просела'}${m.cash<200000?' · кэш заканчивается':''}</h2>
+    <div class="deltas">
+      ${deltaTile('MRR', d.mrr, s.prev.mrr, money)}
+      ${deltaTile('Активные пользователи', m.users, s.prev.users, int)}
+      ${deltaTile('Кэш', m.cash, s.prev.cash, money)}
+      ${deltaTile('LTV / CAC', d.ratio, s.prev.ratio, v=>dec(v,2))}
+    </div>
+    <p class="lead">Пришло ${int(s.newUsers)} новых пользователей (${int(s.paid)} из рекламы, ${int(s.organic)} органически), ушло ${int(s.churned)}. Валовая выручка ${money(d.gross)} против расходов ${money(d.burn)}.</p>
+    ${(s.fired.length||s.debtWarn) ? `<div class="notes">${s.fired.map(n=>`<div class="note">${n}</div>`).join('')}${s.debtWarn?`<div class="note warn">Техдолг выше 50 — релизы ломаются, retention снижается. Займись им.</div>`:''}</div>`:''}
+    <div class="budget">
+      <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">Маркетинговый бюджет на месяц ${S.month+1}</b></span><b id="bval">${money(m.budget)}</b></div>
+      <input type="range" id="budget" min="0" max="60000" step="5000" value="${m.budget}" aria-label="Маркетинговый бюджет">
+      <div class="budget-calc" id="bcalc"></div>
+      <p class="hint" style="margin:10px 0 0">Выше $20k каналы насыщаются и CAC растёт. Масштабируй, только если LTV / CAC здоровый — иначе сжигаешь кэш быстрее.</p>
+    </div>
+    <div class="actions"><button class="btn primary" data-act="next" data-primary>Начать месяц ${S.month+1} →</button></div>
+  </div>`;
+  updateBudget();
+}
+function updateBudget(){
+  const el = $('#budget'); if(!el) return;
+  S.m.budget = +el.value; const d = derive(S.m);
+  $('#bval').textContent = money(S.m.budget);
+  $('#bcalc').innerHTML = `<div><span>CAC установки</span><b>$${dec(d.effCac,2)}</b></div><div><span>Установок из рекламы</span><b>≈ ${int(S.m.budget/d.effCac)}</b></div><div><span>CAC платящего</span><b>$${dec(d.cacPayer,0)}</b></div><div><span>LTV / CAC</span><b>${dec(d.ratio,1)}</b></div><div><span>Расходы в месяц</span><b>${money(d.burn)}</b></div>`;
+  save(); renderDash();
+}
+function renderEnd(){
+  const f = finalScore(), d = derive(S.m), bust = S.m.cash<0;
+  const first = S.history[0];
+  const weak = S.log.filter(l=>(l.kind==='scen' && l.q!=='best') || (l.kind==='chal' && !l.ok));
+  const strong = S.log.filter(l=>(l.kind==='scen' && l.q==='best') || (l.kind==='chal' && l.ok));
+  $('#stage').innerHTML = `<div class="fade">
+    <div class="eyebrow"><span>${bust?`Игра окончена на месяце ${S.month}`:'Итоги 10 месяцев'}</span></div>
+    <h2 class="h-display">${bust?'Кэш закончился. Инвестор не дал следующий транш.':(f.growth>=2?'Ты вырастил «Ритм»':'Квартальное ревью с инвестором')}</h2>
+    <div class="grade"><span class="grade-badge">${f.grade}</span><span class="score">${Math.round(f.total*100)} / 100</span></div>
+    <p class="lead">Качество решений: ${Math.round(f.s1*100)}% · задачи: ${Math.round(f.s2*100)}% · бизнес-результат: ${Math.round(f.biz*100)}%. Грейд на 60% зависит от решений и задач, на 40% — от метрик продукта.</p>
+    <div class="task-box"><table class="t"><thead><tr><th>Метрика</th><th>Старт</th><th>Финиш</th></tr></thead><tbody>
+      <tr><td>MRR</td><td>${money(first.mrr)}</td><td>${money(d.mrr)}</td></tr>
+      <tr><td>Активные пользователи</td><td>${int(first.users)}</td><td>${int(S.m.users)}</td></tr>
+      <tr><td>Retention, мес.</td><td>${pct(first.ret)}</td><td>${pct(d.effRet)}</td></tr>
+      <tr><td>LTV / CAC</td><td>${dec(first.ratio,2)}</td><td>${dec(d.ratio,2)}</td></tr>
+      <tr><td>Кэш</td><td>${money(first.cash)}</td><td>${money(S.m.cash)}</td></tr>
+    </tbody></table></div>
+    <div class="section-h">Достижения</div>
+    <div class="badges">${badges().map(b=>`<div class="badge ${b.on?'on':''}"><b>${b.n}</b>${b.t}</div>`).join('')}</div>
+    <div class="section-h">Что подтянуть · ${weak.length}</div>
+    ${weak.length ? `<div class="review">${weak.map(l=>l.kind==='scen' ? `<div class="rev"><span class="dot ${l.q}"></span><b>${l.title} · ${DOMAINS[l.d].name}</b><p>${l.lesson} Сильнее было: «${l.best}»</p></div>` : `<div class="rev"><span class="dot bad"></span><b>Задача: ${l.title} · ${DOMAINS[l.d].name}</b><p>${l.explain}</p></div>`).join('')}</div>` : '<p class="lead">Ни одной ошибки. Серьёзно впечатляет.</p>'}
+    ${strong.length ? `<div class="section-h">Что получилось · ${strong.length}</div><div class="review">${strong.filter(l=>l.kind==='scen').map(l=>`<div class="rev"><span class="dot best"></span><b>${l.title}</b><p>${l.lesson}</p></div>`).join('')}</div>`:''}
+    <div class="actions"><button class="btn primary" data-act="new" data-primary>Сыграть ещё раз — новые кейсы</button></div>
+  </div>`;
+}
+function render(){
+  renderHud(); renderDash();
+  closeTerm();
+  if(!S){ renderIntro(); annotate($('#stage')); return; }
+  ({scenario:renderScenario, scenFeedback:renderScenario, challenge:renderChallenge, chalFeedback:renderChallenge, summary:renderSummary, end:renderEnd})[S.phase]();
+  annotate($('#stage'));
+}
+
+/* ============ events ============ */
+document.addEventListener('click', e=>{
+  const t = e.target.closest('.term');
+  if(t){ e.preventDefault(); e.stopPropagation(); openTerm(t); return; }
+  if(!e.target.closest('#pop')) closeTerm();
+  if(e.target.id==='sheet'){ closeSheet(); return; }
+  const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
+  const a = b.dataset.act;
+  if(a==='sheet'){ openSheet(); return; }
+  if(a==='sheetClose'){ closeSheet(); return; }
+  if(a==='popClose'){ closeTerm(); return; }
+  if(a==='new'){ clearSave(); newGame(); window.scrollTo({top:0}); }
+  else if(a==='continue'){ S = load(); render(); }
+  else if(a==='scen') chooseScenario(+b.dataset.i);
+  else if(a==='toChal'){ toChallenge(); window.scrollTo({top:0}); }
+  else if(a==='chal') answerChallenge(+b.dataset.i);
+  else if(a==='chalNum') answerChallenge($('#ans-num').value);
+  else if(a==='close'){ closeMonth(); window.scrollTo({top:0}); }
+  else if(a==='next'){ nextMonth(); window.scrollTo({top:0}); }
+});
+document.addEventListener('input', e=>{
+  if(e.target.id==='budget') updateBudget();
+  else if(e.target.id==='gsearch') filterSheet(e.target.value);
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
+  if(e.target.id==='ans-num'){ if(e.key==='Enter'){ e.preventDefault(); answerChallenge(e.target.value); } return; }
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='?'){ openSheet(); return; }
+  if((e.key==='Enter'||e.key===' ') && e.target.classList && e.target.classList.contains('term')){ e.preventDefault(); openTerm(e.target); return; }
+  if(/^[1-5]$/.test(e.key)){ const btn = document.querySelector(`.opt[data-i="${+e.key-1}"]:not([disabled])`); if(btn){ btn.click(); } }
+  else if(e.key==='Enter'){ const p = document.querySelector('[data-primary]'); if(p && document.activeElement===document.body){ e.preventDefault(); p.click(); } }
+});
+
+/* ============ boot ============ */
+function start(data){
+  if(data && data.S) S = data.S;
+  render();
+}
+try{ window.claude?.hot?.snapshot?.(()=>({S})); }catch(e){}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+
+</body>
+</html>
