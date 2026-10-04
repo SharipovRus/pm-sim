@@ -1,21 +1,27 @@
-MIT License
+Copyright (c) 2026 Ruslan Sharipov. All rights reserved.
 
-Copyright (c) 2026 Ruslan Sharipov
+This license covers Rhythm (Ритм), a product manager simulator: the source code,
+scenarios, challenges, explanations, glossary, texts and images in this repository.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+You may, free of charge:
+  - play the game at https://sharipovrus.github.io/pm-sim/;
+  - read the source code for your own learning;
+  - share links to the game, screenshots, your result card and your certificate.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+You may not, without the author's prior written permission:
+  - copy, host, mirror or publish the game or any part of its content
+    on other websites, in other apps or in other products;
+  - use the game or its content for any commercial purpose, including paid courses,
+    corporate training, onboarding, hiring or candidate assessment;
+  - modify the game or distribute modified versions.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+For licensing, training use and partnerships, contact the author: sharipovra94@gmail.com,
+https://www.linkedin.com/in/sharipov-ruslan/.
+
+Versions of this repository published before this license took effect were released
+under the MIT License and remain available under that license. This license applies
+to every version published after it, as recorded in the repository's git history.
+
+THE GAME IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+ARISING FROM THE USE OF THE GAME.

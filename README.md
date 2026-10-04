@@ -27,7 +27,9 @@
 
 ## Лицензия
 
-MIT — делай что хочешь, упоминание авторства приветствуется.
+Все права защищены. Играть, читать код для обучения и делиться ссылками, результатами и сертификатами можно свободно. Копировать игру или её контент, размещать у себя, менять и использовать в коммерческих целях (курсы, корпоративное обучение, найм) — только с письменного разрешения автора. Подробности — в [LICENSE](LICENSE). По вопросам лицензии и партнёрства: sharipovra94@gmail.com, [LinkedIn](https://www.linkedin.com/in/sharipov-ruslan/).
+
+Версии, опубликованные до смены лицензии, остаются под MIT.
 
 ---
 
@@ -43,3 +45,5 @@ MIT — делай что хочешь, упоминание авторства 
 - A verifiable certificate for a full run, with an “Add to LinkedIn profile” button, and a public leaderboard
 
 One HTML file, no dependencies, no build, no backend. Progress is stored in your browser's localStorage. Visits are counted with GoatCounter: no cookies, no personal data. If you submit to the leaderboard, your nickname, optional LinkedIn link and best score are stored in Supabase. Switch languages with the RU / EN toggle in the header.
+
+**License.** All rights reserved. You're free to play, read the code to learn from it and share links, results and certificates. Copying, hosting, modifying or commercial use (courses, corporate training, hiring) requires the author's written permission — see [LICENSE](LICENSE). Contact: sharipovra94@gmail.com, [LinkedIn](https://www.linkedin.com/in/sharipov-ruslan/). Versions published before this change remain under MIT.
