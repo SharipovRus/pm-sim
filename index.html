@@ -2076,7 +2076,7 @@ async function copyResult(){
 /* ============ leaderboard ============ */
 // Supabase project (schema: supabase/migrations). The publishable key is public by design:
 // the table is closed, the browser can only call submit_score() and top_scores(), which validate input.
-const LB = {url:'', key:''}, PLAYER_KEY = 'ritm-player';
+const LB = {url:'https://xcqnfeebhxjarxcsjrop.supabase.co', key:'sb_publishable_L6S8ESxoLEJj5HU9rKY0Gw_tL6m-m9Y'}, PLAYER_KEY = 'ritm-player';
 const lbOn = () => !!(LB.url && LB.key);
 const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const gradeL = g => g==='Intern' ? L('Стажёр','Intern') : g;
