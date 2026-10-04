@@ -1939,7 +1939,8 @@ function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
 
 /* ============ scoring ============ */
 function totalXp(){ return Object.values(S.xp).reduce((a,b)=>a+b,0); }
-function rankFromXp(x){ const r=[[0,L('Стажёр','Intern')],[120,'Junior PM'],[260,'Middle PM'],[420,'Senior PM'],[560,'Lead PM'],[660,'Head of Product']]; let t=r[0][1]; r.forEach(([v,n])=>{ if(x>=v) t=n; }); return t; }
+// XP gives a level; job titles come only from the final grade, so the two never disagree
+const levelFromXp = x => Math.floor(x/100)+1;
 function finalScore(){
   const sc = S.log.filter(l=>l.kind==='scen'), ch = S.log.filter(l=>l.kind==='chal');
   const s1 = sc.length ? sc.reduce((a,l)=>a+QUAL[l.q].pts,0)/(2*sc.length) : 0;
@@ -1949,7 +1950,9 @@ function finalScore(){
   const biz = 0.4*clamp((growth-0.8)/1.7,0,1) + 0.3*clamp((d.ratio-1)/3,0,1) + 0.15*(S.m.cash>0?1:0) + 0.15*S.m.trust/100;
   const total = S.m.cash<0 ? Math.min(0.45, 0.6*skill+0.4*biz) : 0.6*skill+0.4*biz;
   const grades = [[0,L('Стажёр','Intern')],[0.35,'Junior PM'],[0.5,'Middle PM'],[0.65,'Senior PM'],[0.8,'Lead PM'],[0.9,'Head of Product']];
-  let g = grades[0][1]; grades.forEach(([v,n])=>{ if(total>=v) g=n; });
+  // grade by the score the player sees (rounded), so "90 / 100" is never shown with a lower grade
+  const shown = Math.round(total*100)/100;
+  let g = grades[0][1]; grades.forEach(([v,n])=>{ if(shown>=v) g=n; });
   return {skill, biz, total, grade:g, growth, s1, s2};
 }
 function badges(){
@@ -2081,7 +2084,7 @@ function renderHud(){
     <div class="track"><div class="track-label"><span>${S?L(`Месяц ${Math.min(month,MONTHS)} из ${MONTHS}`,`Month ${Math.min(month,MONTHS)} of ${MONTHS}`):L('10 месяцев','10 months')}</span><span>${S?int(totalXp())+' XP':''}</span></div><div class="segs">${segs}</div></div>
     <button class="hud-btn" data-act="sheet">${L('Шпаргалка','Cheat sheet')}</button>
     <div class="lang" role="group" aria-label="Язык / Language">${LANGS.map(lg=>`<button data-act="lang" data-lang="${lg}" aria-pressed="${lg===LANG}" lang="${lg}">${lg.toUpperCase()}</button>`).join('')}</div>
-    ${S?`<div class="rank"><i>${int(totalXp())} XP</i><b>${rankFromXp(totalXp())}</b></div>`:''}`;
+    ${S?`<div class="rank"><i>${int(totalXp())} XP</i><b>${L('Уровень','Level')} ${levelFromXp(totalXp())}</b></div>`:''}`;
 }
 function reviewText(r){
   const g = (r.g>=1?'+':'−')+dec(Math.abs(r.g-1)*100,0)+'%';
