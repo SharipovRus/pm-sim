@@ -20,6 +20,7 @@ img{max-width:100%}
 [hidden]{display:none !important}
 </style>
 <title>Ритм · PM-симулятор</title>
+<script>try{var t=localStorage.getItem('ritm-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -72,6 +73,9 @@ button{font:inherit; color:inherit}
 .rank{display:flex; align-items:center; gap:10px; padding:6px 12px 6px 6px; background:var(--surface); border:1px solid var(--line); border-radius:999px}
 .rank i{font-style:normal; font-family:var(--mono); font-size:12px; font-weight:600; background:var(--xp-soft); color:var(--xp); padding:3px 8px; border-radius:999px}
 .rank b{font-size:13px; font-weight:600}
+:root[data-theme="light"]{color-scheme:light} :root[data-theme="dark"]{color-scheme:dark}
+.hud-btn.theme-btn{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0}
+.hud-btn.theme-btn svg{width:17px; height:17px; flex:none}
 .lang{display:inline-flex; padding:3px; gap:2px; border:1px solid var(--line); border-radius:999px; background:var(--surface)}
 .lang button{padding:4px 10px; border:0; border-radius:999px; background:none; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:.04em; color:var(--muted)}
 .lang button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
@@ -312,6 +316,18 @@ let LANG = (()=>{
   return (navigator.languages||[navigator.language||'']).some(l=>/^(ru|uk|be|kk)/i.test(l)) ? 'ru' : 'en';
 })();
 const L = (ru, en) => LANG==='en' ? en : ru;
+
+/* ============ theme ============ */
+// follows the system until the player picks one; the choice is applied in <head> before first paint
+const THEME_KEY = 'ritm-theme';
+const themeNow = () => document.documentElement.dataset.theme || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+  track('theme-'+t); renderHud();
+}
+const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>';
+const ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
 
 /* ============ analytics ============ */
 // GoatCounter: no cookies, no personal data. Empty code = analytics off; never runs locally.
@@ -2331,6 +2347,7 @@ function renderHud(){
     <div class="brand"><b>${L('Ритм','Rhythm')}</b><span>${L('симулятор продакт-менеджера','product manager simulator')}</span></div>
     <div class="track"><div class="track-label"><span>${S?L(`Месяц ${Math.min(month,MONTHS)} из ${MONTHS}`,`Month ${Math.min(month,MONTHS)} of ${MONTHS}`):L('10 месяцев','10 months')}</span><span>${S?int(totalXp())+' XP':''}</span></div><div class="segs">${segs}</div></div>
     <button class="hud-btn" data-act="sheet">${L('Шпаргалка','Cheat sheet')}</button>
+    <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}" title="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
     <div class="lang" role="group" aria-label="Язык / Language">${LANGS.map(lg=>`<button data-act="lang" data-lang="${lg}" aria-pressed="${lg===LANG}" lang="${lg}">${lg.toUpperCase()}</button>`).join('')}</div>
     ${S?`<div class="rank"><i>${int(totalXp())} XP</i><b>${L('Уровень','Level')} ${levelFromXp(totalXp())}</b></div>`:''}`;
 }
@@ -2571,6 +2588,7 @@ document.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
   const a = b.dataset.act;
   if(a==='lang'){ setLang(b.dataset.lang); return; }
+  if(a==='theme'){ setTheme(themeNow()==='dark' ? 'light' : 'dark'); return; }
   if(a==='shareCard'){ shareCard(); return; }
   if(a==='lbSubmit'){ lbSubmit(); return; }
   if(a==='certIssue'){ certIssue(); return; }
