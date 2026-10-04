@@ -2113,6 +2113,10 @@ const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':
 const gradeL = g => g==='Intern' ? L('Стажёр','Intern') : g;
 function getPlayer(){ try{ return JSON.parse(localStorage.getItem(PLAYER_KEY)) || null; }catch(e){ return null; } }
 function setPlayer(p){ try{ localStorage.setItem(PLAYER_KEY, JSON.stringify(p)); }catch(e){} }
+// secret link that signs the same player in on another device (anyone with it can submit as them)
+const claimUrl = p => SITE + '?claim=' + p.token + '&n=' + encodeURIComponent(p.name) + (p.linkedin ? '&li=' + encodeURIComponent(p.linkedin) : '');
+const claimBtn = p => `<button class="btn ghost" data-act="copyVal" data-val="${escH(claimUrl(p))}" title="${L('Не публикуй её: по ней можно отправлять результаты от твоего имени','Keep it private: anyone with it can submit results as you')}">${L('Ссылка для другого устройства','Link for another device')}</button>`;
+let CLAIMED = null;
 function newToken(){
   if(window.crypto?.randomUUID) return (crypto.randomUUID()+crypto.randomUUID()).replace(/-/g,'');
   const a = new Uint8Array(32); crypto.getRandomValues(a); return [...a].map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -2144,7 +2148,7 @@ function renderLb(msg){
   if(sent){
     box.innerHTML = `<p>${L(`Ты на <b>${sent.rank}</b> месте из ${sent.total}. Твой лучший результат: <b>${sent.best} / 100</b>.`,`You’re <b>#${sent.rank}</b> of ${sent.total}. Your best: <b>${sent.best} / 100</b>.`)}</p>
       <div id="lb-top"><p class="hint">${L('Загружаю…','Loading…')}</p></div>
-      <div class="actions" style="margin-top:12px"><button class="btn" data-act="board">${L('Весь лидерборд','Full leaderboard')}</button></div>`;
+      <div class="actions" style="margin-top:12px"><button class="btn" data-act="board">${L('Весь лидерборд','Full leaderboard')}</button>${p ? claimBtn(p) : ''}</div>`;
     lbRpc('top_scores', {p_limit:5}).then(rows=>{ const t = $('#lb-top'); if(t) t.innerHTML = lbRows(rows, p && p.name); }).catch(()=>{ const t = $('#lb-top'); if(t) t.innerHTML = ''; });
     return;
   }
@@ -2157,7 +2161,7 @@ function renderLb(msg){
          <button class="btn primary" data-act="lbSubmit">${L('Добавить результат','Add my result')}</button>
        </div>`
     : `<p style="margin-top:0">${L(`Ты в лидерборде как <b>${escH(p.name)}</b>.`,`You’re on the leaderboard as <b>${escH(p.name)}</b>.`)}</p>
-       <div class="actions" style="margin-top:8px"><button class="btn primary" data-act="lbSubmit">${L('Отправить этот результат','Submit this run')}</button><button class="btn ghost" data-act="lbEdit">${L('Сменить ник','Change nickname')}</button><button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard')}</button></div>`;
+       <div class="actions" style="margin-top:8px"><button class="btn primary" data-act="lbSubmit">${L('Отправить этот результат','Submit this run')}</button><button class="btn ghost" data-act="lbEdit">${L('Сменить ник','Change nickname')}</button><button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard')}</button>${claimBtn(p)}</div>`;
   if(msg) box.insertAdjacentHTML('beforeend', `<p class="hint lb-msg" role="alert">${msg}</p>`);
 }
 async function lbSubmit(){
@@ -2426,6 +2430,7 @@ function renderIntro(){
     </div>
     <p style="margin-bottom:6px"><b>${L('Цели на игру','Your goals')}</b></p>
     <div class="goals"><span class="chip">${L('MRR +25% к 5-му месяцу','MRR +25% by month 5')}</span><span class="chip">MRR ×2</span><span class="chip">LTV / CAC ≥ 3</span><span class="chip">${L('Кэш > 0','Cash > 0')}</span><span class="chip">${L('Доверие команды','Team trust')}</span></div>
+    ${CLAIMED ? `<div class="notes"><div class="note">${L(`Ты вошёл как <b>${escH(CLAIMED)}</b>: результаты будут уходить в лидерборд под этим ником.`,`You’re signed in as <b>${escH(CLAIMED)}</b>: your results will go to the leaderboard under this nickname.`)}</div></div>` : ''}
     <p class="hint" style="margin-top:12px">${L('Термины с пунктирным подчёркиванием можно нажать — покажу расшифровку и формулу. Полный список — кнопка «Шпаргалка» сверху или клавиша «?».','Tap any term with a dotted underline to see what it stands for and its formula. The full list is under “Cheat sheet” at the top, or press “?”.')}</p>
     <div class="actions">
       ${saved && !saved.ended ? `<button class="btn primary" data-act="continue" data-primary>${L('Продолжить · месяц','Continue · month')} ${saved.month}</button><button class="btn" data-act="new">${L('Начать заново','Start over')}</button>` : `<button class="btn primary" data-act="new" data-primary>${L('Начать игру','Start the game')}</button>`}
@@ -2648,6 +2653,15 @@ function setLang(lg){
 applyLang();
 function start(data){
   if(data && data.S) S = data.S;
+  try{
+    const q = new URLSearchParams(location.search), tok = q.get('claim');
+    if(tok && /^[0-9a-f]{32,128}$/i.test(tok)){
+      setPlayer({token:tok, name:q.get('n')||'', linkedin:q.get('li')||''}); CLAIMED = q.get('n') || '—';
+      ['claim','n','li'].forEach(k=>q.delete(k));
+      history.replaceState(null, '', location.pathname + (q.toString() ? '?'+q : '') + location.hash);
+      track('lb-claim');
+    }
+  }catch(e){}
   let cid = null; try{ cid = new URLSearchParams(location.search).get('cert'); }catch(e){}
   if(cid && lbOn()){ loadCertView(cid); return; }
   render();
