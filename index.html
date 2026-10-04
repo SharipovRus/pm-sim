@@ -225,6 +225,17 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.lb{background:var(--surface2); border:1px solid var(--line); border-radius:14px; padding:14px; margin:4px 0 22px}
+.lb-form{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto; gap:8px}
+.lb-form input{padding:11px 12px; border-radius:10px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; min-width:0}
+.lb-form input:focus{outline:2px solid var(--accent); outline-offset:1px}
+.lb-msg{color:var(--bad); margin:10px 0 0}
+table.lb-t td:nth-child(2), table.lb-t th:nth-child(2){text-align:left; white-space:normal}
+table.lb-t td:first-child{color:var(--muted)}
+table.lb-t td:nth-child(2), table.lb-t td:nth-child(3){font-family:var(--body)}
+table.lb-t tr.me td{background:var(--accent-soft)}
+table.lb-t a{color:var(--accent); text-decoration:none} table.lb-t a:hover{text-decoration:underline}
+@media (max-width:560px){ .lb-form{grid-template-columns:minmax(0,1fr)} }
 .share{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:16px; align-items:center; background:var(--surface2); border:1px solid var(--line); border-radius:14px; padding:14px; margin:4px 0 22px}
 .share img{display:block; width:100%; aspect-ratio:1200/630; border-radius:10px; border:1px solid var(--line); background:var(--bg)}
 .share-btns{display:flex; flex-direction:column; gap:8px}
@@ -251,8 +262,8 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 #pop p, .gitem p{margin:0 0 8px; font-size:14px}
 .term-f{font-family:var(--mono); font-size:12.5px; background:var(--surface2); border:1px solid var(--line); border-radius:8px; padding:7px 10px}
 .term-close{position:absolute; top:8px; right:10px; background:none; border:0; font-size:20px; line-height:1; color:var(--muted); cursor:pointer}
-#pop[hidden], #sheet[hidden]{display:none !important}
-#sheet{position:fixed; inset:0; z-index:70; background:rgba(10,14,18,.45); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px}
+#pop[hidden], #sheet[hidden], #board[hidden]{display:none !important}
+#sheet, #board{position:fixed; inset:0; z-index:70; background:rgba(10,14,18,.45); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px}
 .sheet-panel{background:var(--bg); border:1px solid var(--line); border-radius:18px; width:min(880px,100%); max-height:100%; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
 .sheet-head{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 18px 12px}
 .sheet-head b{font-size:19px}
@@ -2062,6 +2073,92 @@ async function copyResult(){
   shareHint(ok ? L('Скопировано.','Copied.') : shareText());
 }
 
+/* ============ leaderboard ============ */
+// Supabase project (schema: supabase/migrations). The publishable key is public by design:
+// the table is closed, the browser can only call submit_score() and top_scores(), which validate input.
+const LB = {url:'', key:''}, PLAYER_KEY = 'ritm-player';
+const lbOn = () => !!(LB.url && LB.key);
+const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const gradeL = g => g==='Intern' ? L('Стажёр','Intern') : g;
+function getPlayer(){ try{ return JSON.parse(localStorage.getItem(PLAYER_KEY)) || null; }catch(e){ return null; } }
+function setPlayer(p){ try{ localStorage.setItem(PLAYER_KEY, JSON.stringify(p)); }catch(e){} }
+function newToken(){
+  if(window.crypto?.randomUUID) return (crypto.randomUUID()+crypto.randomUUID()).replace(/-/g,'');
+  const a = new Uint8Array(32); crypto.getRandomValues(a); return [...a].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function lbRpc(fn, body){
+  const headers = {'apikey':LB.key, 'Content-Type':'application/json'};
+  if(LB.key.startsWith('eyJ')) headers.Authorization = 'Bearer '+LB.key;   // legacy anon JWT key
+  const r = await fetch(`${LB.url}/rest/v1/rpc/${fn}`, {method:'POST', headers, body:JSON.stringify(body||{})});
+  const data = await r.json().catch(()=>null);
+  if(!r.ok) throw new Error((data && data.message) || ('http_'+r.status));
+  return data;
+}
+function lbError(e){
+  return {name_taken:L('Этот ник уже занят — выбери другой.','That nickname is taken — pick another one.'),
+          bad_name:L('Ник: 2–24 символа — буквы, цифры, пробел, точка, _ или -.','Nickname: 2–24 characters — letters, digits, space, dot, _ or -.'),
+          bad_linkedin:L('Нужна ссылка на профиль вида https://www.linkedin.com/in/имя','Use a profile link like https://www.linkedin.com/in/yourname')}[e.message]
+    || L('Не получилось отправить. Попробуй ещё раз.','Couldn’t send it. Please try again.');
+}
+function lbRows(rows, me){
+  if(!rows.length) return `<p class="hint">${L('Пока пусто — стань первым.','Nobody here yet — be the first.')}</p>`;
+  return `<div class="task-box" style="margin:0"><table class="t lb-t"><thead><tr><th>#</th><th>${L('Игрок','Player')}</th><th>${L('Грейд','Grade')}</th><th>${L('Счёт','Score')}</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr class="${me && r.name.toLowerCase()===me.toLowerCase()?'me':''}"><td>${r.rank}</td><td>${r.linkedin?`<a href="${escH(r.linkedin)}" target="_blank" rel="noopener nofollow ugc">${escH(r.name)}</a>`:escH(r.name)}</td><td>${escH(gradeL(r.grade))}</td><td>${r.score}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+// end-screen block: register once with a nickname, then send the result of each run (the best one is kept)
+function renderLb(msg){
+  const box = $('#lb-end'); if(!box || !lbOn()) return;
+  const p = getPlayer(), sent = S.lbResult;
+  if(sent){
+    box.innerHTML = `<p>${L(`Ты на <b>${sent.rank}</b> месте из ${sent.total}. Твой лучший результат: <b>${sent.best} / 100</b>.`,`You’re <b>#${sent.rank}</b> of ${sent.total}. Your best: <b>${sent.best} / 100</b>.`)}</p>
+      <div id="lb-top"><p class="hint">${L('Загружаю…','Loading…')}</p></div>
+      <div class="actions" style="margin-top:12px"><button class="btn" data-act="board">${L('Весь лидерборд','Full leaderboard')}</button></div>`;
+    lbRpc('top_scores', {p_limit:5}).then(rows=>{ const t = $('#lb-top'); if(t) t.innerHTML = lbRows(rows, p && p.name); }).catch(()=>{ const t = $('#lb-top'); if(t) t.innerHTML = ''; });
+    return;
+  }
+  const editing = !p || box.dataset.edit==='1';
+  box.innerHTML = editing
+    ? `<p class="hint" style="margin-top:0">${L('Ник и ссылку увидят все. В лидерборде остаётся твой лучший результат, а игра запомнит тебя на этом устройстве.','Your nickname and link are public. The leaderboard keeps your best run, and the game remembers you on this device.')}</p>
+       <div class="lb-form">
+         <input id="lb-name" type="text" maxlength="24" autocomplete="nickname" placeholder="${L('Ник','Nickname')}" value="${escH(p ? p.name : '')}" aria-label="${L('Ник','Nickname')}">
+         <input id="lb-li" type="url" autocomplete="url" placeholder="${L('Ссылка на LinkedIn (необязательно)','LinkedIn profile link (optional)')}" value="${escH(p && p.linkedin || '')}" aria-label="LinkedIn">
+         <button class="btn primary" data-act="lbSubmit">${L('Добавить результат','Add my result')}</button>
+       </div>`
+    : `<p style="margin-top:0">${L(`Ты в лидерборде как <b>${escH(p.name)}</b>.`,`You’re on the leaderboard as <b>${escH(p.name)}</b>.`)}</p>
+       <div class="actions" style="margin-top:8px"><button class="btn primary" data-act="lbSubmit">${L('Отправить этот результат','Submit this run')}</button><button class="btn ghost" data-act="lbEdit">${L('Сменить ник','Change nickname')}</button><button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard')}</button></div>`;
+  if(msg) box.insertAdjacentHTML('beforeend', `<p class="hint lb-msg" role="alert">${msg}</p>`);
+}
+async function lbSubmit(){
+  const box = $('#lb-end'); if(!box || S.lbResult) return;
+  const old = getPlayer(), nameEl = $('#lb-name'), liEl = $('#lb-li');
+  const p = {token: old ? old.token : newToken(), name: nameEl ? nameEl.value.trim() : old.name, linkedin: liEl ? liEl.value.trim() : (old.linkedin||'')};
+  if(p.linkedin && !/^https?:\/\//.test(p.linkedin)) p.linkedin = 'https://'+p.linkedin;
+  p.linkedin = p.linkedin.replace(/^http:/,'https:').replace(/\?.*$/,'');
+  const btn = box.querySelector('[data-act="lbSubmit"]'); if(btn){ btn.disabled = true; btn.textContent = L('Отправляю…','Sending…'); }
+  const f = finalScore(), d = derive(S.m);
+  try{
+    const res = await lbRpc('submit_score', {p_token:p.token, p_name:p.name, p_linkedin:p.linkedin, p_score:Math.round(f.total*100),
+      p_s1:+f.s1.toFixed(4), p_s2:+f.s2.toFixed(4), p_biz:+f.biz.toFixed(4), p_mrr_x:+clamp(f.growth,0,20).toFixed(2), p_ltv_cac:+clamp(d.ratio,0,50).toFixed(2),
+      p_months:Math.min(S.month, MONTHS), p_bust:S.m.cash<0, p_lang:LANG});
+    setPlayer(p); S.lbResult = res; save(); track(old ? 'lb-submit' : 'lb-join');
+    delete box.dataset.edit; renderLb();
+  }catch(e){ renderLb(lbError(e)); }
+}
+async function openBoard(){
+  let s = document.getElementById('board');
+  if(!s){ s = document.createElement('div'); s.id = 'board'; document.body.appendChild(s); }
+  s.innerHTML = `<div class="sheet-panel" role="dialog" aria-label="${L('Лидерборд','Leaderboard')}">
+    <div class="sheet-head"><b class="h-display">${L('Лидерборд','Leaderboard')}</b><button class="btn ghost" data-act="boardClose">${L('Закрыть','Close')}</button></div>
+    <div class="sheet-body" id="board-body"><p class="hint">${L('Загружаю…','Loading…')}</p></div></div>`;
+  s.hidden = false; track('lb-open');
+  try{
+    const rows = await lbRpc('top_scores', {p_limit:50}), p = getPlayer();
+    $('#board-body').innerHTML = `<p class="hint" style="margin:0">${L(`Лучший результат каждого игрока. Всего игроков: ${rows.length ? rows[0].total : 0}.`,`Each player’s best run. Players: ${rows.length ? rows[0].total : 0}.`)}</p>${lbRows(rows, p && p.name)}`;
+  }catch(e){ $('#board-body').innerHTML = `<p class="hint">${L('Не удалось загрузить лидерборд.','Couldn’t load the leaderboard.')}</p>`; }
+}
+function closeBoard(){ const s = document.getElementById('board'); if(s) s.hidden = true; }
+
 /* ============ rendering ============ */
 function spark(vals, w=120, h=34){
   if(vals.length<2) vals = [vals[0], vals[0]];
@@ -2164,6 +2261,7 @@ function renderIntro(){
     <p class="hint" style="margin-top:12px">${L('Термины с пунктирным подчёркиванием можно нажать — покажу расшифровку и формулу. Полный список — кнопка «Шпаргалка» сверху или клавиша «?».','Tap any term with a dotted underline to see what it stands for and its formula. The full list is under “Cheat sheet” at the top, or press “?”.')}</p>
     <div class="actions">
       ${saved && !saved.ended ? `<button class="btn primary" data-act="continue" data-primary>${L('Продолжить · месяц','Continue · month')} ${saved.month}</button><button class="btn" data-act="new">${L('Начать заново','Start over')}</button>` : `<button class="btn primary" data-act="new" data-primary>${L('Начать игру','Start the game')}</button>`}
+      ${lbOn() ? `<button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard')}</button>` : ''}
       <span class="hint">${L('Кейсы и цифры каждый раз новые','Cases and numbers change every run')}</span>
     </div></div>`;
 }
@@ -2284,6 +2382,7 @@ function renderEnd(){
         <p class="hint" id="share-hint" aria-live="polite"></p>
       </div>
     </div>
+    ${lbOn() ? `<div class="section-h">${L('Лидерборд','Leaderboard')}</div><div class="lb" id="lb-end"></div>` : ''}
     <div class="task-box"><table class="t"><thead><tr><th>${L('Метрика','Metric')}</th><th>${L('Старт','Start')}</th><th>${L('Финиш','Finish')}</th></tr></thead><tbody>
       <tr><td>MRR</td><td>${money(first.mrr)}</td><td>${money(d.mrr)}</td></tr>
       <tr><td>${L('Активные пользователи','Active users')}</td><td>${int(first.users)}</td><td>${int(S.m.users)}</td></tr>
@@ -2305,7 +2404,7 @@ function render(){
   if(!S){ renderIntro(); annotate($('#stage')); return; }
   ({scenario:renderScenario, scenFeedback:renderScenario, challenge:renderChallenge, chalFeedback:renderChallenge, summary:renderSummary, end:renderEnd})[S.phase]();
   annotate($('#stage'));
-  if(S.phase==='end') paintCard();
+  if(S.phase==='end'){ paintCard(); renderLb(); }
 }
 
 /* ============ events ============ */
@@ -2314,10 +2413,15 @@ document.addEventListener('click', e=>{
   if(t){ e.preventDefault(); e.stopPropagation(); openTerm(t); return; }
   if(!e.target.closest('#pop')) closeTerm();
   if(e.target.id==='sheet'){ closeSheet(); return; }
+  if(e.target.id==='board'){ closeBoard(); return; }
   const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
   const a = b.dataset.act;
   if(a==='lang'){ setLang(b.dataset.lang); return; }
   if(a==='shareCard'){ shareCard(); return; }
+  if(a==='lbSubmit'){ lbSubmit(); return; }
+  if(a==='lbEdit'){ const bx = $('#lb-end'); if(bx){ bx.dataset.edit = '1'; renderLb(); } return; }
+  if(a==='board'){ openBoard(); return; }
+  if(a==='boardClose'){ closeBoard(); return; }
   if(a==='shareLi'){ shareLinkedIn(); return; }
   if(a==='copyRes'){ copyResult(); return; }
   if(a==='sheet'){ openSheet(); return; }
@@ -2337,7 +2441,8 @@ document.addEventListener('input', e=>{
   else if(e.target.id==='gsearch') filterSheet(e.target.value);
 });
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){ const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
+  if(e.key==='Escape'){ const bd = document.getElementById('board'); if(bd && !bd.hidden){ closeBoard(); return; } const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
+  if(e.target.id==='lb-name' || e.target.id==='lb-li'){ if(e.key==='Enter'){ e.preventDefault(); lbSubmit(); } return; }
   if(e.target.id==='ans-num'){ if(e.key==='Enter'){ e.preventDefault(); answerChallenge(e.target.value); } return; }
   if(e.target.tagName==='INPUT') return;
   if(e.key==='?'){ openSheet(); return; }
