@@ -168,6 +168,12 @@ table.t tr:last-child td{border-bottom:0}
 .note{font-size:14px; padding:10px 14px; border-radius:10px; background:var(--accent-soft); border:1px solid var(--line)}
 .note.warn{background:var(--warn-soft)}
 .budget{border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--surface2)}
+.move{border:2px solid var(--accent); border-radius:14px; padding:16px; display:grid; gap:12px}
+.move-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.move-head b{font-size:16px}
+.move .hint{margin:0}
+.chip.move-chip{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+@media (max-width:560px){ .move{padding:12px} .move .budget{padding:12px} .move .budget-calc{grid-template-columns:1fr 1fr} }
 .budget-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px}
 .budget-top b{font-family:var(--mono); font-size:20px}
 input[type=range]{width:100%; accent-color:var(--accent)}
@@ -303,6 +309,8 @@ function track(ev){ try{ window.goatcounter?.count?.({path:`${ev}-${LANG}`, titl
 const MONTHS = 10, TEAM_COST = 35000, MARGIN = 0.7, START_CASH = 350000, SAVE_KEY = 'ritm-pm-sim-v1';
 // investor review: the second tranche depends on MRR growth by the end of REVIEW.month
 const REVIEW = {month:5, tranche:300000, full:1.25, half:1.10};
+// share of the team on tech debt (0–0.4): debt drifts +drift a month, each 10% of the team removes paydown/10
+const DEBT_WORK = {drift:3, paydown:25, organic:1.5, morale:10, max:0.4, penalty:0.0015};
 let DOMAINS, PEOPLE, QUAL, FX_META, CHAL_BONUS;
 function i18nConsts(){
   const pp = L(' п.п.',' pp'), sgn = v => v>0 ? '+' : '−';
@@ -1795,7 +1803,7 @@ function filterSheet(q){
 /* ============ state ============ */
 let S = null;
 function derive(m){
-  const debtPen = Math.max(0, m.debt-50)*0.0008;
+  const debtPen = Math.max(0, m.debt-50)*DEBT_WORK.penalty;
   const effRet = clamp(m.ret - debtPen + (m.morale-60)*0.0003, 0.4, 0.96);
   const effCac = m.cac*(1+Math.max(0,m.budget-20000)/40000);
   const payers = m.users*m.conv, mrr = payers*m.arppu, gross = mrr*MARGIN;
@@ -1837,7 +1845,7 @@ function pickScenarios(){
   return ids;
 }
 function newGame(){
-  const m = {users:45000, ret:0.80, conv:0.05, arppu:9, cac:2.5, viral:0.03, cash:START_CASH, trust:60, morale:62, debt:40, budget:20000};
+  const m = {users:45000, ret:0.80, conv:0.05, arppu:9, cac:2.5, viral:0.03, cash:START_CASH, trust:60, morale:62, debt:40, budget:20000, debtShare:0};
   const d = derive(m);
   S = { v:2, month:1, phase:'scenario', m,
     history:[{month:0, users:m.users, mrr:d.mrr, cash:m.cash, ratio:d.ratio, ret:d.effRet}],
@@ -1900,11 +1908,13 @@ function closeMonth(){
   fired.forEach(q=>applyFx(q.fx));
   const before = derive(m); const prev = {users:m.users, mrr:before.mrr, cash:m.cash, ratio:before.ratio};
   const d = derive(m);
-  const organic = m.users*m.viral, paid = m.budget/d.effCac;
+  // team share on tech debt: fewer features ship, so organic growth drops
+  const ds = m.debtShare||0;
+  const organic = m.users*m.viral*(1 - ds*DEBT_WORK.organic), paid = m.budget/d.effCac;
   m.users = m.users*d.effRet + organic + paid;
   const after = derive(m);
   m.cash += after.gross - after.burn;
-  m.debt = clamp(m.debt+3,0,100); m.morale += (60-m.morale)*0.12; m.trust += (55-m.trust)*0.08;
+  m.debt = clamp(m.debt + DEBT_WORK.drift - ds*DEBT_WORK.paydown, 0, 100); m.morale += (60-m.morale)*0.12 + ds*DEBT_WORK.morale; m.trust += (55-m.trust)*0.08;
   const fin = derive(m);
   let review = null;
   if(S.month===REVIEW.month){
@@ -2144,7 +2154,7 @@ function renderIntro(){
     <div class="rules">
       <div class="rule"><b>${L('Ситуация','Situation')}</b><span>${L('Стейкхолдеры приносят проблемы. Выбираешь решение и получаешь разбор: почему так и что говорит практика.','Stakeholders bring you problems. You make the call and get a debrief: why it works and what practice says.')}</span></div>
       <div class="rule"><b>${L('Задача месяца','Challenge of the month')}</b><span>${L('Расчёт LTV, чтение A/B-теста, RICE, когорты, CustDev. Верный ответ даёт XP и бонус к метрикам.','LTV math, reading an A/B test, RICE, cohorts, customer interviews. A right answer earns XP and a metrics boost.')}</span></div>
-      <div class="rule"><b>${L('Итоги месяца','Month in review')}</b><span>${L('Модель пересчитывает пользователей, выручку и кэш. Ты задаёшь маркетинговый бюджет на следующий месяц.','The model recalculates users, revenue and cash. You set the marketing budget for next month.')}</span></div>
+      <div class="rule"><b>${L('Итоги месяца','Month in review')}</b><span>${L('Модель пересчитывает пользователей, выручку и кэш. Потом твой ход: маркетинговый бюджет и доля команды на техдолг на следующий месяц.','The model recalculates users, revenue and cash. Then it’s your move: the marketing budget and how much of the team goes to tech debt next month.')}</span></div>
     </div>
     <p style="margin-bottom:6px"><b>${L('Цели на игру','Your goals')}</b></p>
     <div class="goals"><span class="chip">${L('MRR +25% к 5-му месяцу','MRR +25% by month 5')}</span><span class="chip">MRR ×2</span><span class="chip">LTV / CAC ≥ 3</span><span class="chip">${L('Кэш > 0','Cash > 0')}</span><span class="chip">${L('Доверие команды','Team trust')}</span></div>
@@ -2216,13 +2226,23 @@ function renderSummary(){
     <p class="lead">${L(`Пришло ${int(s.newUsers)} новых пользователей (${int(s.paid)} из рекламы, ${int(s.organic)} органически), ушло ${int(s.churned)}. Валовая выручка ${money(d.gross)} против расходов ${money(d.burn)}.`,
       `${int(s.newUsers)} new users came in (${int(s.paid)} from ads, ${int(s.organic)} organic) and ${int(s.churned)} churned. Revenue after store fees: ${money(d.gross)} vs. costs of ${money(d.burn)}.`)}</p>
     ${s.review ? `<div class="notes"><div class="note ${s.review.lvl==='full'?'':'warn'}"><b>${L('Ревью инвестора.','Investor review.')}</b> ${reviewText(s.review)}</div></div>` : ''}
-    ${(s.fired.length||s.debtWarn) ? `<div class="notes">${s.fired.map(r=>`<div class="note">${laterNote(r)}</div>`).join('')}${s.debtWarn?`<div class="note warn">${L('Техдолг выше 50 — релизы ломаются, retention снижается. Займись им.','Tech debt is above 50 — releases break and retention drops. Deal with it.')}</div>`:''}</div>`:''}
-    <div class="budget">
-      <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Маркетинговый бюджет на месяц','Marketing budget for month')} ${S.month+1}</b></span><b id="bval">${money(m.budget)}</b></div>
-      <input type="range" id="budget" min="0" max="60000" step="5000" value="${m.budget}" aria-label="${L('Маркетинговый бюджет','Marketing budget')}">
-      <div class="budget-calc" id="bcalc"></div>
-      <p class="hint" style="margin:10px 0 0">${L('Выше $20k каналы насыщаются и CAC растёт. Масштабируй, только если LTV / CAC здоровый — иначе сжигаешь кэш быстрее.','Above $20k, channels saturate and CAC climbs. Scale only if LTV / CAC is healthy — otherwise you just burn cash faster.')}</p>
-    </div>
+    ${(s.fired.length||s.debtWarn) ? `<div class="notes">${s.fired.map(r=>`<div class="note">${laterNote(r)}</div>`).join('')}${s.debtWarn?`<div class="note warn">${L('Техдолг выше 50 — релизы ломаются, retention снижается. Отдай часть команды на техдолг ниже.','Tech debt is above 50 — releases break and retention drops. Put part of the team on it below.')}</div>`:''}</div>`:''}
+    <section class="move" aria-label="${L('Твой ход','Your move')}">
+      <div class="move-head"><span class="chip move-chip">${L('Твой ход','Your move')}</span><b>${L(`Решения на месяц ${S.month+1}`,`Decisions for month ${S.month+1}`)}</b></div>
+      <p class="hint">${L('Два рычага, которые есть только здесь: сколько тратить на рекламу и сколько сил команды отдать техдолгу.','Two levers you only get here: how much to spend on ads and how much of the team to put on tech debt.')}</p>
+      <div class="budget">
+        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Маркетинговый бюджет','Marketing budget')}</b></span><b id="bval">${money(m.budget)}</b></div>
+        <input type="range" id="budget" min="0" max="60000" step="5000" value="${m.budget}" aria-label="${L('Маркетинговый бюджет','Marketing budget')}">
+        <div class="budget-calc" id="bcalc"></div>
+        <p class="hint" style="margin:10px 0 0">${L('Выше $20k каналы насыщаются и CAC растёт. Масштабируй, только если LTV / CAC здоровый — иначе сжигаешь кэш быстрее.','Above $20k, channels saturate and CAC climbs. Scale only if LTV / CAC is healthy — otherwise you just burn cash faster.')}</p>
+      </div>
+      <div class="budget">
+        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Команда на техдолг','Team on tech debt')}</b></span><b id="dval">${Math.round((m.debtShare||0)*100)}%</b></div>
+        <input type="range" id="debtShare" min="0" max="${DEBT_WORK.max*100}" step="10" value="${Math.round((m.debtShare||0)*100)}" aria-label="${L('Доля команды на техдолг','Share of the team on tech debt')}">
+        <div class="budget-calc" id="dcalc"></div>
+        <p class="hint" style="margin:10px 0 0">${L(`Сам по себе техдолг растёт на ${DEBT_WORK.drift} в месяц, а выше 50 режет retention. Каждые 10% команды снимают по ${dec(DEBT_WORK.paydown/10,1)} пункта, но фич выходит меньше — и органики тоже.`,`Tech debt grows by ${DEBT_WORK.drift} a month on its own, and above 50 it cuts retention. Every 10% of the team removes ${dec(DEBT_WORK.paydown/10,1)} points, but fewer features ship — and organic growth slows too.`)}</p>
+      </div>
+    </section>
     <div class="actions"><button class="btn primary" data-act="next" data-primary>${L('Начать месяц','Start month')} ${S.month+1} →</button></div>
   </div>`;
   updateBudget();
@@ -2232,6 +2252,13 @@ function updateBudget(){
   S.m.budget = +el.value; const d = derive(S.m);
   $('#bval').textContent = money(S.m.budget);
   $('#bcalc').innerHTML = `<div><span>${L('CAC установки','CAC per install')}</span><b>$${dec(d.effCac,2)}</b></div><div><span>${L('Установок из рекламы','Installs from ads')}</span><b>≈ ${int(S.m.budget/d.effCac)}</b></div><div><span>${L('CAC платящего','CAC per payer')}</span><b>$${dec(d.cacPayer,0)}</b></div><div><span>LTV / CAC</span><b>${dec(d.ratio,1)}</b></div><div><span>${L('Расходы в месяц','Monthly costs')}</span><b>${money(d.burn)}</b></div>`;
+  const ds = $('#debtShare');
+  if(ds){
+    const m = S.m; m.debtShare = +ds.value/100;
+    const next = clamp(m.debt + DEBT_WORK.drift - m.debtShare*DEBT_WORK.paydown, 0, 100);
+    $('#dval').textContent = Math.round(m.debtShare*100)+'%';
+    $('#dcalc').innerHTML = `<div><span>${L('Техдолг через месяц','Tech debt next month')}</span><b>${Math.round(m.debt)} → ${Math.round(next)}</b></div><div><span>${L('Органика','Organic installs')}</span><b>${m.debtShare ? '−'+Math.round(m.debtShare*DEBT_WORK.organic*100)+'%' : L('без потерь','no loss')}</b></div><div><span>${L('Штраф к retention','Retention penalty')}</span><b>${next>50 ? '−'+dec((next-50)*DEBT_WORK.penalty*100,1)+L(' п.п.',' pp') : L('нет','none')}</b></div>`;
+  }
   save(); renderDash();
 }
 function renderEnd(){
@@ -2303,7 +2330,7 @@ document.addEventListener('click', e=>{
   else if(a==='next'){ nextMonth(); window.scrollTo({top:0}); }
 });
 document.addEventListener('input', e=>{
-  if(e.target.id==='budget') updateBudget();
+  if(e.target.id==='budget' || e.target.id==='debtShare') updateBudget();
   else if(e.target.id==='gsearch') filterSheet(e.target.value);
 });
 document.addEventListener('keydown', e=>{

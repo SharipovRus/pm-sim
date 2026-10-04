@@ -10,7 +10,7 @@
 
 - **35 кейсов от стейкхолдеров.** CEO, маркетинг, техлид, поддержка, инвестор приносят проблемы. После каждого выбора — разбор: какой вариант сильнее и почему. Шесть кейсов — дилеммы: в них два сильных варианта с разной ценой, и решаешь ты, чем платить.
 - **17 типов задач** с генерируемыми числами: LTV, окупаемость CAC, значимость A/B-теста, размер выборки, RICE, воронка, когортная таблица, CustDev, JTBD, модель Кано.
-- **Экономическая модель.** Пользователи, удержание, конверсия, кэш и техдолг пересчитываются каждый месяц и реагируют на решения — иногда с задержкой.
+- **Экономическая модель.** Пользователи, удержание, конверсия, кэш и техдолг пересчитываются каждый месяц и реагируют на решения — иногда с задержкой. В итогах месяца ты задаёшь маркетинговый бюджет и долю команды на техдолг.
 - **Шпаргалка.** 58 терминов с расшифровкой аббревиатуры, переводом и формулой. Термины в тексте кликабельны.
 - **Итоги.** Грейд от стажёра до Head of Product, достижения, список того, что стоит подтянуть, и карточка результата, которой можно поделиться.
 
@@ -36,7 +36,7 @@ MIT — делай что хочешь, упоминание авторства 
 
 - 35 stakeholder cases with a debrief after every call, including 6 dilemmas where both strong options come at a different price
 - 17 challenge types with generated numbers: LTV, CAC payback, A/B test significance, sample size, RICE, funnels, cohort tables, customer interviews, JTBD, Kano
-- A business model that recalculates users, retention, revenue, cash and tech debt every month
+- A business model that recalculates users, retention, revenue, cash and tech debt every month; you set the marketing budget and how much of the team goes to tech debt
 - A cheat sheet of 58 PM terms; terms in the text are clickable
 - A shareable result card with your grade and metrics at the end
 
