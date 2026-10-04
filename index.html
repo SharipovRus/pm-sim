@@ -236,6 +236,19 @@ table.lb-t td:nth-child(2), table.lb-t td:nth-child(3){font-family:var(--body)}
 table.lb-t tr.me td{background:var(--accent-soft)}
 table.lb-t a{color:var(--accent); text-decoration:none} table.lb-t a:hover{text-decoration:underline}
 @media (max-width:560px){ .lb-form{grid-template-columns:minmax(0,1fr)} }
+.cert-form{grid-template-columns:minmax(0,1fr) auto}
+@media (max-width:560px){ .cert-form{grid-template-columns:minmax(0,1fr)} }
+.cert-share img{aspect-ratio:1600/1131}
+.cert-fields{margin-top:12px; display:grid; gap:6px; font-size:13px}
+.cert-fields > div{display:grid; grid-template-columns:150px minmax(0,1fr) auto; gap:8px; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:6px 8px}
+.cert-fields span{color:var(--muted)} .cert-fields b{font-weight:600; overflow-wrap:anywhere}
+.cert-fields .btn{padding:6px 10px; font-size:12px}
+@media (max-width:560px){ .cert-fields > div{grid-template-columns:minmax(0,1fr) auto} .cert-fields span{grid-column:1 / -1} }
+.end-cta{display:flex; flex-wrap:wrap; gap:8px; margin:-6px 0 16px}
+.end-cta .chip{cursor:pointer; padding:6px 12px; font-size:13px}
+.end-cta .chip:hover{border-color:var(--accent); color:var(--accent)}
+.chip.verified{background:var(--good-soft); border-color:var(--good); color:var(--good)}
+.cert-view-img{display:block; width:100%; border-radius:12px; border:1px solid var(--line); margin:8px 0 14px; aspect-ratio:1600/1131; background:var(--bg)}
 .share{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:16px; align-items:center; background:var(--surface2); border:1px solid var(--line); border-radius:14px; padding:14px; margin:4px 0 22px}
 .share img{display:block; width:100%; aspect-ratio:1200/630; border-radius:10px; border:1px solid var(--line); background:var(--bg)}
 .share-btns{display:flex; flex-direction:column; gap:8px}
@@ -1983,6 +1996,8 @@ function badges(){
 
 /* ============ share card ============ */
 const SITE = 'https://sharipovrus.github.io/pm-sim/';
+// web fonts load per unicode subset: ask for Latin and Cyrillic glyphs before drawing on canvas
+const FONT_SAMPLE = 'AaZz ЯяЁёЖж 0123 ×';
 const shareUrl = () => SITE + (LANG==='en' ? 'en/' : '');
 function shareText(){
   const f = finalScore(), d = derive(S.m), g = 'MRR ×'+dec(f.growth,2)+', LTV / CAC '+dec(d.ratio,1);
@@ -1994,7 +2009,7 @@ function shareText(){
 }
 async function drawCard(){
   const f = finalScore(), d = derive(S.m), bust = S.m.cash<0, H = S.history;
-  try{ await Promise.all(['700 60px Unbounded','700 24px Onest','400 22px Onest','600 24px "JetBrains Mono"'].map(x=>document.fonts.load(x))); }catch(e){}
+  try{ await Promise.all(['700 60px Unbounded','700 24px Onest','400 22px Onest','600 24px "JetBrains Mono"'].map(x=>document.fonts.load(x, FONT_SAMPLE))); }catch(e){}
   const c = document.createElement('canvas'); c.width = 1200; c.height = 630;
   const x = c.getContext('2d');
   const C = {bg:'#EDF0EA', ink:'#16202A', muted:'#5A6570', line:'#D5DBD1', accent:'#2A4FE6', accentSoft:'#E3E8FD', good:'#1D8657', goodSoft:'#DDF2E7', warn:'#B87200', warnSoft:'#FAEBCF', bad:'#C23E2C', badSoft:'#F8E0DB', xp:'#B87200', xpSoft:'#FBEFD6'};
@@ -2158,6 +2173,142 @@ async function openBoard(){
   }catch(e){ $('#board-body').innerHTML = `<p class="hint">${L('Не удалось загрузить лидерборд.','Couldn’t load the leaderboard.')}</p>`; }
 }
 function closeBoard(){ const s = document.getElementById('board'); if(s) s.hidden = true; }
+
+/* ============ certificate ============ */
+// Issued for full 10-month runs without going bust; stored in Supabase and verifiable at ?cert=ID
+const CERT_NAME_KEY = 'ritm-cert-name';
+let CERT_VIEW = null;   // {id, data|null, error} when the page is opened as a certificate check
+const certEligible = () => S && S.phase==='end' && S.m.cash>=0 && S.month>=MONTHS;
+const certUrl = id => SITE + (LANG==='en' ? 'en/' : '') + '?cert=' + encodeURIComponent(id);
+const certDate = iso => new Intl.DateTimeFormat(LANG==='en'?'en-US':'ru-RU', {year:'numeric', month:'long', day:'numeric'}).format(new Date(iso));
+const trancheL = t => ({full:L('полный','full'), half:L('половина','half'), none:L('отказ','declined')})[t] || '—';
+const certTitle = c => L(`Симулятор продакт-менеджера «Ритм»: ${gradeL(c.grade)}`, `Rhythm PM Simulator: ${c.grade}`);
+const CERT_ORG = 'Rhythm PM Simulator';
+async function drawCert(c){
+  try{ await Promise.all(['700 64px Unbounded','400 24px Onest','700 24px Onest','italic 400 30px Onest','600 30px "JetBrains Mono"'].map(x=>document.fonts.load(x, FONT_SAMPLE))); }catch(e){}
+  const W = 1600, H = 1131, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const C = {bg:'#FBFAF6', ink:'#16202A', muted:'#5A6570', line:'#D5DBD1', accent:'#2A4FE6', accentSoft:'#E3E8FD', xp:'#B87200', xpSoft:'#FBEFD6'};
+  const center = (t,y,font,color,maxW)=>{ x.font = font; x.fillStyle = color; if(maxW){ let s = parseInt(font.match(/(\d+)px/)[1]); while(x.measureText(t).width>maxW && s>20){ s-=2; x.font = font.replace(/\d+px/, s+'px'); } } const w = x.measureText(t).width; x.fillText(t,(W-w)/2,y); return w; };
+  const rr = (X,Y,w,h,r,fill)=>{ x.beginPath(); x.moveTo(X+r,Y); x.arcTo(X+w,Y,X+w,Y+h,r); x.arcTo(X+w,Y+h,X,Y+h,r); x.arcTo(X,Y+h,X,Y,r); x.arcTo(X,Y,X+w,Y,r); x.closePath(); x.fillStyle = fill; x.fill(); };
+  x.fillStyle = C.bg; x.fillRect(0,0,W,H);
+  x.strokeStyle = C.accent; x.lineWidth = 4; x.strokeRect(30,30,W-60,H-60);
+  x.strokeStyle = C.line; x.lineWidth = 1.5; x.strokeRect(46,46,W-92,H-92);
+  center(L('Ритм · симулятор продакт-менеджера','Rhythm · product manager simulator'),128,'400 24px Onest',C.muted);
+  x.letterSpacing = '6px'; center(L('СЕРТИФИКАТ О ПРОХОЖДЕНИИ','CERTIFICATE OF COMPLETION'),190,'700 28px Onest',C.accent); x.letterSpacing = '0px';
+  center(L('Сертификат выдан','This certifies that'),278,'400 26px Onest',C.muted);
+  center(c.name,378,'700 72px Unbounded',C.ink,1300);
+  x.strokeStyle = C.line; x.lineWidth = 2; x.beginPath(); x.moveTo(420,410); x.lineTo(W-420,410); x.stroke();
+  center(L('за полное прохождение симуляции продакт-менеджера «Ритм»:','completed all 10 months of the Rhythm product management simulation:'),470,'400 26px Onest',C.ink,1340);
+  center(L('решения со стейкхолдерами, задачи на метрики и живая бизнес-модель','stakeholder decisions, metrics challenges and a live business model'),512,'400 22px Onest',C.muted,1340);
+  // grade + score
+  x.font = '700 52px Unbounded'; const gw = x.measureText(gradeL(c.grade)).width;
+  x.font = '600 30px "JetBrains Mono"'; const sTxt = `${c.score} / 100`, sw = x.measureText(sTxt).width + 36;
+  const gx = (W - (gw + 28 + sw))/2;
+  x.font = '700 52px Unbounded'; x.fillStyle = C.ink; x.fillText(gradeL(c.grade), gx, 618);
+  rr(gx+gw+28, 578, sw, 52, 26, C.xpSoft); x.font = '600 30px "JetBrains Mono"'; x.fillStyle = C.xp; x.fillText(sTxt, gx+gw+28+18, 614);
+  // metrics
+  const cols = [[L('Рост MRR','MRR growth'),'×'+dec(+c.mrr_x,2)],['LTV / CAC',dec(+c.ltv_cac,1)],['Retention',dec(+c.retention,1)+'%'],[L('Транш инвестора','Investor tranche'),trancheL(c.tranche)]];
+  const cw = 300, cx0 = (W - cw*cols.length)/2;
+  cols.forEach(([k,v],i)=>{ const mx = cx0 + cw*i + cw/2; x.font = '400 20px Onest'; x.fillStyle = C.muted; x.fillText(k, mx - x.measureText(k).width/2, 712); x.font = '600 34px "JetBrains Mono"'; x.fillStyle = C.ink; x.fillText(v, mx - x.measureText(v).width/2, 758); });
+  center(L('Discovery · Приоритизация · Метрики и юнит-экономика · Эксперименты','Discovery · Prioritization · Metrics & unit economics · Experimentation'),850,'400 22px Onest',C.muted,1340);
+  // footer: date · signature · id
+  const fy = 980;
+  x.font = '400 18px Onest'; x.fillStyle = C.muted; x.fillText(L('Дата выдачи','Issued'), 130, fy-40);
+  x.font = '700 24px Onest'; x.fillStyle = C.ink; x.fillText(certDate(c.issued_at), 130, fy);
+  x.strokeStyle = C.ink; x.lineWidth = 1.5; x.beginPath(); x.moveTo(W/2-170, fy-22); x.lineTo(W/2+170, fy-22); x.stroke();
+  center(L('Руслан Шарипов','Ruslan Sharipov'), fy-34, 'italic 400 30px Onest', C.ink);
+  center(L('автор «Ритма»','Creator of Rhythm'), fy+8, '400 18px Onest', C.muted);
+  const rx = W-130;
+  x.font = '400 18px Onest'; x.fillStyle = C.muted; const l1 = L('ID сертификата','Certificate ID'); x.fillText(l1, rx - x.measureText(l1).width, fy-40);
+  x.font = '600 26px "JetBrains Mono"'; x.fillStyle = C.ink; x.fillText(c.id, rx - x.measureText(c.id).width, fy);
+  const vu = certUrl(c.id).replace('https://','');
+  x.font = '400 17px Onest'; x.fillStyle = C.accent; x.fillText(vu, rx - x.measureText(vu).width, fy+30);
+  return cv;
+}
+function paintCert(c, imgId){
+  drawCert(c).then(cv=>{ const img = document.getElementById(imgId); if(img) img.src = cv.toDataURL('image/png'); }).catch(()=>{});
+}
+function liAddUrl(c){
+  const d = new Date(c.issued_at);
+  const q = new URLSearchParams({startTask:'CERTIFICATION_NAME', name:certTitle(c), organizationName:CERT_ORG, issueYear:d.getFullYear(), issueMonth:d.getMonth()+1, certUrl:certUrl(c.id), certId:c.id});
+  return 'https://www.linkedin.com/profile/add?' + q.toString();
+}
+function certFields(c){
+  const rows = [[L('Название','Name'), certTitle(c)], [L('Организация','Issuing organization'), CERT_ORG], [L('Дата выдачи','Issue date'), certDate(c.issued_at)], ['Credential ID', c.id], ['Credential URL', certUrl(c.id)]];
+  return `<div class="cert-fields"><p class="hint" style="margin:0 0 6px">${L('Если LinkedIn откроет пустую форму, скопируй значения:','If LinkedIn opens an empty form, copy these values:')}</p>
+    ${rows.map(([k,v])=>`<div><span>${k}</span><b>${escH(v)}</b><button class="btn ghost" data-act="copyVal" data-val="${escH(v)}">${L('Копировать','Copy')}</button></div>`).join('')}</div>`;
+}
+// end-screen block
+function renderCertBox(msg){
+  const box = $('#cert-end'); if(!box) return;
+  if(!certEligible()){ box.innerHTML = `<p class="hint" style="margin:0">${L('Сертификат выдаётся за полное прохождение всех 10 месяцев без банкротства. Попробуй ещё раз!','The certificate is for completing all 10 months without running out of cash. Give it another go!')}</p>`; return; }
+  const c = S.cert;
+  if(!c){
+    let saved = ''; try{ saved = localStorage.getItem(CERT_NAME_KEY) || ''; }catch(e){}
+    box.innerHTML = `<p class="hint" style="margin-top:0">${L('Имя будет на сертификате и на странице проверки — пиши так, как хочешь видеть его в LinkedIn.','Your name goes on the certificate and its verification page — write it the way you want it on LinkedIn.')}</p>
+      <div class="lb-form cert-form"><input id="cert-name" type="text" maxlength="60" autocomplete="name" placeholder="${L('Имя и фамилия','Full name')}" value="${escH(saved)}" aria-label="${L('Имя и фамилия','Full name')}">
+      <button class="btn primary" data-act="certIssue">${L('Получить сертификат','Get my certificate')}</button></div>
+      ${msg ? `<p class="hint lb-msg" role="alert">${msg}</p>` : ''}`;
+    return;
+  }
+  box.innerHTML = `<div class="share cert-share"><img id="cert-img" alt="${L('Сертификат','Certificate')}">
+      <div class="share-btns">
+        <button class="btn primary" data-act="certLi">${L('Добавить в профиль LinkedIn','Add to LinkedIn profile')}</button>
+        <button class="btn" data-act="certShare">${L('Поделиться сертификатом','Share the certificate')}</button>
+        <button class="btn" data-act="copyVal" data-val="${escH(certUrl(c.id))}">${L('Скопировать ссылку','Copy link')}</button>
+        <p class="hint" id="cert-hint" aria-live="polite"></p>
+      </div></div>
+    <div id="cert-fields" hidden>${certFields(c)}</div>`;
+  paintCert(c, 'cert-img');
+}
+async function certIssue(){
+  const inp = $('#cert-name'); if(!inp || S.cert) return;
+  const name = inp.value.trim().replace(/\s+/g,' ');
+  const btn = $('#cert-end [data-act="certIssue"]'); if(btn){ btn.disabled = true; btn.textContent = L('Выдаю…','Issuing…'); }
+  const f = finalScore(), d = derive(S.m);
+  try{
+    const c = await lbRpc('issue_certificate', {p_name:name, p_score:Math.round(f.total*100), p_s1:+f.s1.toFixed(4), p_s2:+f.s2.toFixed(4), p_biz:+f.biz.toFixed(4),
+      p_mrr_x:+clamp(f.growth,0,20).toFixed(2), p_ltv_cac:+clamp(d.ratio,0,50).toFixed(2), p_retention:+(d.effRet*100).toFixed(2), p_tranche:S.review ? S.review.lvl : 'none', p_lang:LANG});
+    S.cert = c; save(); try{ localStorage.setItem(CERT_NAME_KEY, name); }catch(e){}
+    track('cert-issue'); renderCertBox();
+  }catch(e){
+    renderCertBox(e.message==='bad_name' ? L('Имя: 2–60 символов, буквы, пробел, дефис или апостроф.','Name: 2–60 characters — letters, spaces, hyphens or apostrophes.') : L('Не получилось выдать сертификат. Попробуй ещё раз.','Couldn’t issue the certificate. Please try again.'));
+  }
+}
+async function certShare(c){
+  const cv = await drawCert(c); const blob = await new Promise(r=>cv.toBlob(r,'image/png'));
+  const file = new File([blob], L('ritm-sertifikat.png','rhythm-certificate.png'), {type:'image/png'});
+  const text = L(`Прошёл симуляцию продакт-менеджера «Ритм»: ${gradeL(c.grade)}, ${c.score}/100. Сертификат: ${certUrl(c.id)}`, `I completed the Rhythm product management simulation: ${c.grade}, ${c.score}/100. Certificate: ${certUrl(c.id)}`);
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file], text}); track('cert-share-native'); return; } catch(e){ if(e.name==='AbortError') return; }
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  const ok = await copyText(text); track('cert-download');
+  const h = $('#cert-hint'); if(h) h.textContent = ok ? L('Картинка сохранена, текст поста скопирован.','Image saved, post text copied.') : L('Картинка сохранена.','Image saved.');
+}
+// verification view: index.html?cert=ID
+async function loadCertView(id){
+  CERT_VIEW = {id, data:null, error:false}; render();
+  try{ CERT_VIEW.data = await lbRpc('get_certificate', {p_id:id}); if(!CERT_VIEW.data) CERT_VIEW.error = true; }
+  catch(e){ CERT_VIEW.error = true; }
+  track('cert-view'); render();
+}
+function renderCertView(){
+  const v = CERT_VIEW, c = v.data;
+  $('#stage').innerHTML = `<div class="fade">
+    ${!c && !v.error ? `<p class="hint">${L('Проверяю сертификат…','Checking the certificate…')}</p>` : ''}
+    ${v.error ? `<h2 class="h-display">${L('Сертификат не найден','Certificate not found')}</h2><p class="lead">${L('Проверь ссылку: такого номера нет.','Check the link: there’s no certificate with this ID.')} <span class="num">${escH(v.id)}</span></p>` : ''}
+    ${c ? `<div class="eyebrow"><span class="chip verified">✓ ${L('Сертификат подтверждён','Verified certificate')}</span><span>ID ${escH(c.id)}</span></div>
+      <h2 class="h-display">${escH(c.name)}</h2>
+      <p class="lead">${L(`Симуляция продакт-менеджера «Ритм» пройдена полностью, ${certDate(c.issued_at)}: <b>${gradeL(c.grade)}</b>, ${c.score} / 100.`,`Completed the Rhythm product management simulation on ${certDate(c.issued_at)}: <b>${c.grade}</b>, ${c.score} / 100.`)}</p>
+      <img id="certv-img" class="cert-view-img" alt="${L('Сертификат','Certificate')}">
+      <p class="hint">${L('«Ритм» — бесплатная браузерная игра-тренажёр для продакт-менеджеров. Сертификат подтверждает, что игра пройдена с этим результатом; это не профессиональная аккредитация.','Rhythm is a free browser-based simulator for product managers. The certificate confirms the game was completed with this result; it is not a professional accreditation.')}</p>` : ''}
+    <div class="actions"><button class="btn primary" data-act="certPlay" data-primary>${L('Сыграть самому','Play it yourself')}</button></div>
+  </div>`;
+  if(c) paintCert(c, 'certv-img');
+}
 
 /* ============ rendering ============ */
 function spark(vals, w=120, h=34){
@@ -2371,6 +2522,7 @@ function renderEnd(){
     <div class="eyebrow"><span>${bust?L(`Игра окончена на месяце ${S.month}`,`Game over in month ${S.month}`):L('Итоги 10 месяцев','10 months in review')}</span></div>
     <h2 class="h-display">${bust?L('Кэш закончился. Инвестор не дал следующий транш.','You ran out of cash. The investor passed on the next tranche.'):(f.growth>=2?L('Ты вырастил «Ритм»','You grew Rhythm'):L('Квартальное ревью с инвестором','Quarterly review with the investor'))}</h2>
     <div class="grade"><span class="grade-badge">${f.grade}</span><span class="score">${Math.round(f.total*100)} / 100</span></div>
+    ${lbOn() ? `<div class="end-cta">${certEligible() ? `<button class="chip" data-act="goto" data-target="cert-sec">🏅 ${L('Получить сертификат','Get your certificate')} ↓</button>` : ''}<button class="chip" data-act="goto" data-target="lb-sec">🏆 ${L('Попасть в лидерборд','Join the leaderboard')} ↓</button></div>` : ''}
     <p class="lead">${L(`Качество решений: ${Math.round(f.s1*100)}% · задачи: ${Math.round(f.s2*100)}% · бизнес-результат: ${Math.round(f.biz*100)}%. Грейд на 60% зависит от решений и задач, на 40% — от метрик продукта.`,
       `Decision quality: ${Math.round(f.s1*100)}% · challenges: ${Math.round(f.s2*100)}% · business results: ${Math.round(f.biz*100)}%. Your grade is 60% decisions and challenges, 40% product metrics.`)}</p>
     <div class="share">
@@ -2382,7 +2534,8 @@ function renderEnd(){
         <p class="hint" id="share-hint" aria-live="polite"></p>
       </div>
     </div>
-    ${lbOn() ? `<div class="section-h">${L('Лидерборд','Leaderboard')}</div><div class="lb" id="lb-end"></div>` : ''}
+    ${lbOn() ? `<div class="section-h" id="cert-sec">${L('Сертификат','Certificate')}</div><div class="lb" id="cert-end"></div>` : ''}
+    ${lbOn() ? `<div class="section-h" id="lb-sec">${L('Лидерборд','Leaderboard')}</div><div class="lb" id="lb-end"></div>` : ''}
     <div class="task-box"><table class="t"><thead><tr><th>${L('Метрика','Metric')}</th><th>${L('Старт','Start')}</th><th>${L('Финиш','Finish')}</th></tr></thead><tbody>
       <tr><td>MRR</td><td>${money(first.mrr)}</td><td>${money(d.mrr)}</td></tr>
       <tr><td>${L('Активные пользователи','Active users')}</td><td>${int(first.users)}</td><td>${int(S.m.users)}</td></tr>
@@ -2399,12 +2552,13 @@ function renderEnd(){
   </div>`;
 }
 function render(){
+  if(CERT_VIEW){ renderHud(); $('#dash').innerHTML = ''; $('#dash').hidden = true; closeTerm(); renderCertView(); return; }
   renderHud(); renderDash();
   closeTerm();
   if(!S){ renderIntro(); annotate($('#stage')); return; }
   ({scenario:renderScenario, scenFeedback:renderScenario, challenge:renderChallenge, chalFeedback:renderChallenge, summary:renderSummary, end:renderEnd})[S.phase]();
   annotate($('#stage'));
-  if(S.phase==='end'){ paintCard(); renderLb(); }
+  if(S.phase==='end'){ paintCard(); renderCertBox(); renderLb(); }
 }
 
 /* ============ events ============ */
@@ -2419,6 +2573,12 @@ document.addEventListener('click', e=>{
   if(a==='lang'){ setLang(b.dataset.lang); return; }
   if(a==='shareCard'){ shareCard(); return; }
   if(a==='lbSubmit'){ lbSubmit(); return; }
+  if(a==='certIssue'){ certIssue(); return; }
+  if(a==='certLi'){ window.open(liAddUrl(S.cert), '_blank', 'noopener'); const fl = $('#cert-fields'); if(fl) fl.hidden = false; track('cert-linkedin'); return; }
+  if(a==='certShare'){ certShare(S.cert); return; }
+  if(a==='copyVal'){ copyText(b.dataset.val).then(ok=>{ if(!ok) return; const t = b.textContent; b.textContent = L('Скопировано','Copied'); setTimeout(()=>{ b.textContent = t; }, 1500); }); return; }
+  if(a==='certPlay'){ CERT_VIEW = null; try{ const u = new URL(location.href); u.searchParams.delete('cert'); history.replaceState(null, '', u); }catch(e){} render(); window.scrollTo({top:0}); return; }
+  if(a==='goto'){ const el = document.getElementById(b.dataset.target); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); return; }
   if(a==='lbEdit'){ const bx = $('#lb-end'); if(bx){ bx.dataset.edit = '1'; renderLb(); } return; }
   if(a==='board'){ openBoard(); return; }
   if(a==='boardClose'){ closeBoard(); return; }
@@ -2443,6 +2603,7 @@ document.addEventListener('input', e=>{
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){ const bd = document.getElementById('board'); if(bd && !bd.hidden){ closeBoard(); return; } const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
   if(e.target.id==='lb-name' || e.target.id==='lb-li'){ if(e.key==='Enter'){ e.preventDefault(); lbSubmit(); } return; }
+  if(e.target.id==='cert-name'){ if(e.key==='Enter'){ e.preventDefault(); certIssue(); } return; }
   if(e.target.id==='ans-num'){ if(e.key==='Enter'){ e.preventDefault(); answerChallenge(e.target.value); } return; }
   if(e.target.tagName==='INPUT') return;
   if(e.key==='?'){ openSheet(); return; }
@@ -2469,6 +2630,8 @@ function setLang(lg){
 applyLang();
 function start(data){
   if(data && data.S) S = data.S;
+  let cid = null; try{ cid = new URLSearchParams(location.search).get('cert'); }catch(e){}
+  if(cid && lbOn()){ loadCertView(cid); return; }
   render();
 }
 try{ window.claude?.hot?.snapshot?.(()=>({S})); }catch(e){}

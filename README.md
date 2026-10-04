@@ -13,6 +13,7 @@
 - **Экономическая модель.** Пользователи, удержание, конверсия, кэш и техдолг пересчитываются каждый месяц и реагируют на решения — иногда с задержкой. В итогах месяца ты задаёшь маркетинговый бюджет и долю команды на техдолг.
 - **Шпаргалка.** 58 терминов с расшифровкой аббревиатуры, переводом и формулой. Термины в тексте кликабельны.
 - **Итоги.** Грейд от стажёра до Head of Product, достижения, список того, что стоит подтянуть, и карточка результата, которой можно поделиться.
+- **Сертификат и лидерборд.** За полное прохождение — именной сертификат с проверкой по ссылке и кнопкой «добавить в профиль LinkedIn». Лучший результат можно отправить в общий рейтинг.
 
 Темы: discovery и CustDev, приоритизация и роадмап, метрики и юнит-экономика, A/B-тесты и аналитика.
 
@@ -39,5 +40,6 @@ MIT — делай что хочешь, упоминание авторства 
 - A business model that recalculates users, retention, revenue, cash and tech debt every month; you set the marketing budget and how much of the team goes to tech debt
 - A cheat sheet of 58 PM terms; terms in the text are clickable
 - A shareable result card with your grade and metrics at the end
+- A verifiable certificate for a full run, with an “Add to LinkedIn profile” button, and a public leaderboard
 
 One HTML file, no dependencies, no build, no backend. Progress is stored in your browser's localStorage. Visits are counted with GoatCounter: no cookies, no personal data. If you submit to the leaderboard, your nickname, optional LinkedIn link and best score are stored in Supabase. Switch languages with the RU / EN toggle in the header.
