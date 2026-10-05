@@ -121,6 +121,22 @@ p{margin:0 0 12px}
 .opt.picked{opacity:1; border-color:var(--ink)}
 .opt.is-best{border-color:var(--good); background:var(--good-soft); opacity:1}
 .opt.is-wrong{border-color:var(--bad); background:var(--bad-soft); opacity:1}
+.opts.wf{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+.opts.wf .opt{flex-direction:column; align-items:stretch; gap:10px}
+.opt-img{display:block}
+.opt-img svg{display:block; width:100%; max-width:132px; height:auto; margin:0 auto}
+@media (max-width:620px){ .opts.wf{grid-template-columns:minmax(0,1fr)} .opts.wf .opt{flex-direction:row; align-items:flex-start} .opts.wf .opt-img svg{width:76px} .opts.wf .opt-img{flex:none} }
+.wf-frame{fill:var(--surface); stroke:var(--ink); stroke-width:1.5}
+.wf-bar{fill:var(--line)}
+.wf-block{fill:var(--line); opacity:.85}
+.wf-accent{fill:var(--accent)}
+.wf-soft{fill:var(--surface2)}
+.wf-line{stroke:var(--muted); stroke-width:1; fill:none}
+.wf-icon{fill:var(--muted)}
+.hint-box{background:var(--xp-soft); border:1px solid var(--xp); border-radius:12px; padding:12px 14px; margin:0 0 14px; font-size:14px}
+.hint-box b{display:block; color:var(--xp); font-size:12px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px}
+.hint-btn{padding:8px 14px; font-size:13px}
+.budget-calc .lena{border-color:var(--accent); background:var(--accent-soft)}
 
 .verdict{border-radius:12px; padding:16px 18px; margin-top:18px; border:1px solid}
 .verdict.best{background:var(--good-soft); border-color:var(--good)}
@@ -351,6 +367,14 @@ const MONTHS = 10, TEAM_COST = 35000, MARGIN = 0.7, START_CASH = 350000, SAVE_KE
 const REVIEW = {month:5, tranche:300000, full:1.25, half:1.10};
 // share of the team on tech debt (0–0.4): debt drifts +drift a month, each 10% of the team removes paydown/10
 const DEBT_WORK = {drift:3, paydown:25, organic:1.5, morale:10, max:0.4, penalty:0.0015};
+// a hint in a challenge: right answer with a hint gives HINT.xp instead of 40 and counts half in the score
+const HINT = {xp:25, cost:15};
+// marketing owns the spend: the PM recommends, Lena moves toward her own number when trust is low
+const MKT = {pref:30000, trustLo:30, trustHi:70};
+function lenaBudget(rec, trust){
+  const k = clamp((trust - MKT.trustLo)/(MKT.trustHi - MKT.trustLo), 0, 1);
+  return Math.round((MKT.pref + (rec - MKT.pref)*k)/1000)*1000;
+}
 let DOMAINS, PEOPLE, QUAL, FX_META, CHAL_BONUS;
 function i18nConsts(){
   const pp = L(' п.п.',' pp'), sgn = v => v>0 ? '+' : '−';
@@ -366,7 +390,8 @@ function i18nConsts(){
     tech:{name:L('Тимур','Tim'), role:L('Техлид','Tech lead'), ini:L('ТИ','TI'), color:'#2E7D6B'},
     sup:{name:L('Оля','Olivia'), role:L('Поддержка','Support'), ini:L('ОЛ','OL'), color:'#B7791F'},
     data:{name:L('Дима','Dan'), role:L('Продуктовый аналитик','Product analyst'), ini:L('ДИ','DA'), color:'#4B5BD6'},
-    inv:{name:L('Фонд «Север»','North Ventures'), role:L('Инвестор','Investor'), ini:L('ФС','NV'), color:'#6B5B4B'}
+    inv:{name:L('Фонд «Север»','North Ventures'), role:L('Инвестор','Investor'), ini:L('ФС','NV'), color:'#6B5B4B'},
+    design:{name:L('Кира','Kira'), role:L('Продуктовый дизайнер','Product designer'), ini:L('КИ','KI'), color:'#8A4FBF'}
   };
   QUAL = {
     best:{label:L('Сильное решение','Strong call'), xp:30, pts:2},
@@ -773,7 +798,83 @@ const SCEN = [
     fb:'Ты сохраняешь постоянное измерение и сможешь поймать медленные эффекты вроде усталости от пушей. Плата — часть удержания прямо сейчас и недовольство Лены, а точность замеров падает вместе с размером группы.'},
    {t:'Включить пуши всем и закрыть вопрос: эффект доказан за год, мерить дальше незачем.', q:'bad', fx:{ret:0.004, trust:3}, later:{in:2, fx:{ret:-0.006}, note:'Маркетинг добавлял пуш за пушем, а мерить вред было не на чем. Пользователи массово отключали уведомления — удержание просело.'},
     fb:'Год назад эффект был доказан для тех пушей. Без контрольной группы ты не увидишь, когда новые рассылки начнут вредить, — а маркетинг будет добавлять их и дальше.'}
-  ], lesson:'Холдаут — это плата удержанием за знание. Бесплатного варианта нет: реши явно, сколько готов платить за то, чтобы видеть долгосрочный эффект.'}
+  ], lesson:'Холдаут — это плата удержанием за знание. Бесплатного варианта нет: реши явно, сколько готов платить за то, чтобы видеть долгосрочный эффект.'},
+ {id:'s40', d:'disc', from:'ceo', title:'Семь цитат за $15 000',
+  text:'Андрей нанял исследовательское агентство за $15 000. Через месяц пришёл отчёт: 20 интервью и семь «ключевых цитат»:<ul><li>«Отмечаю галочки три месяца — и не понимаю, стало ли мне лучше».</li><li>«Добавьте графики, как в беговых приложениях».</li><li>«Графики мне не нужны. Мне нужно, чтобы кто-то сказал: „ты молодец“».</li><li>«Серия слетела на 47-м дне, и я удалила приложение. Зачем начинать заново?»</li><li>«Напоминания бесят. Но без них я забываю».</li><li>«Сделайте экспорт в Google-таблицы, я всё считаю там».</li><li>«212 дней без алкоголя. Ритм — единственное, что меня держит».</li></ul>Андрей: «Деньги потрачены. Что нам со всем этим делать?»',
+  options:[
+   {t:'Запросить у агентства все 20 расшифровок, свести высказывания в задачи и оценить масштаб каждой в данных.', q:'best', fx:{trust:3}, later:{in:1, fx:{ret:0.01}, note:'В расшифровках задача «увидеть, что я меняюсь» нашлась у 14 человек из 20: за ней стояли и графики, и экспорт, и слетевшая серия. Данные подтвердили: после первого месяца весь прогресс в Ритме — это счётчик серии. Сделали месячный итог «что изменилось» — удержание выросло.'},
+    fb:'Семь цитат отобрало агентство, поэтому частоту по ним не посчитать — нужны все расшифровки. Графики, экспорт и «скажите, что я молодец» — разные решения одной задачи: увидеть свой прогресс. История про алкоголь говорит о силе переживаний, а не о массовости; масштаб каждой задачи проверяют в поведении.'},
+   {t:'Перенести запросы в бэклог как есть — графики, экспорт, похвалу за прогресс: люди прямо сказали, чего хотят.', q:'bad', fx:{trust:4, debt:8, morale:-3}, later:{in:2, fx:{ret:0.002}, note:'Графики, экспорт и похвала вышли по отдельности. Каждой фичей пользуется горстка людей, удержание почти не сдвинулось.'},
+    fb:'Пользователи формулируют решения, и здесь они противоречат друг другу: одним нужны графики, другим — «не графики». Перенося цитаты в бэклог буквально, ты строишь три фичи вместо одной, которая решает общую задачу.'},
+   {t:'Сделать ставку на самую сильную историю: если Ритм помогает людям не пить, это и есть наше позиционирование.', q:'bad', fx:{morale:3, cash:-8000}, later:{in:2, fx:{cac:0.15, trust:-3}, note:'Лендинг «Ритм помогает бросить пить» привёл мало установок, и те дорогие: основная аудитория себя в нём не узнала.'},
+    fb:'Самая яркая цитата — не самая частая. Одна история показывает, насколько важной привычка может быть для человека, но не говорит, сколько таких людей. Менять позиционирование по одному интервью — строить продукт вокруг выброса.'},
+   {t:'Не тратить время на отчёт: 20 интервью — это не выборка, а решения мы принимаем по продуктовым данным.', q:'ok', fx:{trust:-5},
+    fb:'Скепсис отчасти верен: по 20 интервью нельзя судить о частоте. Но данные показывают «что» и «где», а не «почему» — без интервью ты не знаешь, что в них искать. А $15 000 Андрея выбрасываются вместе с его доверием к discovery.'}
+  ], lesson:'Цитаты — сырьё, а не бэклог: своди их в задачи пользователей, отделяй яркое от частого и проверяй масштаб в данных.'},
+ {id:'s41', d:'disc', from:'sup', title:'«Верните старый дизайн!»',
+  text:'Неделю назад вышел релиз 4.0 с новым главным экраном, и рейтинг в сторе упал с 4,6 до 4,3. Оля: «Отзывов с одной звездой — 41, тикетов — 380, вдвое больше обычного, но там в основном вопросы „как теперь сделать…“». Типичные:<ul><li>1★: «ВЕРНИТЕ СТАРЫЙ ДИЗАЙН. Плачу два года — и вот так?»</li><li>1★: «Кто это рисовал? Удаляю».</li><li>Тикет: «Как теперь отметить привычку за вчера? Вечером забыла — серия сбросилась».</li><li>Тикет: «Раньше долгим нажатием можно было отметить прошлый день. Где это?»</li><li>4★: «Новый вид симпатичный. Только серия почему-то обнулилась».</li><li>5★: «Наконец-то быстро и современно!»</li></ul>',
+  options:[
+   {t:'Разметить отзывы и тикеты за неделю по проблемам, посчитать каждую и сверить с данными по отметкам.', q:'best', fx:{trust:2}, later:{in:1, fx:{ret:0.012, trust:2}, note:'Злых отзывов про дизайн — 41, вопросов про отметку за вчера — 230: новый экран спрятал её в меню, и серии массово сбрасывались. Вернули долгое нажатие и восстановили серии — удержание вернулось, а жалобы на дизайн за две недели стихли.'},
+    fb:'Громкость — не частота. Капс и одна звезда — сильная эмоция немногих, а вежливые вопросы «как отметить за вчера» — массовая поломка, которая молча обнуляет серии. Разметка превращает шум в список проблем с весом, а данные по отметкам показывают, что реально бьёт по поведению.'},
+   {t:'Откатить редизайн целиком: рейтинг в сторе бьёт по CAC, а злятся платящие, которые с нами по два года.', q:'ok', fx:{ret:0.006, morale:-6, trust:2},
+    fb:'Откат гасит и шум, и тихую поломку — но вслепую. Ты выбрасываешь то, что в редизайне работало, команда теряет месяц, а причину так никто и не назвал: следующий релиз наступит на те же грабли.'},
+   {t:'Ответить каждому автору и выждать пару недель: к новому дизайну всегда сначала привыкают, это нормально.', q:'bad', fx:{trust:3}, later:{in:1, fx:{ret:-0.01}, note:'Злые отзывы правда стихли — люди привыкли. А тихая проблема осталась: без отметки за вчера серии сбрасывались, и удержание просело.'},
+    fb:'Неприятие изменений — реальное явление, и для чисто визуальной правки выждать часто правильно. Но в той же куче лежала функциональная поломка, а её ожидание не лечит. Сначала отдели вкусовщину от проблемы.'},
+   {t:'Вернуть старый дизайн как опцию в настройках: пусть каждый, кому новый не нравится, включит его сам.', q:'bad', fx:{debt:8, trust:2}, later:{in:2, fx:{ret:-0.004}, note:'Старый вид включили 6% пользователей, команда теперь поддерживает два экрана, а в новом отметки за вчера так и нет.'},
+    fb:'Опция успокаивает громких, но удваивает поддержку интерфейса, а большинство остаётся на новом экране с той же поломкой. Ты ответил на тон отзывов, а не на их суть.'}
+  ], lesson:'Громкое — не значит частое: размечай сигналы по проблемам, считай их и сверяй с поведением, прежде чем реагировать на тон.'},
+ {id:'s42', d:'metr', from:'data', title:'44% «точно купили бы». Купят ли?',
+  text:'Лена хочет продавать программы привычек от экспертов — сон, бег, медитация — по $4,99. Дима принёс опрос в приложении: из 3 100 ответивших 44% «точно купили бы». Андрей уже умножил на всю базу: 45 000 × 44% × $4,99 ≈ $99 000. Но поведение рисует другую картину: бесплатную программу «Сон», которая уже есть в приложении, начали 9% активных пользователей, а закончили 1,5%. А из тех, кто ответил «точно куплю», пейвол Premium за $9 видели больше половины — оплатили 6%, почти как в среднем (5%).',
+  options:[
+   {t:'Проверить спрос делом: на неделю кнопка «Купить за $4,99» (fake door) и 6 интервью о прошлых покупках.', q:'best', fx:{trust:-2}, later:{in:1, fx:{conv:0.002, ret:0.004}, note:'Кнопку с ценой нажали 2% увидевших — в двадцать с лишним раз меньше, чем обещал опрос. Интервью показали: людям нужна не программа, а готовый план на первые две недели. Встроили его в Premium — конверсия и удержание подросли.'},
+    fb:'Сказать «точно куплю» ничего не стоит, поэтому опрос мерит симпатию, а не спрос. Кнопка с ценой ловит действие, а вопросы о прошлом («когда вы последний раз платили за курс?») — реальное поведение. Потребность из опроса никуда не делась: ты узнал её настоящий размер и форму.'},
+   {t:'Запускать: даже если купит лишь каждый пятый из сказавших «да», это около $20k — ещё месяц выручки.', q:'bad', fx:{cash:-20000, debt:5, morale:-2}, later:{in:2, fx:{cash:3000, trust:-5}, note:'Три программы вышли. За два месяца их купили около 600 раз — $3 000 при затратах на экспертов и разработку в разы больше. Андрей успел пообещать фонду совсем другие цифры.'},
+    fb:'Поправка «каждый пятый» выглядит трезво, но это всё та же опора на слова, только уменьшенная на глаз. К тому же ответы самых вовлечённых ты умножил на всю базу. Поведение уже подсказало порядок цифр: бесплатную программу дочитывают 1,5%.'},
+   {t:'Сделать одну платную программу с экспертом и продавать её месяц: реальные покупки честнее любого опроса.', q:'ok', fx:{cash:-6000, debt:2}, later:{in:1, fx:{cash:1500}, note:'Программу купили около 300 раз — в разы меньше прогноза. Почему остальные не купили, так и осталось загадкой.'},
+    fb:'Реальные продажи — правильная валюта: это уже поведение, а не слова. Но ты платишь месяцем и бюджетом на контент за то, что кнопка с ценой показала бы за неделю. А без разговоров с людьми не узнаешь, почему не купили.'},
+   {t:'Закрыть идею: бесплатную программу «Сон» дочитывают 1,5%, значит, такому опросу верить просто нельзя.', q:'ok', fx:{trust:-4},
+    fb:'Поведение ты прочитал верно: заявленный интерес раздут. Но 44% выбрали программы не случайно — за этим стоит потребность в структуре и подсказке, с чего начать. Выбросив опрос целиком, ты теряешь и её.'}
+  ], lesson:'Заявленное намерение купить — не спрос. Прогноз выручки строй на поведении (конверсия, клики по реальной цене), а опрос используй, чтобы понять потребность.'},
+ {id:'s36', d:'disc', from:'design', title:'Три макета главного экрана',
+  text:'Кира перерисовывает главный экран, где отмечают привычки. На 6 домашних интервью она увидела, как это происходит на самом деле: вечером, лёжа в кровати, одной рукой, за 5–10 секунд. А в прошлогоднем опросе 64% просили «больше статистики». Из трёх макетов Киры Андрею нравится A: «Выглядит как серьёзный продукт».',
+  options:[
+   {t:'Вариант A — дашборд с графиком недели и компактным списком: две трети пользователей в опросе прямо просили статистику.', q:'bad', fx:{trust:3}, later:{in:1, fx:{ret:-0.006}, note:'Вечерних отметок стало меньше: в темноте люди промахивались по мелким чекбоксам и откладывали отметку «на завтра».'},
+    fb:'Опрос фиксирует пожелания, интервью — поведение. Задача экрана — отметить день за секунды одной рукой в полутьме, а мелкие чекбоксы под графиками превращают её в прицеливание. Статистике место на отдельной вкладке, а не над главным действием.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><circle class="wf-block" cx="28" cy="36" r="14"/><path class="wf-accent" d="M28 36V22A14 14 0 1 1 14.7 40.3Z"/><circle class="wf-soft" cx="28" cy="36" r="9"/><path class="wf-block" d="M52 38h5v10h-5zM60 32h5v16h-5zM68 40h5v8h-5zM76 30h5v18h-5zM84 36h5v12h-5zM92 26h5v22h-5z"/><path class="wf-accent" d="M100 34h5v14h-5zM102 65h5v5h-5zM102 80h5v5h-5zM102 110h5v5h-5z"/><path class="wf-bar" d="M22 65h44v3h-44zM22 71h20v2h-20zM22 80h38v3h-38zM22 86h20v2h-20zM22 95h50v3h-50zM22 101h20v2h-20zM22 110h34v3h-34zM22 116h20v2h-20zM22 125h46v3h-46zM22 131h20v2h-20zM22 140h40v3h-40zM22 146h20v2h-20zM22 155h30v3h-30zM22 161h20v2h-20z"/><path class="wf-icon" d="M12.5 68a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM12.5 83a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM12.5 98a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM12.5 113a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM12.5 128a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM12.5 143a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM12.5 158a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM22 185a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM45 185a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM69 185a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM92 185a3 3 0 1 0 6 0a3 3 0 1 0 -6 0z"/><path class="wf-line" d="M10 56h100M2 174h116M102 95h5v5h-5zM102 125h5v5h-5zM102 140h5v5h-5zM102 155h5v5h-5z"/></svg>'},
+   {t:'Вариант B — крупные строки в нижней половине экрана: отметка одним тапом большого пальца, статистика свёрнута в строку.', q:'best', fx:{ret:0.004}, later:{in:1, fx:{ret:0.008}, note:'Доля дней с отметкой выросла: вечерняя отметка занимает пару секунд, а статистику на второй вкладке открывают те, кому она правда нужна.'},
+    fb:'Ты выбираешь по задаче и контексту, которые увидела Кира: кровать, одна рука, секунды. Крупные зоны нажатия там, куда достаёт большой палец, — это и скорость, и доступность. Статистика никуда не делась, она просто не мешает главному действию.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><path class="wf-bar" d="M12 20h46v4h-46zM12 28h30v3h-30zM18 79h40v4h-40zM18 105h40v4h-40zM18 131h40v4h-40zM18 157h40v4h-40z"/><rect class="wf-accent" x="86" y="19" width="22" height="10" rx="5"/><path class="wf-block" d="M14 48a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM28 48a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM42 48a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM56 48a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM84 48a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM98 48a4 4 0 1 0 8 0a4 4 0 1 0 -8 0z"/><circle class="wf-icon" cx="74" cy="48" r="4"/><rect class="wf-soft" x="10" y="70" width="100" height="22" rx="6"/><rect class="wf-soft" x="10" y="96" width="100" height="22" rx="6"/><rect class="wf-soft" x="10" y="122" width="100" height="22" rx="6"/><rect class="wf-soft" x="10" y="148" width="100" height="22" rx="6"/><path class="wf-accent" d="M89 81a7 7 0 1 0 14 0a7 7 0 1 0 -14 0zM89 107a7 7 0 1 0 14 0a7 7 0 1 0 -14 0z"/><path class="wf-line" d="M89 133a7 7 0 1 0 14 0a7 7 0 1 0 -14 0zM89 159a7 7 0 1 0 14 0a7 7 0 1 0 -14 0zM2 178h116"/><path class="wf-icon" d="M37 188a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM77 188a3 3 0 1 0 6 0a3 3 0 1 0 -6 0z"/></svg>'},
+   {t:'Вариант C — по карточке на привычку, свайп вправо засчитывает: удобно одной рукой, и отметка становится маленькой игрой.', q:'ok', fx:{ret:0.002, morale:3},
+    fb:'Одна рука учтена, но у тех, кто ведёт пять привычек, отметка превращается в пять свайпов, а случайный свайп в полусне засчитывает не то. К тому же жест неочевиден: новичок не знает, что карточку надо тянуть.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><path class="wf-accent" d="M42 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0zM50 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0z"/><path class="wf-icon" d="M58 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0zM66 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0zM74 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0z"/><rect class="wf-block" x="22" y="32" width="76" height="112" rx="8"/><rect class="wf-soft" x="18" y="38" width="84" height="112" rx="8" transform="rotate(7 60 94)"/><rect class="wf-line" x="18" y="38" width="84" height="112" rx="8" transform="rotate(7 60 94)"/><circle class="wf-icon" cx="60" cy="76" r="14" transform="rotate(7 60 94)"/><path class="wf-bar" d="M36 100h48v4h-48zM42 108h36v3h-36z" transform="rotate(7 60 94)"/><path class="wf-line" d="M50 164h20m-4-3l4 3-4 3M27 180a9 9 0 1 0 18 0a9 9 0 1 0 -18 0zM32 176l8 8m0-8l-8 8"/><circle class="wf-accent" cx="84" cy="180" r="9"/><path class="wf-soft" d="M79 180l2.5-2.5 2 2 5-5 2.5 2.5-7.5 7.5z"/></svg>'}
+  ], lesson:'Выбирай макет по задаче и контексту пользователя из исследования, а не по вкусу — своему, дизайнера или CEO — и не по пожеланиям из опроса.'},
+ {id:'s37', d:'prio', from:'design', dilemma:true, title:'Как позвать напарника',
+  text:'Цель квартала — чтобы новички заводили напарника по привычке: с ним удержание вдвое выше. Кира принесла три варианта экрана приглашения, Тимур оценил каждый. Команда одна, и от выбранного варианта зависит, что ещё успеет попасть в квартал.',
+  options:[
+   {t:'Вариант A — системное меню «Поделиться» со ссылкой: 3 дня работы, привычно на iOS и Android, данные уже в этом спринте.', q:'best', fx:{viral:0.002}, later:{in:1, fx:{viral:0.002}, note:'Приглашения пошли с первой недели, но по голой ссылке друзья соглашались редко. Зато стало видно, кого и когда зовут, — и что улучшать дальше.'},
+    fb:'Ты покупаешь скорость и данные: через неделю видно, зовут ли люди напарников вообще, а системный экран никому не надо осваивать. Плата — принятие приглашений: голая ссылка в мессенджере ничего не обещает другу, и часть напарников ты недосчитаешься.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><path class="wf-icon" d="M42 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0zM62 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0z"/><path class="wf-bar" d="M30 56h60v4h-60zM38 64h44v3h-44z"/><rect class="wf-accent" x="20" y="76" width="80" height="14" rx="7"/><rect class="wf-soft" x="3" y="100" width="114" height="97" rx="11"/><rect class="wf-block" x="52" y="105" width="16" height="3" rx="1.5"/><rect class="wf-block" x="12" y="114" width="14" height="14" rx="3"/><rect class="wf-block" x="12" y="140" width="13" height="13" rx="3"/><rect class="wf-block" x="32" y="140" width="13" height="13" rx="3"/><rect class="wf-block" x="52" y="140" width="13" height="13" rx="3"/><rect class="wf-block" x="72" y="140" width="13" height="13" rx="3"/><rect class="wf-block" x="92" y="140" width="13" height="13" rx="3"/><path class="wf-bar" d="M30 116h50v3h-50zM30 122h34v2h-34zM13.5 157h10v2h-10zM33.5 157h10v2h-10zM53.5 157h10v2h-10zM73.5 157h10v2h-10zM93.5 157h10v2h-10zM14 172h40v3h-40zM14 184h32v3h-32z"/><path class="wf-line" d="M12 134h96M12 166h96"/><path class="wf-icon" d="M99.5 173.5a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0zM99.5 185.5a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0z"/></svg>'},
+   {t:'Вариант B — своя карточка-приглашение с превью общего прогресса: 3 недели, зато она сама объясняет другу, зачем соглашаться.', q:'best', fx:{debt:3, morale:2}, later:{in:2, fx:{viral:0.005, ret:0.003}, note:'Карточка вышла к середине квартала: друзья принимали приглашения заметно чаще, но первые данные пришли на месяц позже.'},
+    fb:'Ты покупаешь качество главной точки роста: приглашение — это реклама Ритма, которую видит друг, и сильная карточка поднимает принятие. Плата — время: три недели без данных и риск отполировать то, чем люди, возможно, не станут пользоваться.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><path class="wf-bar" d="M40 21h40v4h-40z"/><rect class="wf-soft" x="12" y="36" width="96" height="104" rx="10"/><path class="wf-line" d="M15 19l-4 4 4 4M63 58a10 10 0 1 0 20 0a10 10 0 1 0 -20 0zM73 53v10M68 58h10M28 106h7v7h-7zM38 106h7v7h-7zM48 106h7v7h-7zM58 106h7v7h-7zM68 106h7v7h-7zM78 106h7v7h-7zM88 106h7v7h-7z"/><path class="wf-icon" d="M37 58a10 10 0 1 0 20 0a10 10 0 1 0 -20 0zM17 97.5a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM17 109.5a3 3 0 1 0 6 0a3 3 0 1 0 -6 0z"/><path class="wf-bar" d="M30 74h60v4h-60zM38 82h44v3h-44zM30 124h60v3h-60z"/><path class="wf-accent" d="M28 94h7v7h-7zM38 94h7v7h-7zM48 94h7v7h-7zM58 94h7v7h-7zM68 94h7v7h-7z"/><path class="wf-block" d="M78 94h7v7h-7zM88 94h7v7h-7z"/><rect class="wf-accent" x="12" y="150" width="96" height="16" rx="8"/><path class="wf-icon" d="M39 182a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM55 182a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM71 182a5 5 0 1 0 10 0a5 5 0 1 0 -10 0z"/></svg>'},
+   {t:'Вариант C — полноценные друзья: поиск по нику, заявки и список напарников. 2 месяца, зато это фундамент для всех будущих соцфич.', q:'bad', fx:{debt:10, morale:-4}, later:{in:2, fx:{viral:0.002}, note:'Друзья вышли под конец квартала. Поиском по нику почти не пользовались: людям нужен был один конкретный человек, а не сеть.'},
+    fb:'Платформа под фичу, которую ещё не проверили: два месяца на поиск и заявки, когда задача — позвать одного близкого человека. Фундамент строят под доказанный спрос, а не на вырост.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><rect class="wf-line" x="10" y="16" width="100" height="12" rx="6"/><path class="wf-line" d="M16 22a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM21 24l3 3M10 94h100M2 176h116M104 111l3 3-3 3M104 127l3 3-3 3M104 143l3 3-3 3M104 159l3 3-3 3M93 62h16v8h-16zM93 78h16v8h-16z"/><rect class="wf-soft" x="10" y="34" width="100" height="10" rx="5"/><rect class="wf-accent" x="10" y="34" width="34" height="10" rx="5"/><path class="wf-accent" d="M77 186a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM74 62h16v8h-16zM74 78h16v8h-16z"/><path class="wf-bar" d="M28 21h30v2h-30zM62 38h14v2h-14zM88 38h14v2h-14zM10 52h30v3h-30zM10 100h24v3h-24zM25 63h34v3h-34zM25 68h22v2h-22zM25 79h34v3h-34zM25 84h22v2h-22zM25 111h40v3h-40zM25 116h20v2h-20zM25 127h32v3h-32zM25 132h20v2h-20zM25 143h44v3h-44zM25 148h20v2h-20zM25 159h36v3h-36zM25 164h20v2h-20z"/><path class="wf-icon" d="M11 66a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM11 82a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM11 114a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM11 130a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM11 146a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM11 162a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM17 186a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM37 186a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM57 186a3 3 0 1 0 6 0a3 3 0 1 0 -6 0zM97 186a3 3 0 1 0 6 0a3 3 0 1 0 -6 0z"/></svg>'}
+  ], lesson:'Выбор макета — это и выбор цены: скорость обучения или качество ключевого экрана. Назови плату явно, а платформу под непроверенный спрос не строй.'},
+ {id:'s38', d:'metr', from:'design', title:'Экран сорванной серии',
+  text:'Каждый месяц около 3 000 человек срывают серию длиннее недели, и 40% из них больше не возвращаются. Кира нарисовала три варианта экрана, который они увидят на следующий день. Андрей сразу выбрал C: «Даже если купят 5% — это плюс $1 350 MRR каждый месяц».',
+  options:[
+   {t:'Вариант A — честный ноль без утешений: серия ценна, пока её можно потерять, а заморозки и выкупы только её обесценят.', q:'ok', fx:{trust:-2},
+    fb:'Аргумент про ценность серии справедлив, и экран честный. Но он не решает задачу, ради которой его перерисовывают: 40% сорвавшихся уходят, увидев ноль. Удержание после срыва остаётся там же, где было.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><path class="wf-block" d="M60 20c8 10 16 16 16 28a16 16 0 0 1-32 0c0-7 4-11 7-16 2 5 4 7 7 8 0-8-1-13 2-20zM23 116h8v8h-8zM34 116h8v8h-8zM45 116h8v8h-8zM56 116h8v8h-8zM67 116h8v8h-8zM78 116h8v8h-8z"/><path class="wf-line" d="M57 30l5 9-4 6 4 9M89 116h8v8h-8zM19 120h82"/><path class="wf-icon" d="M60 74a11 15 0 1 1 0 30a11 15 0 1 1 0-30zM60 80a5 9 0 1 0 0 18a5 9 0 1 0 0-18z"/><path class="wf-bar" d="M26 134h68v4h-68zM34 142h52v3h-52z"/><rect class="wf-accent" x="14" y="164" width="92" height="16" rx="8"/></svg>'},
+   {t:'Вариант B — бесплатная заморозка сохраняет серию и зовёт отметиться сегодня; судим по удержанию сорвавшихся через 30 дней.', q:'best', fx:{ret:0.004, trust:-2}, later:{in:1, fx:{ret:0.008}, note:'Через 30 дней среди сорвавших серию осталось заметно больше людей: заморозка превратила срыв в паузу.'},
+    fb:'Ты выбираешь метрику, которая отражает цель пользователя — продолжить привычку, — и экран, который ей служит: срыв становится паузой, а не провалом. Платящие вырастут из тех, кто остался, а не из тех, кого прижали в худший момент.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><circle class="wf-soft" cx="60" cy="48" r="26"/><rect class="wf-soft" x="14" y="122" width="92" height="26" rx="6"/><path class="wf-accent" d="M60 27c8 10 16 16 16 28a16 16 0 0 1-32 0c0-7 4-11 7-16 2 5 4 7 7 8 0-8-1-13 2-20zM23 86h8v8h-8zM34 86h8v8h-8zM45 86h8v8h-8zM56 86h8v8h-8zM67 86h8v8h-8zM22 138h58v4h-58z"/><path class="wf-icon" d="M80 60l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9v-6zM78 86h8v8h-8z"/><path class="wf-line" d="M89 86h8v8h-8z"/><path class="wf-bar" d="M26 104h68v4h-68zM34 112h52v3h-52zM22 129h36v3h-36z"/><path class="wf-block" d="M80 138h18v4h-18z"/><rect class="wf-accent" x="14" y="164" width="92" height="16" rx="8"/></svg>'},
+   {t:'Вариант C — серию можно вернуть только с Premium, пока идёт таймер: мотивация на пике, и такой экран меряется прямой выручкой.', q:'bad', fx:{conv:0.004, trust:3}, later:{in:1, fx:{ret:-0.01, trust:-5}, note:'Покупки на экране были, но в отзывах появилось «держат серию в заложниках», а сорвавшиеся бесплатные пользователи стали уходить ещё чаще.'},
+    fb:'Выручка реальная, но экран зарабатывает на стыде: таймер и мелкий крестик давят в худший момент. Деньги с экрана видны сразу, а ушедшие пользователи и злые отзывы — только через месяц, в удержании и рейтинге.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><rect class="wf-soft" x="24" y="46" width="72" height="46" rx="10"/><rect class="wf-block" x="38" y="57" width="18" height="24" rx="7"/><rect class="wf-block" x="64" y="57" width="18" height="24" rx="7"/><path class="wf-line" d="M106 13l3 3m0-3l-3 3M25 108a5 5 0 1 0 10 0a5 5 0 1 0 -10 0zM30 105v3h2M56 66v-4a4 4 0 0 1 8 0v4"/><path class="wf-accent" d="M48 26l6 6 6-9 6 9 6-6-2 12h-20zM40 106h14v4h-14z"/><rect class="wf-icon" x="53" y="66" width="14" height="11" rx="2"/><path class="wf-block" d="M54 106h42v4h-42z"/><path class="wf-bar" d="M22 122h76v4h-76zM30 130h60v3h-60zM48 182h24v1.5h-24z"/><rect class="wf-accent" x="12" y="148" width="96" height="22" rx="11"/></svg>'}
+  ], lesson:'Оценивай экран по метрике цели пользователя — удержанию через месяц, — а не по деньгам и кликам на самом экране.'},
+ {id:'s39', d:'exp', from:'design', title:'Один тест на три макета',
+  text:'Новичков хватает на один A/B-тест онбординга в месяц, и он поймает эффект от 10% и выше. Кира принесла три варианта первого экрана, а в текущем онбординге 35% новичков отваливаются на шаге настройки привычек. Какой вариант пойдёт в тест против текущего?',
+  options:[
+   {t:'Вариант A — тот же экран с новой иллюстрацией и яркой кнопкой: риск минимальный, тест чистый, а откатывать почти нечего.', q:'bad', later:{in:1, fx:{morale:-3}, note:'Тест закончился «без значимой разницы»: месяц трафика ушёл на то, что можно было просто выкатить.'},
+    fb:'Косметика двигает метрики на 1–2%, а тест ловит от 10%: почти наверняка выйдет «разницы нет», и месяц трафика сгорит впустую. Мелкую полировку выкатывают без теста и следят за дашбордами.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><rect class="wf-soft" x="12" y="20" width="96" height="88" rx="10"/><circle class="wf-accent" cx="84" cy="42" r="8"/><path class="wf-block" d="M14 100c14-22 30-22 44-8 12-14 30-18 48-4v12h-92z"/><rect class="wf-accent" x="46" y="118" width="8" height="4" rx="2"/><path class="wf-icon" d="M58 120a2 2 0 1 0 4 0a2 2 0 1 0 -4 0zM64 120a2 2 0 1 0 4 0a2 2 0 1 0 -4 0zM70 120a2 2 0 1 0 4 0a2 2 0 1 0 -4 0z"/><path class="wf-bar" d="M22 132h76v5h-76zM30 142h60v3h-60zM36 148h48v3h-48z"/><rect class="wf-accent" x="14" y="166" width="92" height="18" rx="9"/></svg>'},
+   {t:'Вариант B — сразу выбрать одну привычку и отметить её: бьёт ровно в шаг, где теряем 35%, и эффект, если есть, будет крупным.', q:'best', later:{in:1, fx:{ret:0.01, conv:0.002}, note:'Тест добежал: D7 вырос на 14%, конверсия в оплату тоже подросла. Раскатили на всех новичков.'},
+    fb:'Тест — дорогой ресурс, и тратить его стоит на крупное рискованное изменение с гипотезой из данных. Вариант бьёт в главную точку потерь, и эффект такого размера тест увидит. Если гипотеза неверна, ты узнаешь это за месяц, а не после раскатки.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><path class="wf-bar" d="M16 20h64v5h-64zM16 30h44v3h-44zM20 66h26v3h-26zM20 106h26v3h-26zM68 106h26v3h-26zM20 146h26v3h-26zM68 146h26v3h-26z"/><rect class="wf-soft" x="14" y="42" width="44" height="34" rx="8"/><rect class="wf-soft" x="14" y="82" width="44" height="34" rx="8"/><rect class="wf-soft" x="62" y="82" width="44" height="34" rx="8"/><rect class="wf-soft" x="14" y="122" width="44" height="34" rx="8"/><rect class="wf-soft" x="62" y="122" width="44" height="34" rx="8"/><rect class="wf-accent" x="62" y="42" width="44" height="34" rx="8"/><path class="wf-icon" d="M20 54a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM20 94a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM68 94a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM20 134a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM68 134a6 6 0 1 0 12 0a6 6 0 1 0 -12 0z"/><rect class="wf-accent" x="14" y="166" width="92" height="18" rx="9"/><path class="wf-soft" d="M68 54a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM68 66h26v3h-26zM53 175l2.5-2.5 2 2 5-5 2.5 2.5-7.5 7.5z"/></svg>'},
+   {t:'Вариант C — квиз из 8 вопросов о целях и персональный план: у фитнес-приложений такой онбординг заметно поднимает конверсию в оплату.', q:'ok', later:{in:1, fx:{conv:0.001}, note:'Квиз поднял оплату у дошедших до конца, но дошло меньше людей — в сумме почти ноль. Месяц ушёл, зато гипотезу закрыли.'},
+    fb:'Крупное изменение — правильный кандидат в тест, но гипотеза спорит с твоими же данными: люди отваливаются на длинной настройке, а квиз её удлиняет. Чужой кейс — повод для гипотезы, а не замена своей воронки.', img:'<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="wf-frame" x="2" y="2" width="116" height="196" rx="12"/><rect class="wf-block" x="50" y="7" width="20" height="3" rx="1.5"/><rect class="wf-soft" x="10" y="96" width="100" height="20" rx="6"/><path class="wf-line" d="M12 18l-3 3 3 3M20 82a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM20 130a4 4 0 1 0 8 0a4 4 0 1 0 -8 0zM20 154a4 4 0 1 0 8 0a4 4 0 1 0 -8 0z"/><path class="wf-accent" d="M20 19.5h9v3h-9zM31 19.5h9v3h-9zM20 106a4 4 0 1 0 8 0a4 4 0 1 0 -8 0z"/><path class="wf-block" d="M42 19.5h9v3h-9zM53 19.5h9v3h-9zM64 19.5h9v3h-9zM75 19.5h9v3h-9zM86 19.5h9v3h-9zM97 19.5h9v3h-9z"/><path class="wf-bar" d="M14 36h84v5h-84zM14 46h64v5h-64zM14 58h50v3h-50zM34 80.5h44v3h-44zM34 104.5h56v3h-56zM34 128.5h38v3h-38zM34 152.5h50v3h-50z"/><rect class="wf-line" x="10" y="72" width="100" height="20" rx="6"/><rect class="wf-line" x="10" y="96" width="100" height="20" rx="6"/><rect class="wf-line" x="10" y="120" width="100" height="20" rx="6"/><rect class="wf-line" x="10" y="144" width="100" height="20" rx="6"/><rect class="wf-accent" x="14" y="172" width="92" height="16" rx="8"/></svg>'}
+  ], lesson:'A/B-тест — дорогой ресурс: трать его на крупные и рискованные изменения интерфейса с гипотезой из данных, а косметику выкатывай и мониторь.'}
 ];
 const SCEN_EN = {
  s1:{title:'“Let\'s build a friends feed”', text:'A competitor just launched a social feed where friends can see each other\'s progress. Andrew is convinced Rhythm needs one too: “It\'s two months of dev work, but it\'s worth it.”', options:[
@@ -965,7 +1066,45 @@ const SCEN_EN = {
    {t:'Keep the 10%: it gives precise numbers, and 180 people a month is an acceptable price.', fb:'You keep the measurement, but 10% is more than your questions need: a holdout half that size would give the same answers. You’re overpaying in retention and in your relationship with marketing.'},
    {t:'Shrink the holdout to 5% and keep it permanent: half the loss, and you keep measuring.', fb:'You keep continuous measurement and can catch slow effects like push fatigue. The cost is some retention right now and an unhappy Lena, and precision drops as the group shrinks.', note:'The holdout showed that retention starts falling after the third push in a week. You cut the frequency, and retention went up.'},
    {t:'Turn pushes on for everyone and close the topic: a year proved the effect, why keep measuring?', fb:'A year ago, the effect was proven for those pushes. Without a control group, you won’t see when new campaigns start doing harm — and marketing will keep adding more.', note:'Marketing added push after push, with nothing to measure the harm against. Users turned off notifications in droves, and retention sagged.'}
- ], lesson:'A holdout trades retention for knowledge. There’s no free option: decide explicitly how much you’ll pay to see long-term effects.'}
+ ], lesson:'A holdout trades retention for knowledge. There’s no free option: decide explicitly how much you’ll pay to see long-term effects.'},
+ s40:{title:'Seven quotes for $15,000', text:'Andrew hired a research agency for $15,000. A month later, the report arrived: 20 interviews and seven “key quotes”:<ul><li>“I’ve been checking boxes for three months, and I can’t tell if I’m any better.”</li><li>“Add charts, like running apps have.”</li><li>“I don’t need charts. I need someone to tell me ‘well done.’”</li><li>“My streak broke on day 47, so I deleted the app. Why start over?”</li><li>“The reminders drive me nuts. But without them, I forget.”</li><li>“Add export to Google Sheets — I track everything there.”</li><li>“212 days without alcohol. Rhythm is the only thing holding me together.”</li></ul>Andrew: “The money’s spent. What do we do with all this?”', options:[
+   {t:'Ask the agency for all 20 transcripts, cluster the statements into user jobs, and size each in the data.', fb:'The agency picked these seven quotes, so you can’t count frequency from them — you need every transcript. Charts, export, and “tell me well done” are different solutions to one job: seeing your own progress. The sobriety story shows how high the stakes can be, not how common they are; you size each job in behavior.', note:'In the transcripts, the job “see that I’m changing” came up for 14 of 20 people: it was behind the charts, the export, and the broken streak. The data confirmed it: after the first month, the only progress Rhythm shows is a streak counter. You added a monthly “what changed” recap — retention went up.'},
+   {t:'Move the requests into the backlog as is — charts, export, praise: users told us exactly what they want.', fb:'Users phrase their needs as solutions, and here those solutions contradict each other: some want charts, others explicitly don’t. Taking the quotes literally, you build three features instead of the one that solves the shared job.', note:'Charts, export, and praise shipped separately. Each is used by a handful of people, and retention barely moved.'},
+   {t:'Bet on the most powerful story: if Rhythm helps people stay sober, that’s our positioning right there.', fb:'The most vivid quote isn’t the most common one. One story shows how much a habit can matter to someone, not how many such people there are. Repositioning on a single interview means building the product around an outlier.', note:'The “Rhythm helps you quit drinking” landing page brought in few installs, and pricey ones: the core audience didn’t see themselves in it.'},
+   {t:'Don’t spend time on the report: 20 interviews isn’t a sample, so we make decisions based on product data.', fb:'The skepticism is partly right: 20 interviews can’t tell you frequency. But data shows “what” and “where,” not “why” — without interviews, you don’t know what to look for. And Andrew’s $15,000 goes in the bin along with his trust in discovery.'}
+ ], lesson:'Quotes are raw material, not a backlog: cluster them into user jobs, separate the vivid from the frequent, and size them in the data.'},
+ s41:{title:'“Bring back the old design!”', text:'A week ago, release 4.0 shipped with a new home screen, and the store rating dropped from 4.6 to 4.3. Olivia: “41 one-star reviews and 380 tickets — twice the usual, but those are mostly ‘how do I…’ questions.” The typical ones:<ul><li>1★: “BRING BACK THE OLD DESIGN. I’ve paid for two years, and this is what I get?”</li><li>1★: “Who designed this? Deleting.”</li><li>Ticket: “How do I check off yesterday now? I forgot last night, and my streak reset.”</li><li>Ticket: “You used to long-press to log a past day. Where did that go?”</li><li>4★: “The new look is nice. My streak reset for some reason, though.”</li><li>5★: “Finally, fast and modern!”</li></ul>', options:[
+   {t:'Tag every review and ticket from the week by problem, count each, and check it against check-in data.', fb:'Loud isn’t the same as frequent. All caps and one star are strong emotion from a few people; polite “how do I log yesterday” questions are a widespread breakage that silently resets streaks. Tagging turns noise into a weighted list of problems, and check-in data shows what actually hits behavior.', note:'Angry design reviews: 41. Questions about logging yesterday: 230 — the new screen buried it in a menu, and streaks were resetting en masse. You brought back the long-press and restored the streaks — retention recovered, and the design complaints faded within two weeks.'},
+   {t:'Roll back the redesign entirely: the store rating drives CAC, and the angry ones are two-year payers.', fb:'A rollback silences both the noise and the quiet breakage — but blindly. You throw away whatever worked in the redesign, the team loses a month, and nobody ever names the cause: the next release will step on the same rake.'},
+   {t:'Reply to every reviewer and wait two weeks: people always push back on a new design at first, then adapt.', fb:'Change aversion is real, and for a purely visual change, waiting it out is often right. But a functional breakage sat in the same pile, and waiting doesn’t fix it. Separate taste from problems first.', note:'The angry reviews did die down — people got used to it. But the quiet problem stayed: without a way to log yesterday, streaks kept resetting, and retention dipped.'},
+   {t:'Bring back the old design as an option in settings, so anyone who dislikes the new one can switch.', fb:'An option calms the loud users but doubles the UI you maintain, while most people stay on the new screen with the same breakage. You responded to the tone of the reviews, not their substance.', note:'6% of users switched to the old look, the team now maintains two screens, and the new one still can’t log yesterday.'}
+ ], lesson:'Loud doesn’t mean frequent: tag signals by problem, count them, and check them against behavior before reacting to tone.'},
+ s42:{title:'44% would “definitely buy.” Will they?', text:'Lena wants to sell expert-led habit programs — sleep, running, meditation — at $4.99 each. Dan brings an in-app survey: of 3,100 respondents, 44% would “definitely buy.” Andrew has already multiplied that across the base: 45,000 × 44% × $4.99 ≈ $99,000. But behavior tells a different story: the free “Sleep” program already in the app was started by 9% of active users and finished by 1.5%. And of those who said “definitely,” more than half have seen the $9 Premium paywall — 6% paid, barely above the 5% average.', options:[
+   {t:'Test real demand: a “Buy for $4.99” button for a week (a fake door) and 6 interviews about past purchases.', fb:'Saying “definitely” costs nothing, so a survey measures sympathy, not demand. A button with a price captures an action, and questions about the past (“when did you last pay for a course?”) capture real behavior. The need behind the survey didn’t go away — you learned its real size and shape.', note:'2% of those who saw the price button clicked it — over twenty times less than the survey promised. Interviews showed people don’t want a program; they want a ready-made plan for their first two weeks. You built it into Premium — paid conversion and retention ticked up.'},
+   {t:'Launch: even if only one in five of the “yes” crowd buys, that’s about $20k — another month of revenue.', fb:'Discounting to “one in five” looks sober, but it still rests on words, just shrunk by eye. And you multiplied the answers of your most engaged users across the whole base. Behavior already gave you the order of magnitude: 1.5% finish the program even when it’s free.', note:'Three programs shipped. In two months they sold about 600 copies — $3,000 against expert and development costs several times higher. Andrew had already promised North Ventures very different numbers.'},
+   {t:'Make one paid program with an expert and sell it for a month: real purchases are more honest than any survey.', fb:'Real sales are the right currency — that’s behavior, not words. But you pay a month and a content budget for what a price button would have shown in a week. And without talking to people, you won’t learn why they didn’t buy.', note:'The program sold about 300 copies — a fraction of the forecast. Why everyone else passed remained a mystery.'},
+   {t:'Drop the idea: even the free “Sleep” program gets finished by only 1.5%, so this survey can’t be trusted.', fb:'You read the behavior right: the stated interest is inflated. But 44% didn’t pick programs at random — behind it is a need for structure and a hint on where to start. Throw out the survey entirely, and you throw that out too.'}
+ ], lesson:'Stated intent to buy isn’t demand. Forecast revenue from behavior (conversion, clicks on a real price), and use surveys to understand the need.'},
+ s36:{title:'Three mockups for the home screen', text:'Kira is redesigning the home screen, where people check in their habits. In 6 home interviews she saw how it really happens: in the evening, lying in bed, one hand, 5–10 seconds. Meanwhile, in last year’s survey 64% asked for “more stats.” Of Kira’s three mockups, Andrew likes A: “It looks like a serious product.”', options:[
+   {t:'Variant A: a dashboard with a weekly chart and a compact list — two thirds of survey respondents asked for stats outright.', fb:'A survey captures wishes; interviews capture behavior. The screen’s job is to log the day in seconds, one-handed, in the dark — and tiny checkboxes under charts turn that into target practice. Stats belong on a separate tab, not on top of the main action.', note:'Evening check-ins dropped: in the dark, people kept missing the tiny checkboxes and put it off “until tomorrow.”'},
+   {t:'Variant B: big rows in the lower half of the screen, one thumb tap per check-in, and stats folded into a single line.', fb:'You chose by the job and context Kira observed: bed, one hand, seconds. Big tap targets where the thumb can reach mean both speed and accessibility. The stats haven’t gone anywhere — they just stay out of the way of the main action.', note:'The share of days with a check-in went up: the evening check-in takes a couple of seconds, and people who really want stats open them on the second tab.'},
+   {t:'Variant C: one card per habit, swipe right to check in — easy one-handed, and checking in becomes a little game.', fb:'It accounts for one-handed use, but for someone tracking five habits, a check-in becomes five swipes, and a stray swipe while half asleep logs the wrong thing. The gesture isn’t obvious either: new users don’t know the card is meant to be swiped.'}
+ ], lesson:'Pick a design by the user’s job and context from research — not by taste (yours, the designer’s, or the CEO’s), and not by survey wish lists.'},
+ s37:{title:'How to invite a buddy', text:'The quarter’s goal is getting new users to add a habit buddy: with one, retention is twice as high. Kira brought three variants of the invite screen, and Tim estimated each. There’s one team, and the variant you pick decides what else fits into the quarter.', options:[
+   {t:'Variant A: the native share sheet with a link — three days of work, familiar on iOS and Android, invite data this sprint.', fb:'You’re buying speed and data: within a week you’ll see whether people invite buddies at all, and nobody has to learn a native screen. The cost is acceptance: a bare link in a messenger promises the friend nothing, and you’ll lose some buddies along the way.', note:'Invites started flowing in week one, but friends rarely accepted a bare link. On the upside, you could now see who invites whom and when — and what to improve next.'},
+   {t:'Variant B: a custom invite card previewing shared progress — three weeks, but the invite itself tells the friend why to join.', fb:'You’re buying quality at your key growth point: the invite is an ad for Rhythm that the friend sees, and a strong card lifts acceptance. The cost is time: three weeks with no data, and the risk of polishing something people may not use.', note:'The card shipped mid-quarter: friends accepted invites noticeably more often, but the first data arrived a month later.'},
+   {t:'Variant C: full-blown friends — username search, requests, a buddy list. Two months, but a base for every future social feature.', fb:'A platform for a feature nobody has validated: two months on search and requests when the job is inviting one close person. Foundations get built for proven demand, not in advance.', note:'Friends shipped at the end of the quarter. Username search barely got used: people wanted one specific person, not a network.'}
+ ], lesson:'Choosing a design also means choosing a price: learning speed or the quality of a key screen. Name what you pay, and don’t build a platform for unproven demand.'},
+ s38:{title:'The broken-streak screen', text:'Every month about 3,000 people break a streak longer than a week, and 40% of them never come back. Kira drew three variants of the screen they’ll see the next day. Andrew picked C right away: “Even if 5% buy, that’s +$1,350 MRR every month.”', options:[
+   {t:'Variant A: an honest zero, no consolation. A streak only matters if you can lose it, and freezes or buybacks would cheapen it.', fb:'The point about streak value is fair, and the screen is honest. But it doesn’t solve the problem the redesign exists for: 40% of those who slip leave after seeing a zero. Retention after a broken streak stays right where it was.'},
+   {t:'Variant B: a free freeze saves the streak and invites a check-in today; we judge it by 30-day retention of those who slipped.', fb:'You pick a metric that reflects the user’s goal — keeping the habit going — and a screen that serves it: a slip becomes a pause, not a failure. Payers will come from the people who stayed, not from those cornered at their worst moment.', note:'After 30 days, noticeably more of the users who broke a streak were still around: the freeze turned a slip into a pause.'},
+   {t:'Variant C: the streak comes back only with Premium, before a timer runs out — motivation peaks here, so judge it by revenue.', fb:'The revenue is real, but the screen profits from shame: a timer and a tiny close button squeeze people at their worst moment. You see the screen’s money right away, but lost users and angry reviews only show up a month later, in retention and ratings.', note:'There were purchases on the screen, but reviews started saying “they hold your streak hostage,” and free users who slipped left even more often.'}
+ ], lesson:'Judge a screen by the metric of the user’s goal — retention a month later — not by money or clicks on the screen itself.'},
+ s39:{title:'One test slot, three mockups', text:'You get enough new users for one onboarding A/B test a month, and it can detect effects of 10% or more. Kira brought three variants of the first screen, and in the current onboarding 35% of new users drop off at the habit setup step. Which variant goes into the test against the current one?', options:[
+   {t:'Variant A: the same screen with a new illustration and a brighter button — minimal risk, a clean test, little to roll back.', fb:'Cosmetic changes move metrics by 1–2%, and your test only detects 10% or more: you’ll almost certainly get “no difference,” and a month of traffic goes to waste. Small polish ships without a test while you watch the dashboards.', note:'The test ended with “no significant difference”: a month of traffic went into something you could have simply shipped.'},
+   {t:'Variant B: pick one habit and check it in right away. It hits the exact step where we lose 35%, so any effect will be big.', fb:'A test is an expensive resource, best spent on a big, risky change with a data-backed hypothesis. This variant targets the biggest drop-off, and the test can see an effect that size. If the hypothesis is wrong, you learn it in a month, not after rollout.', note:'The test ran its course: D7 rose 14%, and paid conversion went up too. You rolled it out to all new users.'},
+   {t:'Variant C: an 8-question quiz about goals plus a personal plan — in fitness apps, this kind of onboarding lifts paid conversion.', fb:'A big change is the right kind of test candidate, but this hypothesis contradicts your own data: people drop off at a long setup, and a quiz makes it longer. Someone else’s case study is a reason for a hypothesis, not a substitute for your own funnel.', note:'The quiz lifted paid conversion among those who finished it, but fewer people finished — net, almost zero. A month gone, but the hypothesis is closed.'}
+ ], lesson:'An A/B test is an expensive resource: spend it on big, risky UI changes with a data-backed hypothesis, and ship cosmetic tweaks with monitoring.'}
 };
 
 /* ============ helpers ============ */
@@ -999,7 +1138,9 @@ const CHAL = {
      <div class="kv"><div><small>Monthly ARPPU</small><b>$${arppu}</b></div><div><small>Gross margin</small><b>70%</b></div><div><small>Monthly payer churn</small><b>${pct(churn,0)}</b></div></div>`),
     question:L('Какой LTV одного платящего пользователя (в $)?','What’s the LTV of a single paying user (in $)?'), answer:ltv, tol:0.05,
     explain:L(`LTV = ARPPU × маржа ÷ отток = ${arppu} × 0,7 ÷ ${dec(churn,2)} ≈ <b>$${dec(ltv,0)}</b>. Средняя «жизнь» платящего — 1 ÷ отток ≈ ${dec(1/churn,1)} мес.`,
-     `LTV = ARPPU × margin ÷ churn = ${arppu} × 0.7 ÷ ${dec(churn,2)} ≈ <b>$${dec(ltv,0)}</b>. The average payer “lifetime” is 1 ÷ churn ≈ ${dec(1/churn,1)} months.`)};
+     `LTV = ARPPU × margin ÷ churn = ${arppu} × 0.7 ÷ ${dec(churn,2)} ≈ <b>$${dec(ltv,0)}</b>. The average payer “lifetime” is 1 ÷ churn ≈ ${dec(1/churn,1)} months.`),
+    hint:L('LTV — это сколько один платящий приносит за всю свою «жизнь» в продукте: месячная выручка после комиссии стора × сколько месяцев он остаётся. Средняя «жизнь» = 1 ÷ месячный отток.',
+     'LTV is what one payer brings in over their whole life with the product: monthly revenue after the store’s cut × how many months they stay. Average lifetime = 1 ÷ monthly churn.')};
  }},
  payback:{d:'metr', gen(){
    const cac = ri(6,18)*5, arppu = ri(7,14);
@@ -1011,7 +1152,9 @@ const CHAL = {
      <div class="kv"><div><small>CAC per payer</small><b>$${cac}</b></div><div><small>Monthly ARPPU</small><b>$${arppu}</b></div><div><small>Gross margin</small><b>70%</b></div></div>`),
     question:L('Через сколько месяцев окупится CAC?','How many months until CAC pays back?'), answer:m, tol:0.07, abs:0.5,
     explain:L(`Payback = CAC ÷ (ARPPU × маржа) = ${cac} ÷ (${arppu} × 0,7) ≈ <b>${dec(m,1)} мес.</b> Для подписок хорошим считается срок до 12 месяцев, отличным — до 6.`,
-     `Payback = CAC ÷ (ARPPU × margin) = ${cac} ÷ (${arppu} × 0.7) ≈ <b>${dec(m,1)} months</b>. For subscriptions, under 12 months is considered good and under 6 is excellent.`)};
+     `Payback = CAC ÷ (ARPPU × margin) = ${cac} ÷ (${arppu} × 0.7) ≈ <b>${dec(m,1)} months</b>. For subscriptions, under 12 months is considered good and under 6 is excellent.`),
+    hint:L('Окупаемость — это сколько месяцев нужно, чтобы маржа с платящего вернула деньги, потраченные на его привлечение. Раздели CAC на то, что он приносит в месяц после комиссии стора.',
+     'Payback is how many months of margin it takes to earn back what you spent acquiring a payer. Divide CAC by what they bring in each month after the store’s cut.')};
  }},
  ltvcac:{d:'metr', gen(){
    let cacI, conv, ltv, r;
@@ -1027,7 +1170,9 @@ const CHAL = {
      ['Shut it off or overhaul it: it loses money','Keep it and optimize: it pays back, but the margin is thin','Scale it: the unit economics are healthy']),
     answer:ans,
     explain:L(`CAC платящего = $${dec(cacI,2)} ÷ ${pct(conv)} ≈ $${dec(cp,0)}. LTV / CAC = ${ltv} ÷ ${dec(cp,0)} ≈ <b>${dec(r,1)}</b>. Ориентиры: < 1 — канал сжигает деньги, 1–3 — окупается впритык, > 3 — можно масштабировать.`,
-     `CAC per payer = $${dec(cacI,2)} ÷ ${pct(conv)} ≈ $${dec(cp,0)}. LTV / CAC = ${ltv} ÷ ${dec(cp,0)} ≈ <b>${dec(r,1)}</b>. Rules of thumb: < 1 — the channel burns cash, 1–3 — it barely pays back, > 3 — you can scale it.`)};
+     `CAC per payer = $${dec(cacI,2)} ÷ ${pct(conv)} ≈ $${dec(cp,0)}. LTV / CAC = ${ltv} ÷ ${dec(cp,0)} ≈ <b>${dec(r,1)}</b>. Rules of thumb: < 1 — the channel burns cash, 1–3 — it barely pays back, > 3 — you can scale it.`),
+    hint:L('Сначала переведи цену установки в цену платящего: платит не каждый установивший, так что раздели её на конверсию в оплату. Потом посмотри, во сколько раз LTV перекрывает этот CAC: классический ориентир здоровой экономики — от 3×.',
+     'First turn cost per install into cost per payer: not every install pays, so divide it by paid conversion. Then see how many times LTV covers that CAC — the classic benchmark for healthy unit economics is 3×.')};
  }},
  ab:{d:'exp', gen(){
    let n,c1,c2,z;
@@ -1046,7 +1191,9 @@ const CHAL = {
     options:L(['Да, значима — можно раскатывать','Нет, не значима — это может быть шум'],
      ['Yes, it’s significant — OK to roll out','No, it’s not significant — it could be noise']), answer:sig?0:1,
     explain:L(`Z-тест для двух долей: объединённая конверсия p = ${pct((c1+c2)/(2*n),2)}, стандартная ошибка = √(p(1−p)·2/n). z ≈ <b>${dec(z,2)}</b>, p-value ≈ <b>${dec(p,3)}</b>. Порог для α = 0,05 — |z| ≥ 1,96. Относительная разница: ${(c2/c1-1)>=0?'+':''}${pct(c2/c1-1)}.`,
-     `Two-proportion z-test: pooled conversion p = ${pct((c1+c2)/(2*n),2)}, standard error = √(p(1−p)·2/n). z ≈ <b>${dec(z,2)}</b>, p-value ≈ <b>${dec(p,3)}</b>. The threshold for α = 0.05 is |z| ≥ 1.96. Relative difference: ${(c2/c1-1)>=0?'+':''}${pct(c2/c1-1)}.`)};
+     `Two-proportion z-test: pooled conversion p = ${pct((c1+c2)/(2*n),2)}, standard error = √(p(1−p)·2/n). z ≈ <b>${dec(z,2)}</b>, p-value ≈ <b>${dec(p,3)}</b>. The threshold for α = 0.05 is |z| ≥ 1.96. Relative difference: ${(c2/c1-1)>=0?'+':''}${pct(c2/c1-1)}.`),
+    hint:L('Разница в конверсиях сама по себе ничего не значит — сравни её с шумом. Раздели разницу на стандартную ошибку √(p(1−p)·2/n), где p — общая конверсия обеих групп, и сравни результат с порогом 1,96.',
+     'A gap in conversion means nothing on its own — compare it to the noise. Divide the difference by the standard error √(p(1−p)·2/n), where p is the pooled conversion of both groups, and check the result against 1.96.')};
  }},
  sample:{d:'exp', gen(){
    const p = pick([0.05,0.1,0.2]), mde = pick([0.1,0.2]);
@@ -1060,7 +1207,9 @@ const CHAL = {
     question:L('Примерно сколько пользователей нужно в каждую группу?','Roughly how many users do you need per group?'),
     options:opts.map(v=>'≈ '+int(v)), answer:opts.indexOf(n),
     explain:L(`Эвристика Лера: n ≈ 16 · p(1−p) / δ² = 16 · ${dec(p,2)} · ${dec(1-p,2)} / ${dec(delta,3)}² ≈ <b>${int(n)}</b> на группу. Запомни: уменьшил MDE вдвое — выборка выросла в 4 раза.`,
-     `Lehr’s rule of thumb: n ≈ 16 · p(1−p) / δ² = 16 · ${dec(p,2)} · ${dec(1-p,2)} / ${dec(delta,3)}² ≈ <b>${int(n)}</b> per group. Remember: halve the MDE and the sample size quadruples.`)};
+     `Lehr’s rule of thumb: n ≈ 16 · p(1−p) / δ² = 16 · ${dec(p,2)} · ${dec(1-p,2)} / ${dec(delta,3)}² ≈ <b>${int(n)}</b> per group. Remember: halve the MDE and the sample size quadruples.`),
+    hint:L('Используй правило Лера: n на группу ≈ 16 × p(1−p) ÷ (абсолютный сдвиг)². Следи за единицами: сдвиг подставляй долей, а не в процентных пунктах и не относительным MDE.',
+     'Use Lehr’s rule: n per group ≈ 16 × p(1−p) ÷ (absolute lift)². Watch the units: plug the lift in as a fraction — not in percentage points, and not as the relative MDE.')};
  }},
  rice:{d:'prio', gen(){
    const names = shuffle(L(['Напоминание по геолокации','Виджет на главный экран','Синхронизация с Apple Health','Челленджи с друзьями','Статистика за год','Шаблоны привычек','Голосовая отметка','Серии и заморозка серии'],
@@ -1076,7 +1225,9 @@ const CHAL = {
      <div class="task-box" style="margin:0"><table class="t"><thead><tr><th>Feature</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th></tr></thead><tbody>
      ${rows.map(r=>`<tr><td>${r.nm}</td><td>${int(r.R)}</td><td>${r.I}</td><td>${Math.round(r.C*100)}%</td><td>${r.E}</td></tr>`).join('')}</tbody></table></div>`),
     question:L('Какая фича получает наивысший RICE-приоритет?','Which feature gets the highest RICE score?'), options:rows.map(r=>r.nm), answer:best,
-    explain:`RICE = Reach × Impact × Confidence ÷ Effort. ${rows.map(r=>`${r.nm}: <b>${int(r.s)}</b>`).join('; ')}.`};
+    explain:`RICE = Reach × Impact × Confidence ÷ Effort. ${rows.map(r=>`${r.nm}: <b>${int(r.s)}</b>`).join('; ')}.`,
+    hint:L('Для каждой фичи перемножь Reach, Impact и Confidence и раздели на Effort. Не выбирай по одному столбцу: большой охват легко съедается низкой уверенностью или долгой разработкой.',
+     'For each feature, multiply Reach × Impact × Confidence and divide by Effort. Don’t pick by a single column: big reach is easily eaten up by low confidence or a long build.')};
  }},
  custdev:{d:'disc', gen(){
    const sets = [
@@ -1085,31 +1236,41 @@ const CHAL = {
      bad:L(['Вы бы продолжили пользоваться трекером, если бы в нём был AI-коуч, который мотивирует?','Правда ведь, что люди бросают трекеры в основном из-за назойливых напоминаний?','Сколько бы вы заплатили за трекер, который точно не захочется бросить через неделю?'],
       ['Would you keep using a tracker if it had an AI coach to keep you motivated?','Isn’t it true that people mostly quit trackers because of annoying reminders?','How much would you pay for a tracker you’d never want to quit after a week?']),
      why:L('Вопрос про AI-коуча продаёт решение и просит фантазировать о будущем, «Правда ведь…» зашивает ответ в вопрос, а цена трекера, который «не захочется бросить», — гипотетика, которая ничего не говорит о реальном поведении.',
-      'The AI coach question pitches a solution and asks about a hypothetical future, “Isn’t it true…” bakes the answer into the question, and the price of a tracker you’d “never want to quit” is pure speculation that says nothing about real behavior.')},
+      'The AI coach question pitches a solution and asks about a hypothetical future, “Isn’t it true…” bakes the answer into the question, and the price of a tracker you’d “never want to quit” is pure speculation that says nothing about real behavior.'),
+     hint:L('Настоящие причины ухода видны в реальной истории, а не в догадках и обещаниях. Хороший вопрос не подсказывает ответ и не продаёт решение.',
+      'The real reasons people quit show up in an actual story, not in guesses or promises. A good question doesn’t suggest the answer and doesn’t pitch a solution.')},
     {goal:L('понять готовность платить','understand willingness to pay'),
      good:L('За какие приложения для здоровья и привычек вы платили за полгода? Почему за них?','Which health or habit apps have you paid for in the past six months? Why those?'),
      bad:L(['Купили бы вы подписку на Ритм за $9 в месяц, если бы в нём было всё, что вам нужно?','Как вам наша идея трекера привычек с напарником, который видит ваш прогресс?','Какие функции вы хотели бы видеть в платной версии приложения в первую очередь?'],
       ['Would you buy a Rhythm subscription for $9 a month if it had everything you need?','What do you think of our idea: a habit tracker with a buddy who sees your progress?','Which features would you most want to see first in a paid version of the app?']),
      why:L('«Купили бы вы…» — гипотетический вопрос: на словах платить готовы многие, на деле — единицы. Оценка идеи вызывает вежливую похвалу, а список желаемых функций — это разговор о решении, а не о том, за что человек уже платит.',
-      '“Would you buy…” is hypothetical: plenty of people say they’d pay, very few actually do. Asking for an opinion on your idea gets you polite praise, and a feature wish list is a conversation about the solution, not about what people already pay for.')},
+      '“Would you buy…” is hypothetical: plenty of people say they’d pay, very few actually do. Asking for an opinion on your idea gets you polite praise, and a feature wish list is a conversation about the solution, not about what people already pay for.'),
+     hint:L('На словах платить готовы многие — верь только тому, что человек уже делал со своими деньгами. Ищи вопрос о реальных тратах, а не о мнении про твою идею.',
+      'Plenty of people say they’d pay — trust only what they’ve already done with their money. Look for a question about real spending, not opinions about your idea.')},
     {goal:L('разобраться в утренней рутине пользователей','understand users’ morning routines'),
      good:L('Опишите своё вчерашнее утро — с момента, как проснулись.','Walk me through yesterday morning, from the moment you woke up.'),
      bad:L(['Вы ведь обычно начинаете утро с зарядки? Как она проходит?','Хотели бы вы вести утренние привычки в отдельном приложении?','Как выглядит ваше идеальное утро, если всё идёт по плану?'],
       ['You usually start your morning with a workout, right? How does it go?','Would you like to track your morning habits in a dedicated app?','What does your ideal morning look like when everything goes to plan?']),
      why:L('Вопрос про зарядку наводящий — ответ подсказан, «Хотели бы вы…» просит предсказать будущее и продаёт приложение, а «идеальное утро» — фантазия, а не то, что человек реально делает.',
-      'The workout question is leading — it suggests the answer; “Would you like to…” asks people to predict the future and pitches the app; and the “ideal morning” is a fantasy, not what the person actually does.')},
+      'The workout question is leading — it suggests the answer; “Would you like to…” asks people to predict the future and pitches the app; and the “ideal morning” is a fantasy, not what the person actually does.'),
+     hint:L('Тебе нужна рутина, которой человек реально живёт, а не та, которой он гордится или о которой мечтает. Самую честную картину даёт конкретный недавний эпизод.',
+      'You want the routine people actually live, not the one they’re proud of or dream about. The most honest picture comes from a specific, recent episode.')},
     {goal:L('понять, как люди сейчас справляются с тем, что забывают о привычках','understand how people currently cope with forgetting their habits'),
      good:L('Что вы сделали в последний раз, чтобы не забыть о ежедневной привычке?','What did you do the last time you wanted to remember a daily habit?'),
      bad:L(['Как часто вы обычно забываете о своих привычках в течение недели?','Были бы вам полезны умные напоминания, которые подстраиваются под ваш график?','Насколько вас раздражает, когда вы забываете о привычке, по шкале от 1 до 10?'],
       ['How often do you usually forget about your habits during a week?','Would smart reminders that adapt to your daily schedule be useful to you?','On a scale of 1 to 10, how annoying is it when you forget a habit?']),
      why:L('Вопрос про последний конкретный случай покажет реальные обходные пути (будильник, стикер, другое приложение). «Как часто вы обычно…» даёт усреднённую и приукрашенную оценку, умные напоминания — это питч решения, а оценка по шкале — цифра без истории.',
-      'Asking about the last specific episode reveals the real workarounds (an alarm, a sticky note, another app). “How often do you usually…” gets you a rosy average, the smart reminders question is a pitch, and a 1-to-10 rating gives you a number with no story behind it.')},
+      'Asking about the last specific episode reveals the real workarounds (an alarm, a sticky note, another app). “How often do you usually…” gets you a rosy average, the smart reminders question is a pitch, and a 1-to-10 rating gives you a number with no story behind it.'),
+     hint:L('Тебе важно, как люди уже выкручиваются сами, — их реальные обходные пути. Они всплывают в рассказе о конкретном случае, а не в обобщениях.',
+      'What you’re after is how people already cope on their own — their actual workarounds. Those come out in a story about a specific episode, not in generalizations.')},
     {goal:L('понять, почему пользователи не оплачивают подписку после триала','understand why users don’t pay after the trial'),
      good:L('Расскажите про день, когда закончился триал. Что вы тогда сделали и почему?','Tell me about the day your trial ended. What did you do then, and why?'),
      bad:L(['Вам показалась слишком высокой цена подписки или дело было в чём-то ещё?','Вы бы оплатили подписку, если бы первый месяц стоил вдвое дешевле, чем сейчас?','Насколько вероятно, что вы порекомендуете Ритм другу, по шкале от 0 до 10?'],
       ['Did the subscription price feel too high, or was it something else?','Would you have paid if the first month had been half the price?','How likely are you to recommend Rhythm to a friend, on a scale of 0 to 10?']),
      why:L('Рассказ о конкретном дне покажет, как человек на самом деле принимал решение. Вопрос про цену наводящий — он подсказывает готовую причину, вопрос про скидку — гипотетика, а вопрос о рекомендации (NPS) не объясняет, почему человек не заплатил.',
-      'A story about that specific day shows how the person actually made the decision. The price question is leading — it hands them a ready-made reason; the discount question is a hypothetical; and the recommendation question (NPS) doesn’t explain why they didn’t pay.')}
+      'A story about that specific day shows how the person actually made the decision. The price question is leading — it hands them a ready-made reason; the discount question is a hypothetical; and the recommendation question (NPS) doesn’t explain why they didn’t pay.'),
+     hint:L('Решение не платить человек принял в конкретный момент — восстанови его, а не проси угадать причину. Остерегайся вопросов, которые сами подсовывают готовое объяснение.',
+      'The decision not to pay happened at a specific moment — reconstruct it instead of asking them to guess the reason. Beware of questions that hand them a ready-made explanation.')}
    ];
    const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
    return {title:L('Выбери лучший вопрос для интервью','Pick the best interview question'), type:'choice',
@@ -1117,7 +1278,7 @@ const CHAL = {
      `<p>The goal of this problem interview is to ${s.goal}. You have time for one main question.</p>`),
     question:L('Какой вопрос даст самые надёжные ответы?','Which question will get you the most reliable answers?'), options:opts, answer:opts.indexOf(s.good),
     explain:L(`Хороший вопрос спрашивает о <b>конкретном прошлом поведении</b>, не подсказывает ответ и не просит оценить твою идею («The Mom Test»). ${s.why}`,
-     `A good question asks about <b>specific past behavior</b>, doesn’t lead the respondent, and doesn’t ask them to rate your idea (see “The Mom Test”). ${s.why}`)};
+     `A good question asks about <b>specific past behavior</b>, doesn’t lead the respondent, and doesn’t ask them to rate your idea (see “The Mom Test”). ${s.why}`), hint:s.hint};
  }},
  funnel:{d:'metr', gen(){
    const steps = L(['Установка','Регистрация','Выбор первой привычки','Первая отметка','Старт триала','Оплата'],
@@ -1136,7 +1297,9 @@ const CHAL = {
      ${steps.map((s,i)=>`<tr><td>${s}</td><td>${int(counts[i])}</td></tr>`).join('')}</tbody></table></div>`),
     question:L('На каком переходе самая низкая конверсия шага?','Which step has the lowest step-to-step conversion?'), options:steps.slice(0,5).map((s,i)=>`${s} → ${steps[i+1]}`), answer:minI,
     explain:L(`Конверсии шагов: ${real.map((c,i)=>`${steps[i]} → ${steps[i+1]}: <b>${pct(c,0)}</b>`).join('; ')}. Сравнивай относительную конверсию каждого шага, а не абсолютные потери.`,
-     `Step conversion: ${real.map((c,i)=>`${steps[i]} → ${steps[i+1]}: <b>${pct(c,0)}</b>`).join('; ')}. Compare each step’s relative conversion, not the absolute drop-off.`)};
+     `Step conversion: ${real.map((c,i)=>`${steps[i]} → ${steps[i+1]}: <b>${pct(c,0)}</b>`).join('; ')}. Compare each step’s relative conversion, not the absolute drop-off.`),
+    hint:L('Смотри не на потери в штуках, а на конверсию каждого шага: раздели каждое число на предыдущее. В штуках больше всего теряется там, где больше людей, — это ещё не значит, что шаг хуже.',
+     'Look at each step’s conversion, not the absolute drop-off: divide each number by the one before it. Absolute losses tend to be biggest where there are the most people — that alone doesn’t make a step worse.')};
  }},
  vanity:{d:'metr', gen(){
    const sets = [
@@ -1145,38 +1308,48 @@ const CHAL = {
      o:L(['Retention 7-го дня у новых','Конверсия из триала в оплату','Средняя выручка с одного платящего'],
       ['Day-7 retention of new users','Trial-to-paid conversion rate','Average revenue per payer']),
      why:L('накопительный итог: он только растёт, даже если продукт становится хуже, и не подсказывает, что делать. Решения принимают по долям и конверсиям — например, по retention 7-го дня или конверсии из триала в оплату.',
-      'is a cumulative total: it only ever goes up, even when the product gets worse, and it doesn’t tell you what to do. Decisions are made on rates and conversions — like day-7 retention or trial-to-paid conversion.')},
+      'is a cumulative total: it only ever goes up, even when the product gets worse, and it doesn’t tell you what to do. Decisions are made on rates and conversions — like day-7 retention or trial-to-paid conversion.'),
+     hint:L('Спроси про каждую метрику: может ли она упасть, если продукт станет хуже, и что ты сделаешь иначе, если она сдвинется? Vanity-метрика красиво растёт, но не подсказывает, что делать.',
+      'Ask of each metric: could it drop if the product got worse, and what would you do differently if it moved? A vanity metric grows nicely but never tells you what to do.')},
     {ctx:L('Маркетинг готовит ежемесячный отчёт для руководства.','Marketing is preparing its monthly report for leadership.'),
      v:L('Число подписчиков в Instagram','Instagram follower count'),
      o:L(['Доля платящих, продливших подписку','Пользователи с 3+ отметками в неделю','Стоимость привлечения платящего'],
       ['Share of payers who renew','Users with 3+ check-ins a week','Cost to acquire one payer']),
      why:L('не связано ни с использованием продукта, ни с деньгами: его можно нарастить конкурсами и рекламой, а retention и выручка не сдвинутся. Для маркетинга actionable-метрика здесь — стоимость привлечения платящего.',
-      'isn’t tied to product usage or revenue: you can pump it up with giveaways and ads while retention and revenue stay flat. For marketing, the actionable metric here is the cost to acquire one payer.')},
+      'isn’t tied to product usage or revenue: you can pump it up with giveaways and ads while retention and revenue stay flat. For marketing, the actionable metric here is the cost to acquire one payer.'),
+     hint:L('Проверь, связана ли каждая метрика с использованием продукта или с деньгами. Если цифру можно нарастить, не сдвинув ни retention, ни выручку, решений по ней не примешь.',
+      'Check whether each metric is tied to product usage or to revenue. If a number can be pumped up without moving retention or revenue, you can’t make decisions on it.')},
     {ctx:L('Ты готовишь апдейт для инвесторов.','You’re putting together an investor update.'),
      v:L('Всего просмотров экранов за месяц','Total screen views per month'),
      o:L(['Retention 30-го дня у новых когорт','LTV / CAC по каналам привлечения','Доля выручки от годовых планов'],
       ['D30 retention of new cohorts','LTV / CAC by ad channel','Revenue share from annual plans']),
      why:L('абсолютная величина, которая растёт вместе с числом пользователей и даже с неудобной навигацией (чтобы найти нужное, приходится листать больше экранов), — по ней не понять, стало ли лучше. Инвесторам важны удержание когорт и экономика вроде LTV / CAC.',
-      'is a raw total that grows with the user count and even with clunky navigation (more screens to dig through to find what you need), so it can’t tell you whether things got better. Investors care about cohort retention and unit economics like LTV / CAC.')},
+      'is a raw total that grows with the user count and even with clunky navigation (more screens to dig through to find what you need), so it can’t tell you whether things got better. Investors care about cohort retention and unit economics like LTV / CAC.'),
+     hint:L('Инвесторам важно, становится ли продукт лучше, а не просто больше. Спроси про каждую цифру: видно ли по её росту, что людям стало лучше, или она просто растёт вместе с базой?',
+      'Investors want to know whether the product is getting better, not just bigger. Ask of each number: does its growth show users are better off, or does it simply grow with the user base?')},
     {ctx:L('К годовщине запуска команда готовит слайд для общего собрания.','For the launch anniversary, the team is preparing a slide for the all-hands.'),
      v:L('Число отметок с момента запуска','Total check-ins since launch'),
      o:L(['Доля DAU от MAU (липкость продукта)','Конверсия из установки в триал','Месячный отток среди платящих'],
       ['DAU/MAU ratio (product stickiness)','Install-to-trial conversion','Monthly churn among payers']),
      why:L('накопительный счётчик: он растёт, даже когда активных пользователей становится меньше, и никогда не падает. Липкость DAU/MAU и отток платящих показывают, что происходит с продуктом прямо сейчас.',
-      'is a cumulative counter: it keeps growing even as active users decline, and it never goes down. DAU/MAU stickiness and payer churn show what’s happening to the product right now.')},
+      'is a cumulative counter: it keeps growing even as active users decline, and it never goes down. DAU/MAU stickiness and payer churn show what’s happening to the product right now.'),
+     hint:L('Полезная метрика должна уметь падать — иначе она не предупредит о проблеме. Спроси про каждую: покажет ли она, что происходит с продуктом прямо сейчас?',
+      'A useful metric has to be able to fall — otherwise it can’t warn you about a problem. Ask of each one: does it show what’s happening to the product right now?')},
     {ctx:L('Команда вовлечённости выбирает метрики для своих OKR.','The engagement team is choosing metrics for its OKRs.'),
      v:L('Число пушей, отправленных за месяц','Push notifications sent per month'),
      o:L(['Доля пушей, после которых была отметка','Retention 4-й недели у новых','Отток платящих в первый месяц'],
       ['Share of pushes followed by a check-in','Week-4 retention of new users','Payer churn in the first month']),
      why:L('его команда целиком контролирует сама: можно слать больше и «выполнить» OKR, одновременно раздражая людей и повышая отток. Actionable-версия той же идеи — доля пушей, после которых была отметка.',
-      'is entirely under the team’s control: you can send more and “hit” the OKR while annoying people and driving up churn. The actionable version of the same idea is the share of pushes followed by a check-in.')}
+      'is entirely under the team’s control: you can send more and “hit” the OKR while annoying people and driving up churn. The actionable version of the same idea is the share of pushes followed by a check-in.'),
+     hint:L('Метрика для OKR не должна выполняться силами одной команды без пользы для людей. Спроси про каждую: можно ли её «выполнить», сделав пользователям хуже?',
+      'An OKR metric shouldn’t be something the team can hit on its own without users getting any value. Ask of each one: could you “hit” it while making things worse for users?')}
    ];
    const s = pick(sets); const opts = shuffle([s.v, ...s.o]);
    return {title:L('Найди vanity-метрику','Spot the vanity metric'), type:'choice',
     prompt:L(`<p>${s.ctx} Одна из метрик хорошо смотрится в отчётах, но не помогает принимать решения.</p>`,
      `<p>${s.ctx} One of the metrics looks great in reports but doesn’t help you make decisions.</p>`),
     question:L('Какая метрика — vanity?','Which one is the vanity metric?'), options:opts, answer:opts.indexOf(s.v),
-    explain:L(`«${s.v}» — ${s.why}`, `“${s.v}” ${s.why}`)};
+    explain:L(`«${s.v}» — ${s.why}`, `“${s.v}” ${s.why}`), hint:s.hint};
  }},
  cohort:{d:'metr', gen(){
    const mons = L(['Янв','Фев','Мар','Апр'], ['Jan','Feb','Mar','Apr']);
@@ -1204,7 +1377,9 @@ const CHAL = {
     explain: variant==='bad' ? L(`Когорта «${mons[badI]}» резко проседает уже на M1, а соседние ведут себя нормально и выходят на плато. Значит, проблема локальна: новый канал привлечения, релиз или сезон. Сравнивай когорты по столбцам, а не только по строкам.`,
      `The “${mons[badI]}” cohort drops sharply as early as M1, while its neighbors behave normally and level off. So the problem is local: a new acquisition channel, a release, or seasonality. Compare cohorts down the columns, not just across the rows.`)
      : L('Каждая следующая когорта удерживается лучше на одном и том же «возрасте» (сравни столбец M1 сверху вниз). Это признак того, что продуктовые изменения работают.',
-     'Each newer cohort retains better at the same “age” (read the M1 column top to bottom). That’s a sign the product changes are working.')};
+     'Each newer cohort retains better at the same “age” (read the M1 column top to bottom). That’s a sign the product changes are working.'),
+    hint:L('Сравнивай когорты на одном и том же «возрасте»: читай столбцы M1 и M2 сверху вниз, а не только строки слева направо. Так видно, что изменилось между когортами, а не просто как люди отваливаются со временем.',
+     'Compare cohorts at the same “age”: read the M1 and M2 columns top to bottom, not just the rows left to right. That shows what changed between cohorts, not just how people drop off over time.')};
  }},
  mrr:{d:'metr', gen(){
    const u = ri(20,90)*1000, c = ri(20,80)/10, a = ri(6,15), mrr = u*c/100*a;
@@ -1213,7 +1388,9 @@ const CHAL = {
      `<div class="kv"><div><small>Active users</small><b>${int(u)}</b></div><div><small>Share of payers</small><b>${dec(c,1)}%</b></div><div><small>Monthly ARPPU</small><b>$${a}</b></div></div>`),
     question:L('Какая ежемесячная регулярная выручка (MRR) в $?','What’s the monthly recurring revenue (MRR), in $?'), answer:mrr, tol:0.02,
     explain:L(`MRR = пользователи × доля платящих × ARPPU = ${int(u)} × ${dec(c/100,3)} × ${a} = <b>$${int(mrr)}</b>. Тот же расчёт через ARPU: ARPU = $${dec(c/100*a,2)} на пользователя, MRR = ARPU × ${int(u)}.`,
-     `MRR = users × share of payers × ARPPU = ${int(u)} × ${dec(c/100,3)} × ${a} = <b>$${int(mrr)}</b>. Same math via ARPU: ARPU = $${dec(c/100*a,2)} per user, MRR = ARPU × ${int(u)}.`)};
+     `MRR = users × share of payers × ARPPU = ${int(u)} × ${dec(c/100,3)} × ${a} = <b>$${int(mrr)}</b>. Same math via ARPU: ARPU = $${dec(c/100*a,2)} per user, MRR = ARPU × ${int(u)}.`),
+    hint:L('MRR — это число платящих × сколько каждый платит в месяц; это выручка, так что комиссию стора здесь не вычитай. Не забудь перевести долю платящих из процентов в число людей.',
+     'MRR is the number of payers × what each one pays per month; it’s revenue, so don’t subtract the store’s cut here. Remember to turn the payer share from a percentage into a headcount.')};
  }},
  jtbd:{d:'disc', gen(){
    const sets = [
@@ -1228,7 +1405,9 @@ const CHAL = {
        'Our core user is a woman aged 25–35 in a big city who works long hours and keeps an eye on her health',
        'When users get home in the evening, we want them to open Rhythm every time, so that our D7 retention goes up']),
      why:L('Остальное — user story с готовым решением (кнопка), портрет сегмента без ситуации и мотивации и цель компании вместо задачи пользователя.',
-       'The others are a user story with a ready-made solution (the button), a segment profile with no situation or motivation, and the company’s goal instead of the user’s job.')},
+       'The others are a user story with a ready-made solution (the button), a segment profile with no situation or motivation, and the company’s goal instead of the user’s job.'),
+     hint:L('Job story держится на трёх частях: ситуация из жизни, мотивация и результат для самого пользователя. Проверь, чья это цель — человека или компании, — и нет ли внутри готовой фичи.',
+      'A job story rests on three parts: a real-life situation, a motivation, and an outcome for the user. Ask whose goal it is — the person’s or the company’s — and whether a ready-made feature is baked in.')},
     {ctx:L('Интервью показали: люди начинают новую жизнь с понедельника, берут сразу пять привычек и к среде всё бросают.',
        'Interviews show that people start a “new life” on Monday, take on five habits at once, and drop them all by Wednesday.'),
      good:L('Когда я решаю начать новую жизнь с понедельника, я хочу выбрать один посильный шаг, чтобы не сдуться к среде',
@@ -1240,7 +1419,9 @@ const CHAL = {
        'Most respondents drop new habits by day three because they take on too much at once right from the start',
        'I want to finally build healthy habits and become a disciplined person who always follows through on things']),
      why:L('Остальное — job story с готовым решением (каталог шаблонов) вместо мотивации, инсайт из интервью без ситуации и результата и мечта без конкретной ситуации, под которую нечего проектировать.',
-       'The others are a job story with a ready-made solution (the template catalog) in place of a motivation, an interview insight with no situation or outcome, and an aspiration with no situation — there’s nothing to design for.')},
+       'The others are a job story with a ready-made solution (the template catalog) in place of a motivation, an interview insight with no situation or outcome, and an aspiration with no situation — there’s nothing to design for.'),
+     hint:L('Job story описывает момент из жизни, а не человека вообще: «Когда [ситуация], я хочу [мотивация], чтобы [результат]». Вспомни, в какой момент у людей из интервью всё ломается, и проверь, нет ли внутри готового решения.',
+      'A job story captures a moment in someone’s life, not a person in general: “When [situation], I want to [motivation], so I can [outcome].” Think about the moment things fall apart for the people interviewed, and check that no ready-made solution is baked in.')},
     {ctx:L('Пользователи, которые часто ездят в командировки, рассказывают: поездка ломает режим, и после неё они часто не возвращаются в Ритм.',
        'Users who travel for work a lot say a trip breaks their routine, and afterwards they often don’t come back to Rhythm.'),
      good:L('Когда поездка ломает мой режим, я хочу сохранить хоть минимум привычек, чтобы не казалось, что всё зря',
@@ -1252,7 +1433,9 @@ const CHAL = {
        'When a user goes on a trip, we want to send them a push about streak freeze, so that we bring churn down',
        'Managers aged 30–45 who travel for work two or three times a month and try hard to stick to their routine']),
      why:L('Остальное — user story с готовым решением (заморозка серии), цель компании (пуш ради churn) вместо задачи пользователя и описание сегмента без ситуации и мотивации.',
-       'The others are a user story with a ready-made solution (streak freeze), the company’s goal (a push to cut churn) instead of the user’s job, and a segment description with no situation or motivation.')},
+       'The others are a user story with a ready-made solution (streak freeze), the company’s goal (a push to cut churn) instead of the user’s job, and a segment description with no situation or motivation.'),
+     hint:L('Job story говорит голосом пользователя в конкретной ситуации: что ему нужно и какого результата он хочет. Проверь, не подменена ли его мотивация готовой фичей или целью компании.',
+      'A job story speaks in the user’s voice, in a specific situation: what they need and what outcome they’re after. Check whether their motivation has been swapped for a ready-made feature or a company goal.')},
     {ctx:L('Пользователи, бросившие спорт, говорят: «Когда никто не видит, пропустить тренировку слишком легко».',
        'Users who gave up on working out say: “When nobody’s watching, it’s way too easy to skip a workout.”'),
      good:L('Когда я пропускаю тренировки и никто не замечает, я хочу делиться прогрессом с близким, чтобы не бросить тихо',
@@ -1264,7 +1447,9 @@ const CHAL = {
        'Respondents quit workouts much less often when a friend is tracking the same habit together with them',
        'As a user, I want to invite friends via a link so that we can work on our habits together right in the app']),
      why:L('Остальное — job story с готовым решением (рейтинг) и ситуацией «открываю приложение» вместо жизненной, инсайт из интервью без ситуации и мотивации и user story про фичу приглашений.',
-       'The others are a job story with a ready-made solution (the leaderboard) and “I open the app” instead of a real-life situation, an interview insight with no situation or motivation, and a user story about an invite feature.')},
+       'The others are a job story with a ready-made solution (the leaderboard) and “I open the app” instead of a real-life situation, an interview insight with no situation or motivation, and a user story about an invite feature.'),
+     hint:L('Ситуация в job story — это момент из жизни человека, а не действие в интерфейсе. А мотивация — это потребность, а не конкретная фича.',
+      'The situation in a job story is a moment in the person’s life, not an action in the interface. And the motivation is a need, not a specific feature.')},
     {ctx:L('В интервью люди жалуются: в загруженный день они вспоминают о привычках только ночью, когда уже поздно.',
        'In interviews, people complain that on busy days they only remember their habits at night, when it’s too late.'),
      good:L('Когда день на работе закрутился, я хочу вспомнить о привычке, пока ещё успеваю, чтобы не жалеть о ней ночью',
@@ -1276,7 +1461,9 @@ const CHAL = {
        'I want to be an organized person who never forgets anything and gets it all done, even on the busiest days',
        'As a busy professional, I want AI-powered smart reminders so that I never miss a single one of my habits']),
      why:L('Остальное — цель компании (больше напоминаний ради отметок), мечта без конкретной ситуации и user story, где вместо мотивации — готовое решение (AI-напоминания).',
-       'The others are the company’s goal (more reminders to get more check-ins), an aspiration with no specific situation, and a user story with a ready-made solution (AI reminders) instead of a motivation.')}
+       'The others are the company’s goal (more reminders to get more check-ins), an aspiration with no specific situation, and a user story with a ready-made solution (AI reminders) instead of a motivation.'),
+     hint:L('Job story — про то, что нужно человеку в конкретный момент его дня, а не про то, что продукт хочет с ним сделать. Проверь, есть ли ситуация, мотивация и результат — без готового решения.',
+      'A job story is about what a person needs at a specific moment in their day, not what the product wants to do to them. Check for a situation, a motivation and an outcome — with no ready-made solution.')}
    ];
    const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
    return {title:L('Сформулируй работу (JTBD)','Frame the job (JTBD)'), type:'choice',
@@ -1284,7 +1471,7 @@ const CHAL = {
      `<p>${s.ctx} The team is writing a job story for next quarter.</p>`),
     question:L('Какая формулировка — правильная job story?','Which one is a proper job story?'), options:opts, answer:opts.indexOf(s.good),
     explain:L(`Job story: <b>«Когда [ситуация], я хочу [мотивация], чтобы [ожидаемый результат]»</b> — без готового решения внутри. ${s.why}`,
-     `Job story: <b>“When [situation], I want to [motivation], so I can [expected outcome]”</b> — with no ready-made solution baked in. ${s.why}`)};
+     `Job story: <b>“When [situation], I want to [motivation], so I can [expected outcome]”</b> — with no ready-made solution baked in. ${s.why}`), hint:s.hint};
  }},
  moscow:{d:'prio', gen(){
    const sets = [
@@ -1294,61 +1481,87 @@ const CHAL = {
      bad:L(['Чат с напарником, включая голосовые сообщения','Рейтинг всех пар напарников по длине их серий','Собственные аватары и рамки профиля напарников'],
       ['Chat with your buddy, including voice messages','A leaderboard ranking all buddy pairs by streak','Custom avatars and profile frames for buddies']),
      why:L('Без связи с напарником и видимости его прогресса гипотезу о поддержке не проверить. Чат, рейтинг и аватары — Could/Won’t на первом шаге.',
-      'Without connecting with a buddy and seeing their progress, you can’t test the support hypothesis. Chat, the leaderboard and avatars are Could/Won’t for the first step.')},
+      'Without connecting with a buddy and seeing their progress, you can’t test the support hypothesis. Chat, the leaderboard and avatars are Could/Won’t for the first step.'),
+     hint:L('Перечитай гипотезу: что именно она утверждает про поддержку напарника? Must have — то, без чего её не проверить за 2 недели, а не то, что сделает фичу приятнее.',
+      'Reread the hypothesis: what exactly does it claim about a buddy’s support? The Must have is what you can’t test it without in 2 weeks, not what makes the feature nicer.')},
     {ctx:L('MVP «заморозки серии». Гипотеза: если пропуск одного дня не обнуляет серию, меньше людей уходит после первого срыва. Срок — 10 дней.',
        'An MVP of “streak freeze.” Hypothesis: if missing one day doesn’t reset the streak, fewer people leave after their first slip. Deadline: 10 days.'),
      good:L('Одна бесплатная заморозка в неделю, спасающая серию','One free freeze a week that saves your streak'),
      bad:L(['Покупка дополнительных заморозок внутри приложения','Календарь серии, где замороженные дни отмечены синим','Кнопка «Поделиться рекордом серии» в соцсетях'],
       ['Buying extra freezes as an in-app purchase','A streak calendar with frozen days shown in blue','A “Share my record streak” social media button']),
      why:L('Гипотеза — о том, что пропуск не обнуляет серию, и для проверки хватит одной бесплатной заморозки. Платные заморозки — монетизация, календарь и шеринг — полировка; всё это после подтверждения.',
-      'The hypothesis is about a missed day not resetting the streak, so one free freeze is enough to test it. Paid freezes are monetization; the calendar and sharing are polish — all of that comes after validation.')},
+      'The hypothesis is about a missed day not resetting the streak, so one free freeze is enough to test it. Paid freezes are monetization; the calendar and sharing are polish — all of that comes after validation.'),
+     hint:L('Сформулируй, что именно должно произойти с серией в день пропуска, чтобы гипотеза проверилась. Must have — самый минимум, без которого этот механизм не заработает за 10 дней.',
+      'Spell out what exactly has to happen to the streak on a missed day for the hypothesis to be tested. The Must have is the bare minimum that makes that mechanism work within 10 days.')},
     {ctx:L('MVP виджета для главного экрана. Гипотеза: если отмечаться можно без открытия приложения, ежедневных отметок станет больше. Срок — 2 недели.',
        'An MVP of a home screen widget. Hypothesis: if people can check in without opening the app, daily check-ins will go up. Deadline: 2 weeks.'),
      good:L('Отметка привычки одним тапом прямо в виджете','One-tap check-in right from the widget'),
      bad:L(['Выбор темы оформления и размера для виджета','График прогресса за всю неделю внутри виджета','Версии виджета для экрана блокировки и часов'],
       ['A choice of widget themes and sizes','A weekly progress chart inside the widget','Lock screen and smartwatch versions']),
      why:L('Гипотеза — про отметку без открытия приложения, значит, Must have — отметка в один тап. Темы и график её не проверяют, а экран блокировки и часы — Should на следующую итерацию.',
-      'The hypothesis is about checking in without opening the app, so the Must have is one-tap check-in. Themes and the chart don’t test it, and the lock screen and smartwatch are Should for the next iteration.')},
+      'The hypothesis is about checking in without opening the app, so the Must have is one-tap check-in. Themes and the chart don’t test it, and the lock screen and smartwatch are Should for the next iteration.'),
+     hint:L('Найди в гипотезе главное действие пользователя. Must have — то, без чего это действие невозможно; всё, что лишь украшает или расширяет виджет, подождёт.',
+      'Find the key user action in the hypothesis. The Must have is whatever that action is impossible without; anything that just decorates or extends the widget can wait.')},
     {ctx:L('MVP интеграции с Apple Health. Гипотеза: если привычка «10 000 шагов» отмечается сама, люди дольше её не бросают. Срок — 3 недели.',
        'An MVP of Apple Health integration. Hypothesis: if a “10,000 steps” habit checks itself off, people stick with it longer. Deadline: 3 weeks.'),
      good:L('Автоотметка шагов по данным Apple Health','Auto check-in for steps from Apple Health'),
      bad:L(['Синхронизация ещё и с Google Fit и Garmin','Графики шагов и пульса прямо в приложении','Экспорт истории привычек в Apple Health'],
       ['Sync with Google Fit and Garmin as well','Step and heart rate charts right in the app','Exporting habit history to Apple Health']),
      why:L('Проверяем, удерживает ли автоотметка, — значит, нужна именно она. Другие источники данных — Should после подтверждения, а графики и экспорт к гипотезе не относятся.',
-      'You’re testing whether auto check-in keeps people going, so that’s exactly what you need. Other data sources are Should after validation; charts and export have nothing to do with the hypothesis.')},
+      'You’re testing whether auto check-in keeps people going, so that’s exactly what you need. Other data sources are Should after validation; charts and export have nothing to do with the hypothesis.'),
+     hint:L('Сформулируй, какой механизм удержания проверяется в гипотезе, и спроси про каждый пункт: относится ли он именно к нему? Must have — минимальная версия того, без чего ответа не будет.',
+      'Pin down which retention mechanism the hypothesis is testing, then ask of each item: is it about that exact mechanism? The Must have is the minimal version of whatever you can’t get an answer without.')},
     {ctx:L('MVP шаблонов привычек в онбординге. Гипотеза: новички, которые стартуют с готового шаблона, чаще делают первую отметку. Срок — 1 неделя.',
        'An MVP of habit templates in onboarding. Hypothesis: newcomers who start from a ready-made template are more likely to make a first check-in. Deadline: 1 week.'),
      good:L('Пять готовых шаблонов на выбор в онбординге','Pick from five starter templates in onboarding'),
      bad:L(['Каталог всех шаблонов с поиском и категориями','Создание и публикация собственных шаблонов','Рейтинги и отзывы к шаблонам от сообщества'],
       ['A template catalog with search and categories','Users creating and publishing their own templates','Community ratings and reviews for templates']),
      why:L('Чтобы проверить, помогает ли старт с шаблона, хватит нескольких шаблонов в онбординге. Каталог с поиском — Should, когда шаблонов станет много, а свои шаблоны и отзывы — Won’t на этом шаге.',
-      'To test whether starting from a template helps, a handful of templates in onboarding is enough. A searchable catalog is Should once there are lots of templates; user-made templates and reviews are Won’t for now.')}
+      'To test whether starting from a template helps, a handful of templates in onboarding is enough. A searchable catalog is Should once there are lots of templates; user-made templates and reviews are Won’t for now.'),
+     hint:L('Срок — всего неделя, а гипотеза только о том, помогает ли новичку старт с шаблона. Must have — самый маленький объём, которого хватит, чтобы это проверить.',
+      'You have just one week, and the hypothesis is only about whether starting from a template helps newcomers. The Must have is the smallest scope that’s enough to test that.')}
    ];
    const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
    return {title:L('Что обязательно в MVP?','What’s a must for the MVP?'), type:'choice',
     prompt:L(`<p>${s.ctx}</p>`, `<p>${s.ctx}</p>`),
     question:L('Что из этого — Must have для проверки гипотезы?','Which of these is a Must have for testing the hypothesis?'), options:opts, answer:opts.indexOf(s.good),
     explain:L(`MVP проверяет гипотезу минимальным набором: Must have — то, без чего её не проверить. ${s.why}`,
-     `An MVP tests the hypothesis with the bare minimum: Must have is whatever you can’t test it without. ${s.why}`)};
+     `An MVP tests the hypothesis with the bare minimum: Must have is whatever you can’t test it without. ${s.why}`), hint:s.hint};
  }},
  kano:{d:'prio', gen(){
    const items = [
     {t:L('Синхронизация между устройствами: когда работает, никто не хвалит; когда ломается — шквал жалоб.','Cross-device sync: when it works, nobody praises it; when it breaks, complaints pour in.'), a:0,
-     w:L('Синхронизация — базовое ожидание: когда она работает, это воспринимают как должное, а поломку не прощают.','Sync is a basic expectation: when it works, it’s taken for granted, and when it breaks, it isn’t forgiven.')},
+     w:L('Синхронизация — базовое ожидание: когда она работает, это воспринимают как должное, а поломку не прощают.','Sync is a basic expectation: when it works, it’s taken for granted, and when it breaks, it isn’t forgiven.'),
+     hint:L('В модели Кано смотрят на две реакции: когда функция есть и когда её нет (или она сломалась). Сравни, какая из них здесь сильнее.',
+      'The Kano model looks at two reactions: when a feature is there and when it’s missing (or broken). Compare which of the two is stronger here.')},
     {t:L('Напоминания приходят ровно в заданное время: пока всё работает, этого никто не замечает, но стоит пушу опоздать на час — в сторе появляются гневные отзывы.','Reminders arrive exactly at the set time: as long as it works, nobody notices, but the moment a push is an hour late, angry reviews hit the store.'), a:0,
-     w:L('Напоминание вовремя — базовое ожидание: за него не хвалят, а за опоздание наказывают отзывами.','An on-time reminder is a basic expectation: nobody praises it, but a late one gets punished in reviews.')},
+     w:L('Напоминание вовремя — базовое ожидание: за него не хвалят, а за опоздание наказывают отзывами.','An on-time reminder is a basic expectation: nobody praises it, but a late one gets punished in reviews.'),
+     hint:L('Обрати внимание на асимметрию: что пользователи говорят, когда всё работает, и что — когда пуш опаздывает. В модели Кано категорию определяет именно соотношение этих двух реакций.',
+      'Notice the asymmetry: what users say when it works versus when a push is late. In the Kano model, the balance of those two reactions decides the category.')},
     {t:L('Скорость открытия приложения: чем быстрее, тем довольнее пользователи — зависимость почти линейная.','App launch speed: the faster it is, the happier users are — the relationship is almost linear.'), a:1,
-     w:L('Скорость — одномерная характеристика: удовлетворённость растёт пропорционально тому, насколько быстро открывается приложение.','Speed is a one-dimensional attribute: satisfaction rises in proportion to how fast the app opens.')},
+     w:L('Скорость — одномерная характеристика: удовлетворённость растёт пропорционально тому, насколько быстро открывается приложение.','Speed is a one-dimensional attribute: satisfaction rises in proportion to how fast the app opens.'),
+     hint:L('Посмотри на форму зависимости: как меняется удовлетворённость по мере улучшения функции — скачком, плавно или никак?',
+      'Look at the shape of the curve: how does satisfaction change as the feature gets better — in a jump, steadily, or not at all?')},
     {t:L('Лимит привычек в бесплатной версии: чем больше привычек можно вести бесплатно, тем выше удовлетворённость, — и каждая дополнительная заметно её поднимает.','The habit limit on the free plan: the more habits you can track for free, the happier users are — and each extra slot noticeably adds to satisfaction.'), a:1,
-     w:L('Лимит привычек — одномерная характеристика: каждое улучшение примерно линейно добавляет удовлетворённости.','The habit limit is one-dimensional: each improvement adds satisfaction in a roughly linear way.')},
+     w:L('Лимит привычек — одномерная характеристика: каждое улучшение примерно линейно добавляет удовлетворённости.','The habit limit is one-dimensional: each improvement adds satisfaction in a roughly linear way.'),
+     hint:L('Представь график: по горизонтали — сколько привычек доступно бесплатно, по вертикали — удовлетворённость. Какой формы получится линия?',
+      'Picture a chart: free habit slots on the x-axis, satisfaction on the y-axis. What shape does the line take?')},
     {t:L('Анимация-салют после 30 дней серии: пользователи в восторге и делятся скриншотами, хотя раньше её никто не просил.','A fireworks animation after a 30-day streak: users love it and share screenshots, even though nobody ever asked for it.'), a:2,
-     w:L('Салют — привлекательная функция: его никто не ждал, поэтому он радует, а без него никто бы не расстроился.','The fireworks are an attractive feature: nobody expected them, so they delight, and nobody would have missed them.')},
+     w:L('Салют — привлекательная функция: его никто не ждал, поэтому он радует, а без него никто бы не расстроился.','The fireworks are an attractive feature: nobody expected them, so they delight, and nobody would have missed them.'),
+     hint:L('Задай два вопроса: что почувствуют пользователи, если функция есть, и что — если её нет? Важно и то, ждал ли её кто-нибудь вообще.',
+      'Ask two questions: how do users feel when the feature is there, and how do they feel when it isn’t? Whether anyone expected it matters too.')},
     {t:L('Персональные «итоги года» в декабре: никто их не просил и без них никто бы не расстроился, но пользователи массово выкладывают их в соцсети.','A personal “year in review” in December: nobody asked for it and nobody would have missed it, but users post it all over social media.'), a:2,
-     w:L('«Итоги года» — привлекательная функция: неожиданная радость, которой делятся, хотя её отсутствие никого не огорчало.','The year in review is an attractive feature: an unexpected delight that people share, even though nobody minded its absence.')},
+     w:L('«Итоги года» — привлекательная функция: неожиданная радость, которой делятся, хотя её отсутствие никого не огорчало.','The year in review is an attractive feature: an unexpected delight that people share, even though nobody minded its absence.'),
+     hint:L('Сопоставь реакцию на наличие функции с реакцией на её отсутствие — в описании есть и то и другое. Именно эта пара определяет категорию по Кано.',
+      'Weigh the reaction to the feature being there against the reaction to it being missing — the description gives you both. That pair is what sets the Kano category.')},
     {t:L('Выбор из 12 цветов иконки приложения: в опросах пользователям всё равно, есть эта настройка или нет, — на удовлетворённость она не влияет.','A choice of 12 app icon colors: in surveys users don’t care whether the setting exists or not — it has no effect on satisfaction.'), a:3,
-     w:L('Цвета иконки — безразличная функция: ни их наличие, ни отсутствие не меняют удовлетворённость.','Icon colors are indifferent: neither having them nor lacking them changes satisfaction.')},
+     w:L('Цвета иконки — безразличная функция: ни их наличие, ни отсутствие не меняют удовлетворённость.','Icon colors are indifferent: neither having them nor lacking them changes satisfaction.'),
+     hint:L('Ищи в описании, меняется ли удовлетворённость вообще — при наличии функции или при её отсутствии. В модели Кано это и есть главный вопрос.',
+      'Look for whether satisfaction changes at all — when the feature is there or when it’s missing. In the Kano model, that’s the key question.')},
     {t:L('Страница «О команде» в настройках: в Кано-опросе пользователи одинаково нейтральны и к её наличию, и к отсутствию.','An “About the team” page in settings: in a Kano survey, users feel equally neutral whether it’s there or not.'), a:3,
-     w:L('Страница «О команде» — безразличная функция: она не сдвигает удовлетворённость ни в одну сторону.','The “About the team” page is indifferent: it doesn’t move satisfaction either way.')}
+     w:L('Страница «О команде» — безразличная функция: она не сдвигает удовлетворённость ни в одну сторону.','The “About the team” page is indifferent: it doesn’t move satisfaction either way.'),
+     hint:L('В Кано-опросе задают парный вопрос: «Как вам, если функция есть?» и «Как вам, если её нет?». Посмотри, как люди ответили на оба.',
+      'A Kano survey asks a paired question: “How do you feel if the feature is there?” and “How do you feel if it isn’t?” Look at how people answered both.')}
    ];
    const it = pick(items);
    const opts = L(['Обязательная (must-be)','Одномерная (performance)','Привлекательная (delighter)','Безразличная (indifferent)'],
@@ -1356,7 +1569,7 @@ const CHAL = {
    return {title:L('Классифицируй по модели Кано','Classify it with the Kano model'), type:'choice',
     prompt:`<p>${it.t}</p>`, question:L('К какой категории модели Кано относится функция?','Which Kano category does this feature fall into?'), options:opts, answer:it.a,
     explain:L(`${it.w} Напомним: обязательные — их отсутствие злит, наличие не радует; одномерные — удовлетворённость растёт пропорционально качеству; привлекательные — неожиданно радуют, но их отсутствие не замечают; безразличные — ни на что не влияют. Со временем «привлекательные» превращаются в «обязательные».`,
-     `${it.w} Recap: must-be — their absence makes users angry, their presence doesn’t make anyone happy; one-dimensional — satisfaction grows in proportion to quality; attractive — they delight unexpectedly, but nobody notices when they’re missing; indifferent — they don’t move the needle. Over time, attractive features turn into must-bes.`)};
+     `${it.w} Recap: must-be — their absence makes users angry, their presence doesn’t make anyone happy; one-dimensional — satisfaction grows in proportion to quality; attractive — they delight unexpectedly, but nobody notices when they’re missing; indifferent — they don’t move the needle. Over time, attractive features turn into must-bes.`), hint:it.hint};
  }},
  method:{d:'disc', gen(){
    const sets = [
@@ -1366,41 +1579,51 @@ const CHAL = {
      bad:L(['Разослать NPS-опрос всей базе и внимательно прочитать комментарии критиков','Сразу запустить A/B-тест скидки 30% на первый месяц после окончания триала','Собрать мнение поддержки о причинах неоплаты и ранжировать их'],
       ['Send an NPS survey to the whole base and read the detractors’ comments','Launch an A/B test of a 30% first-month discount after the trial','Ask support why people don’t pay and rank the reasons they name']),
      why:L('Нужны ответы от <b>тех самых</b> пользователей, у которых проблема: интервью объяснят «почему», аналитика подтвердит масштаб. NPS по всей базе размыт, A/B-тест скидки — лечение до диагноза, а мнение поддержки — полезный, но вторичный источник.',
-      'You need answers from <b>the very users</b> who have the problem: interviews explain the “why,” analytics confirms the scale. An NPS survey of the whole base is too diluted, a discount A/B test is a cure before a diagnosis, and support’s opinion is useful but secondhand.')},
+      'You need answers from <b>the very users</b> who have the problem: interviews explain the “why,” analytics confirms the scale. An NPS survey of the whole base is too diluted, a discount A/B test is a cure before a diagnosis, and support’s opinion is useful but secondhand.'),
+     hint:L('Сначала определи тип вопроса: «почему» или «сколько»? Потом подумай, от кого нужны ответы — от всех подряд или от тех, у кого проблема.',
+      'First pin down the type of question: “why” or “how many”? Then think about whose answers you need — everyone’s, or those of the people who actually have the problem.')},
     {ctx:L('Интервью выявили пять болей пользователей. Нужно понять, какая из них самая массовая среди активной базы, чтобы выбрать фокус квартала.',
        'Interviews surfaced five user pain points. You need to know which one is the most widespread across the active base to pick the quarter’s focus.'),
      good:L('Опросить в приложении случайную выборку активных и посчитать частоту болей','Run an in-app survey of a random sample of active users to size each pain'),
      bad:L(['Провести ещё 10 интервью и как следует раскопать каждую из пяти найденных болей','Попросить подписчиков Ритма в соцсетях проголосовать за самую главную боль','Посчитать, какая боль чаще всего звучала во всех уже проведённых интервью'],
       ['Run 10 more interviews to dig deeper into each of the five pain points you found','Ask Rhythm’s social media followers to vote for the biggest pain point','Count which pain came up most often in the interviews you’ve already done']),
      why:L('Вопрос «сколько» — количественный: нужен опрос на репрезентативной выборке. Интервью отвечают на «почему», а не на «сколько», и частота упоминаний в нескольких интервью статистически ничего не значит. Подписчики в соцсетях — смещённая выборка, а не активная база.',
-      'A “how many” question is quantitative: you need a survey on a representative sample. Interviews answer “why,” not “how many,” and mention counts from a handful of interviews mean nothing statistically. Social media followers are a biased sample, not your active base.')},
+      'A “how many” question is quantitative: you need a survey on a representative sample. Interviews answer “why,” not “how many,” and mention counts from a handful of interviews mean nothing statistically. Social media followers are a biased sample, not your active base.'),
+     hint:L('Здесь вопрос «сколько» по всей активной базе, а не «почему». Подумай, какой метод даёт цифры, которые можно перенести на всю базу.',
+      'This is a “how many, across the active base” question, not a “why.” Think about which method gives you numbers you can generalize to the whole base.')},
     {ctx:L('В отзывах жалуются, что не могут поменять расписание привычки. Аналитика показывает: до экрана настроек доходят, но изменения не сохраняют.',
        'Reviews complain that people can’t change a habit’s schedule. Analytics shows they reach the settings screen but don’t save their changes.'),
      good:L('Юзабилити-тест на 5 пользователях: дать задачу и попросить думать вслух','Run a usability test with 5 users who think aloud while doing the task'),
      bad:L(['Спросить в приложении: «Легко ли поменять расписание?» по шкале от 1 до 5','Сразу запустить A/B-тест двух вариантов экрана настроек расписания','Собрать тепловую карту кликов по экрану настроек за следующий месяц'],
       ['Ask in-app, “How easy is it to change a schedule?” on a 1-to-5 scale','Launch an A/B test of two different versions of the schedule settings screen','Collect a click heatmap of the settings screen over the next month']),
      why:L('Аналитика уже сказала, <b>где</b> проблема; юзабилити-тест покажет, <b>что именно</b> мешает, — хватит и пяти человек. Оценка по шкале даст цифру без причины, A/B-тест выбирает между вариантами, когда ещё неясно, что чинить, а тепловая карта займёт месяц и всё равно не объяснит «почему».',
-      'Analytics has already told you <b>where</b> the problem is; a usability test shows <b>what exactly</b> gets in the way — five people are enough. A rating scale gives you a number without a reason, an A/B test picks between variants before you know what to fix, and a heatmap takes a month and still won’t explain the “why.”')},
+      'Analytics has already told you <b>where</b> the problem is; a usability test shows <b>what exactly</b> gets in the way — five people are enough. A rating scale gives you a number without a reason, an A/B test picks between variants before you know what to fix, and a heatmap takes a month and still won’t explain the “why.”'),
+     hint:L('Аналитика уже показала, где люди застревают. Теперь нужно увидеть, что именно им мешает, — и как можно быстрее.',
+      'Analytics has already shown where people get stuck. Now you need to see what exactly gets in their way — and as fast as possible.')},
     {ctx:L('Копирайтер предложил новый текст напоминания. Нужно понять, станут ли люди из-за него чаще отмечать привычки.',
        'A copywriter has proposed new reminder copy. You need to know whether it actually makes people check in more often.'),
      good:L('A/B-тест: половине — новый текст, половине — старый, сравнить долю отметок','A/B test it: half see the new copy, half the old; compare check-in rates'),
      bad:L(['Показать оба текста на интервью и спросить, какой из них больше мотивирует','Раскатать новый текст на всех и сравнить отметки за неделю до и после','Опросить пользователей в приложении, какой из двух текстов им больше нравится'],
       ['Show both versions in customer interviews and ask which one motivates more','Roll the new copy out to everyone and compare check-ins week over week','Run an in-app survey asking which of the two versions users like better']),
      why:L('Вопрос причинно-следственный — вызывает ли изменение эффект, — и ответ на него даёт только контролируемый эксперимент. Сравнение «до/после» смешает эффект с сезонностью и днями недели, а мнения в интервью и опросе — это слова, а не поведение.',
-      'This is a causal question — does the change cause the effect — and only a controlled experiment can answer it. A before/after comparison mixes the effect up with seasonality and weekday patterns, and opinions from interviews or surveys are words, not behavior.')},
+      'This is a causal question — does the change cause the effect — and only a controlled experiment can answer it. A before/after comparison mixes the effect up with seasonality and weekday patterns, and opinions from interviews or surveys are words, not behavior.'),
+     hint:L('Это вопрос о причине и следствии: вызывает ли изменение эффект. Подумай, какой метод отделит эффект текста от сезонности и других случайных факторов.',
+      'This is a cause-and-effect question: does the change produce the effect? Think about which method separates the copy’s effect from seasonality and other noise.')},
     {ctx:L('Команда хочет делать семейный тариф — это два месяца разработки. Сначала нужно понять, есть ли на него спрос.',
        'The team wants to build a family plan — two months of development. First, you need to know whether there’s demand for it.'),
      good:L('Добавить на пейвол кнопку «Семейный тариф» и замерить долю нажатий','Add a “Family plan” button to the paywall and measure how many tap it'),
      bad:L(['Спросить в интервью, купили бы люди семейный тариф и за сколько','Сделать семейный тариф целиком и посмотреть на продажи за первый месяц','Опросить всю базу пользователей: «Интересен ли вам семейный тариф?»'],
       ['Ask in interviews whether people would buy a family plan, and at what price','Build the family plan and look at its sales in the first month','Survey the whole base: “Would you be interested in a family plan?”']),
      why:L('Спрос лучше всего проверяет поведение, а не слова: fake door («фальшивая дверь») за пару дней покажет, сколько людей реально хотят тариф. Вопросы о намерениях в интервью и опросе дают завышенные ответы, а сделать тариф целиком — значит потратить два месяца до какой-либо проверки.',
-      'Demand is best tested with behavior, not words: a fake door test shows within a couple of days how many people actually want the plan. Questions about intentions in interviews and surveys produce inflated answers, and building the whole plan means spending two months before you’ve tested anything.')}
+      'Demand is best tested with behavior, not words: a fake door test shows within a couple of days how many people actually want the plan. Questions about intentions in interviews and surveys produce inflated answers, and building the whole plan means spending two months before you’ve tested anything.'),
+     hint:L('Спрос надёжнее проверять поведением, а не словами, — и до того, как тратить два месяца на разработку. Подумай, как увидеть реальное желание купить почти бесплатно.',
+      'Demand is best tested through behavior, not words — and before you spend two months building. Think about how to see real intent to buy at almost no cost.')}
    ];
    const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
    return {title:L('Выбери метод исследования','Choose a research method'), type:'choice',
     prompt:L(`<p>${s.ctx}</p>`, `<p>${s.ctx}</p>`),
     question:L('Какой первый шаг лучше всего?','What’s the best first step?'), options:opts, answer:opts.indexOf(s.good),
-    explain:s.why};
+    explain:s.why, hint:s.hint};
  }},
  hypo:{d:'exp', gen(){
    const sets = [
@@ -1414,7 +1637,9 @@ const CHAL = {
        'Grow D1 retention from 40% to 45% by the end of the quarter with a new two-step onboarding instead of the current five steps',
        'Interviewees complain about lengthy setup, so a 2-step onboarding will lift D1 retention — let’s roll it out to everyone next sprint']),
      why:L('Остальные варианты: без конкретной метрики и величины эффекта («понравится» не измерить), цель на квартал без обоснования и способа проверки и уверенное решение вообще без теста.',
-      'The others: no specific metric or effect size (you can’t measure “will like”), a quarterly target with no rationale or way to test it, and a confident decision with no test at all.')},
+      'The others: no specific metric or effect size (you can’t measure “will like”), a quarterly target with no rationale or way to test it, and a confident decision with no test at all.'),
+     hint:L('Проверь, есть ли в формулировке все части: конкретное изменение, метрика с величиной эффекта, обоснование и способ проверки со сроком. Если чего-то не хватает, результат теста будет не с чем сравнить.',
+      'Check that the wording has every part: a specific change, a metric with an effect size, a rationale, and a way to test it with a timeline. If anything’s missing, you’ll have nothing to judge the result against.')},
     {ctx:L('Перед тестом умных напоминаний, которые приходят в обычное для пользователя время отметки, команда записывает гипотезу.','Before testing smart reminders that arrive at the time a user usually checks in, the team writes down the hypothesis.'),
      good:L('Если слать напоминание в обычное время отметки, доля дней с отметкой вырастет на 10%: сейчас пуши приходят невпопад. A/B-тест, 3 недели',
        'If reminders come at each user’s usual check-in time, the share of check-in days will rise 10%, as pushes now land at random. A/B test, 3 weeks'),
@@ -1425,7 +1650,9 @@ const CHAL = {
        'Smart reminders will make Rhythm feel more caring and, over time, will have a positive effect on engagement, retention and our other key metrics',
        'If reminders arrive at each user’s usual check-in time, people will check in more often. We’ll launch a test and see what the numbers say']),
      why:L('Остальные варианты: три изменения сразу (не поймёшь, что сработало), размытое обещание без метрики и срока и формулировка без порога успеха — «станет больше» подтвердит любой результат.',
-      'The others: three changes at once (you won’t know what worked), a vague promise with no metric or deadline, and a wording with no success threshold — “will check in more” fits almost any result.')},
+      'The others: three changes at once (you won’t know what worked), a vague promise with no metric or deadline, and a wording with no success threshold — “will check in more” fits almost any result.'),
+     hint:L('Спроси про каждую формулировку: какой результат теста её опровергнет? Хорошая гипотеза меняет что-то одно, называет метрику с порогом успеха и говорит, как и когда её проверят.',
+      'Ask of each wording: what test result would prove it wrong? A good hypothesis changes one thing, names a metric with a success threshold, and says how and when it’ll be tested.')},
     {ctx:L('Перед тестом годового тарифа со скидкой 40% на пейволе команда записывает гипотезу в трекер экспериментов.','Before testing an annual plan at 40% off on the paywall, the team logs the hypothesis in the experiment tracker.'),
      good:L('Если добавить годовой тариф со скидкой 40%, выручка на увидевшего пейвол вырастет на 8%: многие хотят платить реже. A/B-тест, 4 недели',
        'If we add an annual plan at 40% off, revenue per paywall viewer will grow 8%, since many users want to pay less often. A/B test, 4 weeks'),
@@ -1436,7 +1663,9 @@ const CHAL = {
        'All three of our main competitors have a discounted annual plan, so we need one too — we’ll add it to the paywall next release',
        'If we add a discounted annual plan, revenue will grow, because many users want to pay less often. We’ll launch it and check the results in a month']),
      why:L('Остальные варианты: цель на квартал без обоснования и проверки, решение по примеру конкурентов без теста и формулировка без величины эффекта и контрольной группы — её нельзя опровергнуть.',
-      'The others: a quarterly target with no rationale or test, a copy-the-competitors decision with no test, and a wording with no effect size or control group — it can’t be proven wrong.')},
+      'The others: a quarterly target with no rationale or test, a copy-the-competitors decision with no test, and a wording with no effect size or control group — it can’t be proven wrong.'),
+     hint:L('Отличай гипотезу от цели и от решения: гипотезу можно опровергнуть тестом с контрольной группой. Ищи формулировку, где есть изменение, метрика с величиной эффекта, обоснование и срок проверки.',
+      'Tell a hypothesis apart from a goal or a decision: a hypothesis can be proven wrong by a test with a control group. Look for the wording with a change, a metric with an effect size, a rationale, and a test timeline.')},
     {ctx:L('Перед тестом приглашения напарника в конце онбординга команда записывает гипотезу.','Before testing a habit buddy invite at the end of onboarding, the team writes down the hypothesis.'),
      good:L('Если предлагать позвать напарника в конце онбординга, W4 retention вырастет на 3 п.п.: с напарником реже бросают. A/B-тест, 5 недель',
        'If we suggest inviting a habit buddy after onboarding, W4 retention will rise 3 pp, since people with a buddy quit less. A/B test, 5 weeks'),
@@ -1447,7 +1676,9 @@ const CHAL = {
        'A habit buddy invite will make Rhythm more social, boost user engagement and, over time, help the whole product grow faster',
        'If we prompt users to invite a buddy at the end of onboarding, more new users will invite their friends to Rhythm. We’ll run a 5-week A/B test']),
      why:L('Остальные варианты: корреляция выдана за причину (с напарником остаются те, кто и так мотивирован), размытое обещание без метрики и срока и «метрика», которая просто повторяет само изменение, — к тому же без величины эффекта.',
-      'The others: correlation passed off as causation (people who already have a buddy may simply be more motivated), a vague promise with no metric or deadline, and a “metric” that just restates the change itself — with no effect size, too.')},
+      'The others: correlation passed off as causation (people who already have a buddy may simply be more motivated), a vague promise with no metric or deadline, and a “metric” that just restates the change itself — with no effect size, too.'),
+     hint:L('Хорошая гипотеза называет метрику, ради которой всё затевается, с величиной эффекта и предлагает тест, который отделит причину от совпадения. Проверь каждую формулировку на эти два пункта.',
+      'A good hypothesis names the metric the whole thing is for, with an effect size, and proposes a test that separates cause from coincidence. Check each wording against those two points.')},
     {ctx:L('Перед тестом заморозки серии команда записывает гипотезу в трекер экспериментов.','Before testing streak freeze, the team logs the hypothesis in the experiment tracker.'),
      good:L('Если давать одну заморозку в неделю, отток после первого пропуска упадёт на 15%: люди бросают, увидев обнулённую серию. A/B-тест, 3 недели',
        'If we give one streak freeze a week, churn after a first miss will drop 15%, since people quit once their streak resets. A/B test, 3 weeks'),
@@ -1458,14 +1689,16 @@ const CHAL = {
        'Cut churn after a first missed day from 40% to 34% by the end of the quarter by launching streak freeze for all Rhythm users',
        'Users keep asking for streak freeze in app store reviews, so it will definitely reduce churn — let’s build it and ship it in the next release']),
      why:L('Остальные варианты: три изменения сразу (не поймёшь, что сработало), цель на квартал без обоснования и способа проверки и уверенное решение без теста — просьбы в отзывах ещё не доказывают эффект.',
-      'The others: three changes at once (you won’t know what worked), a quarterly target with no rationale or way to test it, and a confident decision with no test — requests in reviews don’t prove an effect.')}
+      'The others: three changes at once (you won’t know what worked), a quarterly target with no rationale or way to test it, and a confident decision with no test — requests in reviews don’t prove an effect.'),
+     hint:L('Гипотеза должна менять что-то одно, называть метрику с величиной эффекта, объяснять «почему» и говорить, как и когда её проверят. Если чего-то нет, тест не сможет её ни подтвердить, ни опровергнуть.',
+      'A hypothesis should change one thing, name a metric with an effect size, explain the “why,” and say how and when it’ll be tested. If anything’s missing, no test can confirm or refute it.')}
    ];
    const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
    return {title:L('Какая гипотеза сформулирована правильно?','Which hypothesis is well-formed?'), type:'choice',
     prompt:L(`<p>${s.ctx}</p>`, `<p>${s.ctx}</p>`),
     question:L('Выбери корректную формулировку.','Pick the correct wording.'), options:opts, answer:opts.indexOf(s.good),
     explain:L(`Проверяемая гипотеза: <b>изменение → ожидаемый эффект на конкретную метрику (с величиной) → обоснование → способ и срок проверки</b>. ${s.why}`,
-     `A testable hypothesis: <b>change → expected effect on a specific metric (with a size) → rationale → how and by when you’ll test it</b>. ${s.why}`)};
+     `A testable hypothesis: <b>change → expected effect on a specific metric (with a size) → rationale → how and by when you’ll test it</b>. ${s.why}`), hint:s.hint};
  }},
  primary:{d:'exp', gen(){
    const sets = [
@@ -1474,38 +1707,48 @@ const CHAL = {
      bad:L(['Число отправленных пушей на пользователя в день','Среднее число открытий приложения в день на человека','Выручка от новых подписчиков за весь квартал'],
       ['Number of push notifications sent per user per day','Average number of app opens per user per day','Total revenue from new subscribers this quarter']),
      why:L('Пуши — это то, что ты сам меняешь; открытия легко «накрутить» тем же пушем; выручка за квартал слишком запаздывает и шумит.',
-      'Pushes are the very thing you’re changing; app opens are easy to inflate with that same push; quarterly revenue lags too much and is too noisy.')},
+      'Pushes are the very thing you’re changing; app opens are easy to inflate with that same push; quarterly revenue lags too much and is too noisy.'),
+     hint:L('Спроси про каждую метрику: показывает ли она, что людям стало лучше, и успеет ли сдвинуться за 2 недели? Она не должна расти просто потому, что ты что-то включил.',
+      'Ask of each metric: does it show users are better off, and can it move within 2 weeks? It shouldn’t go up just because you switched something on.')},
     {ctx:L('Тестируешь новый текст пейвола, который пользователи видят в конце триала. Тест длится 3 недели.','You’re testing new paywall copy that users see at the end of their trial. The test runs for 3 weeks.'),
      good:L('Конверсия в оплату среди увидевших пейвол','Paid conversion of users who saw the paywall'),
      bad:L(['Среднее время, проведённое на экране пейвола','Доля нажавших на кнопку выбора тарифа','Рейтинг приложения в App Store за месяц'],
       ['Average time users spend on the paywall screen','Share of users who tap one of the plan buttons','Rhythm’s App Store rating for the month']),
      why:L('Время на экране можно трактовать в обе стороны, нажатие на тариф — промежуточный шаг (до оплаты доходят не все), а рейтинг почти не зависит от пейвола и меняется медленно.',
-      'Time on screen can be read either way, tapping a plan is an intermediate step (not everyone goes on to pay), and the store rating barely depends on the paywall and moves slowly.')},
+      'Time on screen can be read either way, tapping a plan is an intermediate step (not everyone goes on to pay), and the store rating barely depends on the paywall and moves slowly.'),
+     hint:L('Подумай, ради какого финального действия вообще существует пейвол. Хорошая основная метрика однозначна: её рост — всегда хорошая новость, а не повод для споров.',
+      'Think about the final action the paywall exists for. A good primary metric is unambiguous: when it rises, that’s always good news, not something to argue about.')},
     {ctx:L('Тестируешь онбординг из 2 шагов вместо 5 на новых пользователях. Тест длится 2 недели.','You’re testing a 2-step onboarding instead of 5 steps on new users. The test runs for 2 weeks.'),
      good:L('Доля новых, отмечающихся на 7-й день','Share of new users who check in on day 7'),
      bad:L(['Доля новых, дошедших до конца онбординга','Среднее время прохождения всего онбординга','Число привычек, созданных при регистрации'],
       ['Share of new users who complete onboarding','Average time it takes to finish onboarding','Number of habits created during sign-up']),
      why:L('Доходимость и время онбординга улучшатся механически — шагов стало меньше, — но это не значит, что люди получили ценность. Число привычек при регистрации может упасть просто потому, что убрали шаг их выбора, и это не обязательно плохо.',
-      'Completion rate and onboarding time will improve mechanically — there are fewer steps — but that doesn’t mean people got any value. The number of habits created at sign-up may drop simply because a step was removed, and that’s not necessarily bad.')},
+      'Completion rate and onboarding time will improve mechanically — there are fewer steps — but that doesn’t mean people got any value. The number of habits created at sign-up may drop simply because a step was removed, and that’s not necessarily bad.'),
+     hint:L('Когда шагов становится меньше, часть метрик улучшится механически, даже если пользы не прибавилось. Ищи метрику, которая показывает, что человек получил ценность от продукта уже после онбординга.',
+      'With fewer steps, some metrics will improve mechanically even if nobody gets more value. Look for the metric that shows people got value from the product after onboarding.')},
     {ctx:L('Тестируешь экран «Позови напарника» в конце онбординга. Цель — удержание. Тест длится 4 недели.','You’re testing an “Invite a buddy” screen at the end of onboarding. The goal is retention. The test runs for 4 weeks.'),
      good:L('Retention 3-й недели по всей тестовой группе','Week-3 retention across the whole test group'),
      bad:L(['Retention 3-й недели среди тех, кто позвал напарника','Число отправленных приглашений на пользователя','Доля приглашённых, установивших приложение'],
       ['Week-3 retention among users who invited a buddy','Average number of buddy invites sent per user','Share of invited friends who install the app']),
      why:L('Считать нужно по всей группе: приглашают самые мотивированные, и их retention выше и без фичи — это смещение отбора. Приглашения и установки по ним — промежуточные метрики, а цель теста — удержание.',
-      'Measure across the whole group: the most motivated users are the ones who invite, and they retain better even without the feature — that’s selection bias. Invites sent and installs from invites are intermediate metrics, while the goal of the test is retention.')},
+      'Measure across the whole group: the most motivated users are the ones who invite, and they retain better even without the feature — that’s selection bias. Invites sent and installs from invites are intermediate metrics, while the goal of the test is retention.'),
+     hint:L('Цель теста — удержание, а рандомизация делает группы сравнимыми только целиком. Остерегайся сравнивать пользователей, которые сами себя отобрали.',
+      'The test’s goal is retention, and randomization only makes the groups comparable as a whole. Watch out for comparing users who selected themselves.')},
     {ctx:L('Тестируешь годовой тариф со скидкой 40% на пейволе. Тест длится 4 недели.','You’re testing an annual plan at 40% off on the paywall. The test runs for 4 weeks.'),
      good:L('Выручка за 30 дней на увидевшего пейвол','30-day revenue per user who saw the paywall'),
      bad:L(['Доля годовых подписок среди всех оплат','Конверсия пейвола в покупку любого тарифа','Средний чек одной оплаты подписки'],
       ['Share of annual plans among all payments','Paywall conversion to a purchase of any plan','Average size of a single subscription payment']),
      why:L('Скидка двигает метрики в разные стороны: доля годовых и средний чек вырастут почти наверняка, конверсия может вырасти за счёт дешёвого предложения. Итог показывает только выручка на увидевшего пейвол — она учитывает и конверсию, и цену.',
-      'The discount pushes metrics in different directions: the annual share and the average payment size will almost certainly go up, and conversion may rise thanks to the cheaper offer. Only revenue per paywall viewer shows the net effect — it captures both conversion and price.')}
+      'The discount pushes metrics in different directions: the annual share and the average payment size will almost certainly go up, and conversion may rise thanks to the cheaper offer. Only revenue per paywall viewer shows the net effect — it captures both conversion and price.'),
+     hint:L('Скидка двигает разные метрики в разные стороны: одни вырастут почти наверняка, другие могут просесть. Нужна метрика, которая учитывает и сколько людей заплатило, и сколько они заплатили.',
+      'A discount pushes different metrics in different directions: some will almost surely rise, others may fall. You need a metric that captures both how many people paid and how much they paid.')}
    ];
    const s = pick(sets); const opts = shuffle([s.good, ...s.bad]);
    return {title:L('Основная метрика теста','The test’s primary metric'), type:'choice',
     prompt:L(`<p>${s.ctx}</p>`, `<p>${s.ctx}</p>`),
     question:L('Что выбрать основной метрикой теста?','What should the test’s primary metric be?'), options:opts, answer:opts.indexOf(s.good),
     explain:L(`Основная метрика должна отражать ценность, реагировать на изменение и успевать сдвинуться за срок теста. ${s.why}`,
-     `The primary metric should reflect value, respond to the change, and be able to move within the test window. ${s.why}`)};
+     `The primary metric should reflect value, respond to the change, and be able to move within the test window. ${s.why}`), hint:s.hint};
  }}
 };
 
@@ -1885,7 +2128,7 @@ function pickScenarios(){
   return ids;
 }
 function newGame(){
-  const m = {users:45000, ret:0.80, conv:0.05, arppu:9, cac:2.5, viral:0.03, cash:START_CASH, trust:60, morale:62, debt:40, budget:20000, debtShare:0};
+  const m = {users:45000, ret:0.80, conv:0.05, arppu:9, cac:2.5, viral:0.03, cash:START_CASH, trust:60, morale:62, debt:40, budget:20000, budgetRec:20000, debtShare:0};
   const d = derive(m);
   S = { v:2, month:1, phase:'scenario', m,
     history:[{month:0, users:m.users, mrr:d.mrr, cash:m.cash, ratio:d.ratio, ret:d.effRet}],
@@ -1936,10 +2179,11 @@ function answerChallenge(val){
     ok = Math.abs(v-c.answer) <= Math.max(Math.abs(c.answer)*c.tol, c.abs||0); S.cur.chalAns = v;
   } else { ok = val===c.answer; S.cur.chalAns = val; }
   S.cur.chalOk = ok;
-  S.xp[c.d] += ok?40:10; S.acc[c.d][0] += ok?2:0; S.acc[c.d][1] += 2;
+  const hint = !!S.cur.hintUsed;
+  S.xp[c.d] += ok ? (hint ? HINT.xp : 40) : 10; S.acc[c.d][0] += ok ? (hint ? 1 : 2) : 0; S.acc[c.d][1] += 2;
   if(ok) applyFx(CHAL_BONUS[c.d].fx);
   streakHit(ok);
-  S.log.push({kind:'chal', d:c.d, ok, title:{ru:c.txt.ru.title, en:c.txt.en.title}, explain:{ru:c.txt.ru.explain, en:c.txt.en.explain}});
+  S.log.push({kind:'chal', d:c.d, ok, hint, title:{ru:c.txt.ru.title, en:c.txt.en.title}, explain:{ru:c.txt.ru.explain, en:c.txt.en.explain}});
   S.phase = 'chalFeedback'; save(); render();
 }
 function closeMonth(){
@@ -1984,7 +2228,8 @@ const levelFromXp = x => Math.floor(x/100)+1;
 function finalScore(){
   const sc = S.log.filter(l=>l.kind==='scen'), ch = S.log.filter(l=>l.kind==='chal');
   const s1 = sc.length ? sc.reduce((a,l)=>a+QUAL[l.q].pts,0)/(2*sc.length) : 0;
-  const s2 = ch.length ? ch.filter(l=>l.ok).length/ch.length : 0;
+  // a right answer with a hint counts half
+  const s2 = ch.length ? ch.reduce((a,l)=>a + (l.ok ? (l.hint ? 0.5 : 1) : 0), 0)/ch.length : 0;
   const skill = (s1+s2)/2;
   const d = derive(S.m), growth = d.mrr/S.initMrr;
   const biz = 0.4*clamp((growth-0.8)/1.7,0,1) + 0.3*clamp((d.ratio-1)/3,0,1) + 0.15*(S.m.cash>0?1:0) + 0.15*S.m.trust/100;
@@ -2426,7 +2671,7 @@ function renderIntro(){
     <div class="rules">
       <div class="rule"><b>${L('Ситуация','Situation')}</b><span>${L('Стейкхолдеры приносят проблемы. Выбираешь решение и получаешь разбор: почему так и что говорит практика.','Stakeholders bring you problems. You make the call and get a debrief: why it works and what practice says.')}</span></div>
       <div class="rule"><b>${L('Задача месяца','Challenge of the month')}</b><span>${L('Расчёт LTV, чтение A/B-теста, RICE, когорты, CustDev. Верный ответ даёт XP и бонус к метрикам.','LTV math, reading an A/B test, RICE, cohorts, customer interviews. A right answer earns XP and a metrics boost.')}</span></div>
-      <div class="rule"><b>${L('Итоги месяца','Month in review')}</b><span>${L('Модель пересчитывает пользователей, выручку и кэш. Потом твой ход: маркетинговый бюджет и доля команды на техдолг на следующий месяц.','The model recalculates users, revenue and cash. Then it’s your move: the marketing budget and how much of the team goes to tech debt next month.')}</span></div>
+      <div class="rule"><b>${L('Итоги месяца','Month in review')}</b><span>${L('Модель пересчитывает пользователей, выручку и кэш. Потом твой ход: рекомендация маркетингу по бюджету и доля команды на техдолг на следующий месяц.','The model recalculates users, revenue and cash. Then it’s your move: a budget recommendation to marketing and how much of the team goes to tech debt next month.')}</span></div>
     </div>
     <p style="margin-bottom:6px"><b>${L('Цели на игру','Your goals')}</b></p>
     <div class="goals"><span class="chip">${L('MRR +25% к 5-му месяцу','MRR +25% by month 5')}</span><span class="chip">MRR ×2</span><span class="chip">LTV / CAC ≥ 3</span><span class="chip">${L('Кэш > 0','Cash > 0')}</span><span class="chip">${L('Доверие команды','Team trust')}</span></div>
@@ -2457,7 +2702,7 @@ function renderScenario(){
     <div class="msg-head"><div class="ava" style="background:${p.color}">${p.ini}</div><div class="msg-who"><b>${p.name}</b><span>${p.role} · ${days[(S.month*3)%5]}, ${9+(S.month*7)%9}:${String((S.month*17)%60).padStart(2,'0')}</span></div></div>
     <h2 class="h-display">${sc.title}</h2>
     <div class="msg-body">${sc.text}</div>
-    <div class="opts" role="list">${order.map((i,pos)=>{ const op = sc.options[i]; let cls='opt'; if(done){ if(op.q==='best') cls+=' is-best'; else if(i===picked) cls+=' is-wrong'; if(i===picked) cls+=' picked'; } return `<button class="${cls}" data-act="scen" data-i="${i}" ${done?'disabled':''}><kbd>${pos+1}</kbd><span>${op.t}</span></button>`; }).join('')}</div>
+    <div class="opts${sc.options.every(o=>o.img)?' wf':''}" role="list">${order.map((i,pos)=>{ const op = sc.options[i]; let cls='opt'; if(done){ if(op.q==='best') cls+=' is-best'; else if(i===picked) cls+=' is-wrong'; if(i===picked) cls+=' picked'; } return `<button class="${cls}" data-act="scen" data-i="${i}" ${done?'disabled':''}><kbd>${pos+1}</kbd>${op.img?`<span class="opt-img">${op.img}</span>`:''}<span>${op.t}</span></button>`; }).join('')}</div>
     ${done ? `<div class="verdict ${o.q}"><h3>${sc.dilemma && o.q==='best' ? L('Обоснованный выбор','A defensible call') : QUAL[o.q].label}<span class="xp">+${QUAL[o.q].xp} XP</span></h3><p>${o.fb}</p>${altBest(sc, o)}<p><b>${L('Принцип:','Principle:')}</b> ${sc.lesson}</p>${fxChips(o.fx)}${o.later?`<div class="later">${L('Часть эффекта проявится','Part of the effect will show up')} ${later}</div>`:''}</div>
       <div class="actions"><button class="btn primary" data-act="toChal" data-primary>${L('К задаче месяца →','To the monthly challenge →')}</button></div>` : `<p class="hint" style="margin-top:14px">${L('Можно выбрать клавишами','You can also press')} 1–${sc.options.length}</p>`}
   </div>`;
@@ -2476,8 +2721,10 @@ function renderChallenge(){
     <h2 class="h-display">${c.title}</h2>
     <div style="margin-bottom:16px">${c.prompt}</div>
     <p><b>${c.question}</b></p>
+    ${c.hint && S.cur.hintUsed ? `<div class="hint-box"><b>${L('Подсказка','Hint')}</b>${c.hint}</div>` : ''}
+    ${c.hint && !done && !S.cur.hintUsed ? `<p style="margin:0 0 12px"><button class="btn ghost hint-btn" data-act="hint">💡 ${L(`Подсказка (−${HINT.cost} XP)`,`Hint (−${HINT.cost} XP)`)}</button></p>` : ''}
     ${body}
-    ${done ? `<div class="verdict ${S.cur.chalOk?'best':'bad'}"><h3>${S.cur.chalOk?L('Верно','Correct'):L('Мимо','Miss')}<span class="xp">+${S.cur.chalOk?40:10} XP</span></h3>${c.type==='number'?`<p>${L('Правильный ответ:','Correct answer:')} <b class="num">${c.unit==='$'?'$'+int(c.answer):dec(c.answer,1)+' '+c.unit}</b>${S.cur.chalOk?'':` · ${L('твой:','yours:')} <span class="num">${S.cur.chalAns}</span>`}</p>`:''}<p>${c.explain}</p>${S.cur.chalOk?`<p class="hint">${L('Бонус:','Bonus:')} ${b.why}.</p>${fxChips(b.fx)}`:''}</div>
+    ${done ? `<div class="verdict ${S.cur.chalOk?'best':'bad'}"><h3>${S.cur.chalOk?(S.cur.hintUsed?L('Верно, с подсказкой','Correct, with a hint'):L('Верно','Correct')):L('Мимо','Miss')}<span class="xp">+${S.cur.chalOk?(S.cur.hintUsed?HINT.xp:40):10} XP</span></h3>${c.type==='number'?`<p>${L('Правильный ответ:','Correct answer:')} <b class="num">${c.unit==='$'?'$'+int(c.answer):dec(c.answer,1)+' '+c.unit}</b>${S.cur.chalOk?'':` · ${L('твой:','yours:')} <span class="num">${S.cur.chalAns}</span>`}</p>`:''}<p>${c.explain}</p>${S.cur.chalOk?`<p class="hint">${L('Бонус:','Bonus:')} ${b.why}.</p>${fxChips(b.fx)}`:''}</div>
       <div class="actions"><button class="btn primary" data-act="close" data-primary>${S.month>=MONTHS?L('Закрыть последний месяц →','Close the final month →'):L('Закрыть месяц →','Close the month →')}</button></div>` : ''}
   </div>`;
 }
@@ -2503,12 +2750,12 @@ function renderSummary(){
     ${(s.fired.length||s.debtWarn) ? `<div class="notes">${s.fired.map(r=>`<div class="note">${laterNote(r)}</div>`).join('')}${s.debtWarn?`<div class="note warn">${L('Техдолг выше 50 — релизы ломаются, retention снижается. Отдай часть команды на техдолг ниже.','Tech debt is above 50 — releases break and retention drops. Put part of the team on it below.')}</div>`:''}</div>`:''}
     <section class="move" aria-label="${L('Твой ход','Your move')}">
       <div class="move-head"><span class="chip move-chip">${L('Твой ход','Your move')}</span><b>${L(`Решения на месяц ${S.month+1}`,`Decisions for month ${S.month+1}`)}</b></div>
-      <p class="hint">${L('Два рычага, которые есть только здесь: сколько тратить на рекламу и сколько сил команды отдать техдолгу.','Two levers you only get here: how much to spend on ads and how much of the team to put on tech debt.')}</p>
+      <p class="hint">${L('Два рычага, которые есть только здесь: твоя рекомендация маркетингу по бюджету и доля команды на техдолг.','Two levers you only get here: your budget recommendation to marketing and how much of the team goes to tech debt.')}</p>
       <div class="budget">
-        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Маркетинговый бюджет','Marketing budget')}</b></span><b id="bval">${money(m.budget)}</b></div>
-        <input type="range" id="budget" min="0" max="60000" step="5000" value="${m.budget}" aria-label="${L('Маркетинговый бюджет','Marketing budget')}">
+        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Рекомендация маркетингу по бюджету','Budget recommendation to marketing')}</b></span><b id="bval">${money(m.budgetRec ?? m.budget)}</b></div>
+        <input type="range" id="budget" min="0" max="60000" step="5000" value="${m.budgetRec ?? m.budget}" aria-label="${L('Рекомендация по маркетинговому бюджету','Marketing budget recommendation')}">
         <div class="budget-calc" id="bcalc"></div>
-        <p class="hint" style="margin:10px 0 0">${L('Выше $20k каналы насыщаются и CAC растёт. Масштабируй, только если LTV / CAC здоровый — иначе сжигаешь кэш быстрее.','Above $20k, channels saturate and CAC climbs. Scale only if LTV / CAC is healthy — otherwise you just burn cash faster.')}</p>
+        <p class="hint" style="margin:10px 0 0">${L(`Бюджет решает маркетинг, а ты приносишь данные и рекомендацию. Чем выше доверие к тебе, тем ближе решение Лены к твоей цифре; сама она тянет к ${money(MKT.pref)} — ей нужны установки. Выше $20k каналы насыщаются и CAC растёт.`,`Marketing owns the spend; you bring the data and a recommendation. The more they trust you, the closer Lena lands to your number; left alone she leans toward ${money(MKT.pref)} because she needs installs. Above $20k, channels saturate and CAC climbs.`)}</p>
       </div>
       <div class="budget">
         <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Команда на техдолг','Team on tech debt')}</b></span><b id="dval">${Math.round((m.debtShare||0)*100)}%</b></div>
@@ -2523,9 +2770,9 @@ function renderSummary(){
 }
 function updateBudget(){
   const el = $('#budget'); if(!el) return;
-  S.m.budget = +el.value; const d = derive(S.m);
-  $('#bval').textContent = money(S.m.budget);
-  $('#bcalc').innerHTML = `<div><span>${L('CAC установки','CAC per install')}</span><b>$${dec(d.effCac,2)}</b></div><div><span>${L('Установок из рекламы','Installs from ads')}</span><b>≈ ${int(S.m.budget/d.effCac)}</b></div><div><span>${L('CAC платящего','CAC per payer')}</span><b>$${dec(d.cacPayer,0)}</b></div><div><span>LTV / CAC</span><b>${dec(d.ratio,1)}</b></div><div><span>${L('Расходы в месяц','Monthly costs')}</span><b>${money(d.burn)}</b></div>`;
+  S.m.budgetRec = +el.value; S.m.budget = lenaBudget(S.m.budgetRec, S.m.trust); const d = derive(S.m);
+  $('#bval').textContent = money(S.m.budgetRec);
+  $('#bcalc').innerHTML = `<div class="lena"><span>${L('Лена ставит','Lena sets')} · ${L('доверие','trust')} ${Math.round(S.m.trust)}</span><b>${money(S.m.budget)}</b></div><div><span>${L('CAC установки','CAC per install')}</span><b>$${dec(d.effCac,2)}</b></div><div><span>${L('Установок из рекламы','Installs from ads')}</span><b>≈ ${int(S.m.budget/d.effCac)}</b></div><div><span>${L('CAC платящего','CAC per payer')}</span><b>$${dec(d.cacPayer,0)}</b></div><div><span>LTV / CAC</span><b>${dec(d.ratio,1)}</b></div><div><span>${L('Расходы в месяц','Monthly costs')}</span><b>${money(d.burn)}</b></div>`;
   const ds = $('#debtShare');
   if(ds){
     const m = S.m; m.debtShare = +ds.value/100;
@@ -2593,6 +2840,7 @@ document.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
   const a = b.dataset.act;
   if(a==='lang'){ setLang(b.dataset.lang); return; }
+  if(a==='hint'){ if(S && S.phase==='challenge' && !S.cur.hintUsed){ S.cur.hintUsed = true; track('hint'); save(); render(); } return; }
   if(a==='theme'){ setTheme(themeNow()==='dark' ? 'light' : 'dark'); return; }
   if(a==='shareCard'){ shareCard(); return; }
   if(a==='lbSubmit'){ lbSubmit(); return; }
