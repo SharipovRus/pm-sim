@@ -245,6 +245,24 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.comp-lbl{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+button.chip.comp{cursor:pointer; font:inherit; font-size:12px; font-weight:600; text-decoration:underline dotted; text-underline-offset:3px}
+button.chip.comp:hover{border-color:var(--accent); color:var(--accent)}
+.goal{border:1px solid var(--line); border-radius:12px; background:var(--surface2); margin:0 0 18px; font-size:14px}
+.goal summary{display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer; list-style:none}
+.goal summary::-webkit-details-marker{display:none}
+.goal-txt{flex:1; min-width:0}
+.goal-more{flex:none; font-size:12px; font-weight:600; color:var(--accent)}
+.goal-more::after{content:' ▾'}
+.goal[open] .goal-more::after{content:' ▴'}
+.goal-body{padding:0 14px 12px; display:grid; gap:10px}
+.goal-top{display:flex; justify-content:space-between; gap:10px; font-size:13px; margin-bottom:4px}
+.goal-top b{font-family:var(--mono)}
+.goal-top b.ok{color:var(--good)}
+.cur-val{font-size:13px; color:var(--muted)}
+.cur-val b{margin-left:4px}
+.range-scale{display:flex; justify-content:space-between; margin:2px 2px 0; font-family:var(--mono); font-size:11px; color:var(--muted)}
+
 .chip.comp{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
 .chip.comp.sec{background:transparent; border-color:var(--line); color:var(--muted)}
 .link-btn{background:none; border:0; padding:0; color:var(--accent); cursor:pointer; font:inherit; font-size:12px; font-weight:600; letter-spacing:0; text-transform:none}
@@ -2262,7 +2280,7 @@ function annotate(root){
     acceptNode(n){
       if(!n.nodeValue || n.nodeValue.trim().length<2) return NodeFilter.FILTER_REJECT;
       const p = n.parentElement;
-      if(!p || p.closest('.term, .opt, kbd, .lvl, .pill, script, style, .badge, .segs')) return NodeFilter.FILTER_REJECT;
+      if(!p || p.closest('.term, .opt, kbd, .lvl, .pill, script, style, .badge, .segs, .goal summary, .comp-lbl, .chip')) return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
   });
@@ -2291,9 +2309,13 @@ function termCard(g){
 }
 function openTerm(btn){
   const g = GMAP[btn.dataset.term]; if(!g) return;
+  showPop(btn, termCard(g));
+}
+// popover next to an anchor (bottom sheet on narrow screens)
+function showPop(btn, html){
   let pop = document.getElementById('pop');
   if(!pop){ pop = document.createElement('div'); pop.id = 'pop'; pop.setAttribute('role','dialog'); document.body.appendChild(pop); }
-  pop.innerHTML = termCard(g) + `<button class="term-close" data-act="popClose" aria-label="${L('Закрыть','Close')}">×</button>`;
+  pop.innerHTML = html + `<button class="term-close" data-act="popClose" aria-label="${L('Закрыть','Close')}">×</button>`;
   pop.hidden = false; pop.classList.remove('sheet');
   const narrow = window.innerWidth < 620;
   if(narrow){ pop.classList.add('sheet'); pop.style.left = ''; pop.style.top = ''; }
@@ -2800,7 +2822,35 @@ function compScores(){
   });
   return out;
 }
-function compChips(tags){ return tags.map((k,i)=>`<span class="chip comp${i?' sec':''}">${compName(k)}</span>`).join(''); }
+function compChips(tags){
+  return `<span class="comp-lbl">${L('прокачиваешь','builds')}</span>` + tags.map((k,i)=>`<button class="chip comp${i?' sec':''}" data-act="compInfo" data-k="${k}" title="${L('Что это за компетенция','What this competency is')}">${compName(k)}</button>`).join('');
+}
+function openCompInfo(btn){
+  const c = COMP.find(x=>x.k===btn.dataset.k); if(!c) return;
+  showPop(btn, `<h4>${c.name[LANG]}</h4><div class="term-sub">${L('Компетенция продакта · уровни от Junior до Head','PM competency · levels from Junior to Head')}</div><p>${c.def[LANG]}</p><p class="hint">${c.game[LANG]}</p><button class="link-btn" data-act="matrix">${L('Вся матрица компетенций →','Full competency matrix →')}</button>`);
+}
+
+/* ============ goal bar ============ */
+// collapsible reminder of what the game is about, on every game screen
+const GOAL_KEY = 'ritm-goal-open';
+function goalBar(){
+  const d = derive(S.m), growth = d.mrr/S.initMrr;
+  let open = false; try{ open = localStorage.getItem(GOAL_KEY)==='1'; }catch(e){}
+  const row = (label, now, pct, ok) => `<div class="goal-row"><div class="goal-top"><span>${label}</span><b class="${ok?'ok':''}">${now}</b></div><div class="bar"><i class="${ok?'good':'warn'}" style="width:${Math.round(clamp(pct,0,1)*100)}%"></i></div></div>`;
+  const pctTxt = g => (g>=1?'+':'−') + dec(Math.abs(g-1)*100,0) + '%';
+  const review = S.review
+    ? `<div class="goal-row"><div class="goal-top"><span>${L('Ревью инвестора после 5-го месяца','Investor review after month 5')}</span><b class="${S.review.lvl==='full'?'ok':''}">${L('транш','tranche')}: ${trancheL(S.review.lvl)}</b></div></div>`
+    : row(L(`MRR +${dec((REVIEW.full-1)*100,0)}% к ${REVIEW.month}-му месяцу → транш ${money(REVIEW.tranche)}`,`MRR +${dec((REVIEW.full-1)*100,0)}% by month ${REVIEW.month} → ${money(REVIEW.tranche)} tranche`), pctTxt(growth), (growth-1)/(REVIEW.full-1), growth>=REVIEW.full);
+  return `<details class="goal" id="goal"${open?' open':''}>
+    <summary><span class="goal-ico" aria-hidden="true">🎯</span><span class="goal-txt"><b>${L('Цель игры:','Your goal:')}</b> ${L('за 10 месяцев вырастить MRR вдвое, держать LTV / CAC выше 3 и не остаться без денег','grow MRR 2× in 10 months, keep LTV / CAC above 3 and don’t run out of cash')}</span><span class="goal-more">${L('прогресс','progress')}</span></summary>
+    <div class="goal-body">
+      ${row(L('MRR ×2 к концу игры','MRR ×2 by the end'), '×'+dec(growth,2), growth/2, growth>=2)}
+      ${review}
+      ${row('LTV / CAC ≥ 3', dec(d.ratio,1), d.ratio/3, d.ratio>=3)}
+      ${row(L('Кэш больше нуля','Cash above zero'), money(S.m.cash) + (d.runway===Infinity ? '' : ' · ' + dec(d.runway,1) + L(' мес.',' mo')), S.m.cash/START_CASH, S.m.cash>0)}
+      <p class="hint" style="margin:8px 0 0">${L('Попутно каждое решение прокачивает 7 компетенций продакта.','Along the way, every call builds 7 PM competencies.')} <button class="link-btn" data-act="matrix">${L('Матрица компетенций →','Competency matrix →')}</button></p>
+    </div></details>`;
+}
 const compTop = (n=2) => { const cs = compScores(); return COMP_KEYS.filter(k=>cs[k].score!==null).sort((a,b)=>cs[b].score-cs[a].score).slice(0,n); };
 function compProfile(){
   const cs = compScores();
@@ -3234,14 +3284,16 @@ function renderSummary(){
       <div class="move-head"><span class="chip move-chip">${L('Твой ход','Your move')}</span><b>${L(`Решения на месяц ${S.month+1}`,`Decisions for month ${S.month+1}`)}</b></div>
       <p class="hint">${L('Два рычага, которые есть только здесь: твоя рекомендация маркетингу по бюджету и доля команды на техдолг.','Two levers you only get here: your budget recommendation to marketing and how much of the team goes to tech debt.')}</p>
       <div class="budget">
-        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Рекомендация маркетингу по бюджету','Budget recommendation to marketing')}</b></span><b id="bval">${money(m.budgetRec ?? m.budget)}</b></div>
+        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Рекомендация маркетингу по бюджету','Budget recommendation to marketing')}</b></span><span class="cur-val">${L('ты рекомендуешь','you recommend')} <b id="bval">${money(m.budgetRec ?? m.budget)}</b></span></div>
         <input type="range" id="budget" min="0" max="60000" step="5000" value="${m.budgetRec ?? m.budget}" aria-label="${L('Рекомендация по маркетинговому бюджету','Marketing budget recommendation')}">
+        <div class="range-scale" aria-hidden="true"><span>$0</span><span>$20k</span><span>$40k</span><span>$60k</span></div>
         <div class="budget-calc" id="bcalc"></div>
         <p class="hint" style="margin:10px 0 0">${L(`Бюджет решает маркетинг, а ты приносишь данные и рекомендацию. Чем выше доверие к тебе, тем ближе решение Лены к твоей цифре; сама она тянет к ${money(MKT.pref)} — ей нужны установки. Выше $20k каналы насыщаются и CAC растёт.`,`Marketing owns the spend; you bring the data and a recommendation. The more they trust you, the closer Lena lands to your number; left alone she leans toward ${money(MKT.pref)} because she needs installs. Above $20k, channels saturate and CAC climbs.`)}</p>
       </div>
       <div class="budget">
-        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Команда на техдолг','Team on tech debt')}</b></span><b id="dval">${Math.round((m.debtShare||0)*100)}%</b></div>
+        <div class="budget-top"><span><b style="font-family:var(--body);font-size:15px">${L('Команда на техдолг','Team on tech debt')}</b></span><span class="cur-val">${L('сейчас','now')} <b id="dval">${Math.round((m.debtShare||0)*100)}%</b></span></div>
         <input type="range" id="debtShare" min="0" max="${DEBT_WORK.max*100}" step="10" value="${Math.round((m.debtShare||0)*100)}" aria-label="${L('Доля команды на техдолг','Share of the team on tech debt')}">
+        <div class="range-scale" aria-hidden="true"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span></div>
         <div class="budget-calc" id="dcalc"></div>
         <p class="hint" style="margin:10px 0 0">${L(`Сам по себе техдолг растёт на ${DEBT_WORK.drift} в месяц, а выше 50 режет retention. Каждые 10% команды снимают по ${dec(DEBT_WORK.paydown/10,1)} пункта, но фич выходит меньше — и органики тоже.`,`Tech debt grows by ${DEBT_WORK.drift} a month on its own, and above 50 it cuts retention. Every 10% of the team removes ${dec(DEBT_WORK.paydown/10,1)} points, but fewer features ship — and organic growth slows too.`)}</p>
       </div>
@@ -3309,6 +3361,7 @@ function render(){
   closeTerm();
   if(!S){ renderIntro(); annotate($('#stage')); return; }
   ({scenario:renderScenario, scenFeedback:renderScenario, challenge:renderChallenge, chalFeedback:renderChallenge, summary:renderSummary, end:renderEnd})[S.phase]();
+  if(S.phase!=='end') $('#stage').insertAdjacentHTML('afterbegin', goalBar());
   annotate($('#stage'));
   if(S.phase==='end'){ paintCard(); renderCertBox(); renderLb(); }
 }
@@ -3337,7 +3390,8 @@ document.addEventListener('click', e=>{
   if(a==='lbEdit'){ const bx = $('#lb-end'); if(bx){ bx.dataset.edit = '1'; renderLb(); } return; }
   if(a==='board'){ openBoard(); return; }
   if(a==='boardClose'){ closeBoard(); return; }
-  if(a==='matrix'){ openMatrix(); return; }
+  if(a==='matrix'){ closeTerm(); openMatrix(); return; }
+  if(a==='compInfo'){ openCompInfo(b); return; }
   if(a==='matrixClose'){ closeMatrix(); return; }
   if(a==='shareLi'){ shareLinkedIn(); return; }
   if(a==='copyRes'){ copyResult(); return; }
@@ -3353,6 +3407,7 @@ document.addEventListener('click', e=>{
   else if(a==='close'){ closeMonth(); window.scrollTo({top:0}); }
   else if(a==='next'){ nextMonth(); window.scrollTo({top:0}); }
 });
+document.addEventListener('toggle', e=>{ if(e.target.id==='goal'){ try{ localStorage.setItem(GOAL_KEY, e.target.open ? '1' : '0'); }catch(err){} } }, true);
 document.addEventListener('input', e=>{
   if(e.target.id==='budget' || e.target.id==='debtShare') updateBudget();
   else if(e.target.id==='gsearch') filterSheet(e.target.value);
