@@ -8,14 +8,16 @@
 
 ## Что внутри
 
-- **42 кейса от стейкхолдеров.** CEO, маркетинг, техлид, поддержка, аналитик, дизайнер и инвестор приносят проблемы: от трёх макетов экрана на выбор до сырых цитат пользователей, которые нужно разобрать. После каждого выбора — разбор: какой вариант сильнее и почему. Шесть кейсов — дилеммы: в них два сильных варианта с разной ценой, и решаешь ты, чем платить.
-- **17 типов задач** с подсказками (за них снимают очки) и генерируемыми числами: LTV, окупаемость CAC, значимость A/B-теста, размер выборки, RICE, воронка, когортная таблица, CustDev, JTBD, модель Кано.
+- **45 кейсов от стейкхолдеров.** CEO, маркетинг, техлид, поддержка, аналитик, дизайнер и инвестор приносят проблемы: от трёх макетов экрана на выбор до сырых цитат пользователей, которые нужно разобрать. После каждого выбора — разбор: какой вариант сильнее и почему. Семь кейсов — дилеммы: в них два сильных варианта с разной ценой, и решаешь ты, чем платить.
+- **20 типов задач** с подсказками (за них снимают очки) и генерируемыми числами: LTV, окупаемость CAC, значимость A/B-теста, размер выборки, RICE, воронка, когортная таблица, CustDev, JTBD, модель Кано.
 - **Экономическая модель.** Пользователи, удержание, конверсия, кэш и техдолг пересчитываются каждый месяц и реагируют на решения — иногда с задержкой. В итогах месяца ты рекомендуешь маркетингу бюджет (решение за ними, и чем выше доверие, тем ближе оно к твоему) и решаешь, сколько сил команды отдать техдолгу.
 - **Шпаргалка.** 58 терминов с расшифровкой аббревиатуры, переводом и формулой. Термины в тексте кликабельны.
 - **Итоги.** Грейд от стажёра до Head of Product, достижения, список того, что стоит подтянуть, и карточка результата, которой можно поделиться.
 - **Сертификат и лидерборд.** За полное прохождение — именной сертификат с проверкой по ссылке и кнопкой «добавить в профиль LinkedIn». Лучший результат можно отправить в общий рейтинг.
 
-Темы: discovery и CustDev, приоритизация и роадмап, метрики и юнит-экономика, A/B-тесты и аналитика.
+## Матрица компетенций
+
+Игрок получает уровень от Junior до Head по 7 компетенциям: пользователь и дискавери, стратегия, приоритизация и execution, данные и эксперименты, бизнес и экономика продукта, стейкхолдеры, лидерство и решения. Матрица собрана из публичных PM-фреймворков Авито, GitLab, Intercom, Wise, Monzo и Atlassian — полностью, с источниками: [COMPETENCIES.md](COMPETENCIES.md).
 
 ## Технически
 
@@ -37,8 +39,9 @@
 
 **Rhythm** is a browser-based product manager simulator. You're the PM of a habit-tracker subscription app: 10 in-game months and $350k in the bank. After month 5 the investor decides on a second tranche, and they want MRR up 25%. The goal is to grow revenue, get LTV / CAC above 3 and not run out of cash.
 
-- 42 stakeholder cases with a debrief after every call (from choosing between a designer’s three mockups to making sense of raw user quotes), including 6 dilemmas where both strong options come at a different price
-- 17 challenge types with hints (they cost points) and generated numbers: LTV, CAC payback, A/B test significance, sample size, RICE, funnels, cohort tables, customer interviews, JTBD, Kano
+- 45 stakeholder cases with a debrief after every call (from choosing between a designer’s three mockups to making sense of raw user quotes), including 7 dilemmas where both strong options come at a different price
+- A competency profile from Junior to Head across 7 PM competencies, built on the public PM frameworks of Avito, GitLab, Intercom, Wise, Monzo and Atlassian ([COMPETENCIES.md](COMPETENCIES.md))
+- 20 challenge types with hints (they cost points) and generated numbers: LTV, CAC payback, A/B test significance, sample size, RICE, funnels, cohort tables, customer interviews, JTBD, Kano
 - A business model that recalculates users, retention, revenue, cash and tech debt every month; you recommend a budget to marketing (they make the call, closer to yours the more they trust you) and decide how much of the team goes to tech debt
 - A cheat sheet of 58 PM terms; terms in the text are clickable
 - A shareable result card with your grade and metrics at the end
