@@ -245,6 +245,26 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.vs-prev{font-size:14px; font-weight:600; color:var(--muted)}
+.vs-prev.up{color:var(--good)} .vs-prev.down{color:var(--bad)}
+.comp-lv{display:inline-flex; align-items:center; gap:8px}
+.comp-lv .was{font-size:12px; color:var(--muted)}
+.runs-list{display:grid; gap:10px}
+.run{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface)}
+.run.best{border-color:var(--xp)}
+.run-top{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:var(--muted)}
+.run-main{display:flex; align-items:baseline; gap:12px; margin:4px 0 2px}
+.run-main b{font-family:var(--display); font-size:18px}
+.run-dl{font-size:13px; font-weight:700} .run-dl.up{color:var(--good)} .run-dl.down{color:var(--bad)}
+.run-meta{font-size:13px; color:var(--muted)}
+.run-comps{display:flex; flex-wrap:wrap; gap:4px; margin-top:8px}
+.rl{display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:6px; font-size:12px; border:1px solid var(--line); background:var(--surface2); color:var(--muted)}
+.rl b{font-weight:700}
+.rl.l1{background:var(--warn-soft); border-color:var(--warn); color:var(--warn)}
+.rl.l2{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+.rl.l3{background:var(--good-soft); border-color:var(--good); color:var(--good)}
+.rl.l4{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+
 .plain-toggle{display:flex; gap:8px; align-items:flex-start; font-size:13px; color:var(--muted); cursor:pointer; margin-top:2px}
 .plain-toggle input{margin-top:2px; accent-color:var(--accent)}
 
@@ -335,8 +355,8 @@ table.lb-t a{color:var(--accent); text-decoration:none} table.lb-t a:hover{text-
 #pop p, .gitem p{margin:0 0 8px; font-size:14px}
 .term-f{font-family:var(--mono); font-size:12.5px; background:var(--surface2); border:1px solid var(--line); border-radius:8px; padding:7px 10px}
 .term-close{position:absolute; top:8px; right:10px; background:none; border:0; font-size:20px; line-height:1; color:var(--muted); cursor:pointer}
-#pop[hidden], #sheet[hidden], #board[hidden], #matrix[hidden]{display:none !important}
-#sheet, #board, #matrix{position:fixed; inset:0; z-index:70; background:rgba(10,14,18,.45); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px}
+#pop[hidden], #sheet[hidden], #board[hidden], #matrix[hidden], #runs[hidden]{display:none !important}
+#sheet, #board, #matrix, #runs{position:fixed; inset:0; z-index:70; background:rgba(10,14,18,.45); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px}
 .sheet-panel{background:var(--bg); border:1px solid var(--line); border-radius:18px; width:min(880px,100%); max-height:100%; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
 .sheet-head{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 18px 12px}
 .sheet-head b{font-size:19px}
@@ -2478,7 +2498,7 @@ function closeMonth(){
   S.history.push({month:S.month, users:m.users, mrr:fin.mrr, cash:m.cash, ratio:fin.ratio, ret:fin.effRet});
   S.summary = {prev, fired:fired.map(f=>({sid:f.sid, oi:f.oi})), newUsers:organic+paid, paid, organic, churned:prev.users*(1-d.effRet), debtWarn:d.debtPen>0, review};
   S.phase = m.cash<0 ? 'end' : (S.month>=MONTHS ? 'end' : 'summary');
-  if(S.phase==='end'){ S.ended = true; track(m.cash<0 ? 'bust' : 'finish'); }
+  if(S.phase==='end'){ S.ended = true; track(m.cash<0 ? 'bust' : 'finish'); saveRun(); }
   save(); render();
 }
 function nextMonth(){ S.month++; startMonth(); }
@@ -2905,17 +2925,56 @@ function goalBar(){
 }
 const compTop = (n=2) => { const cs = compScores(); return COMP_KEYS.filter(k=>cs[k].score!==null).sort((a,b)=>cs[b].score-cs[a].score).slice(0,n); };
 function compProfile(){
-  const cs = compScores();
+  const cs = compScores(), prev = S.runAt ? prevRun() : null;
   return `<div class="section-h" id="comp-sec">${L('Профиль компетенций','Competency profile')}</div>
   <p class="hint" style="margin-top:-4px">${L('Уровни — по публичным матрицам продактов Авито, GitLab, Intercom, Wise, Monzo и Atlassian. Уровень зависит и от качества решений, и от того, как часто компетенция проявлялась: для Head нужно минимум 6 ходов.','Levels follow the public PM frameworks of Avito, GitLab, Intercom, Wise, Monzo and Atlassian. The level depends on both the quality of your calls and how often the competency came up: Head takes at least 6 moves.')} <button class="link-btn" data-act="matrix">${L('Вся матрица →','Full matrix →')}</button></p>
   <div class="comp-list">${COMP.map(c=>{ const r = cs[c.k];
     if(r.score===null) return `<div class="comp-row muted"><b>${c.name[LANG]}</b><span>${L('в этой партии не встретилась','not tested this run')}</span></div>`;
     const nx = Math.min(r.level+1, 4);
-    return `<div class="comp-row"><div class="comp-top"><b>${c.name[LANG]} <span class="comp-n">${L(`ходов: ${r.n}`, `${r.n} ${r.n===1?'move':'moves'}`)}</span></b><span class="chip lvl-chip l${r.level}">${COMP_LVL[r.level][1]}</span></div>
+    return `<div class="comp-row"><div class="comp-top"><b>${c.name[LANG]} <span class="comp-n">${L(`ходов: ${r.n}`, `${r.n} ${r.n===1?'move':'moves'}`)}</span></b><span class="comp-lv">${prev && prev.comps && prev.comps[c.k]!=null && prev.comps[c.k]!==r.level ? `<span class="was">${L('было','was')} ${COMP_LVL[prev.comps[c.k]][1]}</span>` : ''}<span class="chip lvl-chip l${r.level}">${COMP_LVL[r.level][1]}</span></span></div>
       <div class="bar"><i style="width:${Math.round(r.score*100)}%"></i></div>
       <p>${c.levels[r.level][LANG]}</p>
       ${r.level<4 ? `<p class="hint">${r.capped ? L('Для уровня выше нужно больше ходов в этой компетенции. ','More moves in this competency are needed for a higher level. ') : ''}${L('До уровня','To reach')} ${COMP_LVL[nx][1]}: ${c.levels[nx][LANG]}</p>` : ''}</div>`; }).join('')}</div>`;
 }
+/* ============ run history ============ */
+// every finished run is kept in this browser so players can compare runs (the leaderboard keeps only the best one)
+const RUNS_KEY = 'ritm-runs', RUNS_MAX = 50;
+function getRuns(){ try{ return JSON.parse(localStorage.getItem(RUNS_KEY)) || []; }catch(e){ return []; } }
+function saveRun(){
+  if(!S || S.runAt) return;
+  const f = finalScore(), d = derive(S.m), cs = compScores();
+  S.runAt = Date.now();
+  const run = {at:S.runAt, grade:f.grade===L('Стажёр','Intern') ? 'Intern' : f.grade, score:Math.round(f.total*100), growth:+f.growth.toFixed(2), ratio:+d.ratio.toFixed(2),
+    cash:Math.round(S.m.cash), bust:S.m.cash<0, month:S.month, tranche:S.review ? S.review.lvl : null,
+    comps:Object.fromEntries(COMP_KEYS.map(k=>[k, cs[k].score===null ? null : cs[k].level]))};
+  try{ localStorage.setItem(RUNS_KEY, JSON.stringify([run, ...getRuns()].slice(0, RUNS_MAX))); }catch(e){}
+}
+// the run before the current one (for "compared with last time")
+function prevRun(){ const runs = getRuns(); const i = runs.findIndex(r=>r.at===S.runAt); return i>=0 ? runs[i+1] : runs[0]; }
+const runDate = ts => new Intl.DateTimeFormat(LANG==='en'?'en-US':'ru-RU', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}).format(new Date(ts));
+function openRuns(){
+  let s = document.getElementById('runs');
+  if(!s){ s = document.createElement('div'); s.id = 'runs'; document.body.appendChild(s); }
+  const runs = getRuns(), best = runs.reduce((b,r)=>!b || r.score>b.score ? r : b, null);
+  const SHORT = {user:L('Дискавери','Discovery'), strategy:L('Стратегия','Strategy'), exec:'Execution', data:L('Данные','Data'), biz:L('Бизнес','Business'), stake:L('Стейкхолдеры','Stakeholders'), lead:L('Лидерство','Leadership')};
+  const lv = (k, i) => i===null || i===undefined
+    ? `<span class="rl" title="${compName(k)}: ${L('не встретилась','not tested')}">${SHORT[k]} <b>—</b></span>`
+    : `<span class="rl l${i}" title="${compName(k)}: ${COMP_LVL[i][1]}">${SHORT[k]} <b>${COMP_LVL[i][1][0]}</b></span>`;
+  s.innerHTML = `<div class="sheet-panel" role="dialog" aria-label="${L('Мои партии','My runs')}">
+    <div class="sheet-head"><b class="h-display">${L('Мои партии','My runs')}</b><button class="btn ghost" data-act="runsClose">${L('Закрыть','Close')}</button></div>
+    <div class="sheet-body">
+      ${runs.length ? `<p class="hint" style="margin:0">${L(`Партий: ${runs.length} · лучшая: ${best.score} / 100 (${gradeL(best.grade)}). История хранится в этом браузере.`,`Runs: ${runs.length} · best: ${best.score} / 100 (${gradeL(best.grade)}). History is kept in this browser.`)}</p>
+      <p class="hint" style="margin:0">${L('Буквы — уровень по компетенции: J — Junior, M — Middle, S — Senior, L — Lead, H — Head.','Letters are the competency level: J — Junior, M — Middle, S — Senior, L — Lead, H — Head.')}</p>
+      <div class="runs-list">${runs.map((r,i)=>{ const nx = runs[i+1]; const dl = nx ? r.score - nx.score : null;
+        return `<div class="run${r===best?' best':''}"><div class="run-top"><span class="run-date">${runDate(r.at)}</span>${r===best?`<span class="chip lvl-chip l4">${L('лучшая','best')}</span>`:''}</div>
+        <div class="run-main"><b>${gradeL(r.grade)}</b><span class="num">${r.score} / 100</span>${dl!==null&&dl!==0?`<span class="run-dl ${dl>0?'up':'down'}">${dl>0?'+':'−'}${Math.abs(dl)}</span>`:''}</div>
+        <div class="run-meta">MRR ×${dec(r.growth,2)} · LTV / CAC ${dec(r.ratio,1)} · ${r.bust ? L(`банкротство на ${r.month}-м месяце`,`bust in month ${r.month}`) : L('10 месяцев','10 months')}</div>
+        <div class="run-comps">${COMP_KEYS.map(k=>lv(k, r.comps && r.comps[k])).join('')}</div></div>`; }).join('')}</div>`
+      : `<p class="hint" style="margin:0">${L('Пока пусто: доиграй партию, и она появится здесь.','Nothing here yet: finish a run and it will show up here.')}</p>`}
+    </div></div>`;
+  s.hidden = false; track('runs-open');
+}
+function closeRuns(){ const s = document.getElementById('runs'); if(s) s.hidden = true; }
 function openMatrix(){
   let s = document.getElementById('matrix');
   if(!s){ s = document.createElement('div'); s.id = 'matrix'; document.body.appendChild(s); }
@@ -3244,6 +3303,8 @@ function domainChip(d){ return `<span class="chip d-${d}">${DOMAINS[d].name}</sp
 
 function renderIntro(){
   const saved = load();
+  // a run finished before history existed goes into the history too
+  if(saved && saved.ended && !saved.runAt){ const keep = S; S = saved; saveRun(); save(); S = keep; }
   $('#stage').innerHTML = `<div class="fade">
     <div class="intro-hero">
       <div class="eyebrow"><span class="chip">${L('Продуктовый симулятор','Product simulator')}</span><span>${L('10 месяцев · ~25 минут','10 months · ~25 minutes')}</span></div>
@@ -3264,6 +3325,7 @@ function renderIntro(){
       ${saved && !saved.ended ? `<button class="btn primary" data-act="continue" data-primary>${L('Продолжить · месяц','Continue · month')} ${saved.month}</button><button class="btn" data-act="new">${L('Начать заново','Start over')}</button>` : `<button class="btn primary" data-act="new" data-primary>${L('Начать игру','Start the game')}</button>`}
       ${lbOn() ? `<button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard')}</button>` : ''}
       <button class="btn ghost" data-act="matrix">${L('Матрица компетенций','Competency matrix')}</button>
+      ${getRuns().length ? `<button class="btn ghost" data-act="runs">${L('Мои партии','My runs')} · ${getRuns().length}</button>` : ''}
       <span class="hint">${L('Кейсы и цифры каждый раз новые','Cases and numbers change every run')}</span>
     </div></div>`;
 }
@@ -3376,7 +3438,7 @@ function renderEnd(){
   $('#stage').innerHTML = `<div class="fade">
     <div class="eyebrow"><span>${bust?L(`Игра окончена на месяце ${S.month}`,`Game over in month ${S.month}`):L('Итоги 10 месяцев','10 months in review')}</span></div>
     <h2 class="h-display">${bust?L('Кэш закончился. Инвестор не дал следующий транш.','You ran out of cash. The investor passed on the next tranche.'):(f.growth>=2?L('Ты вырастил «Ритм»','You grew Rhythm'):L('Квартальное ревью с инвестором','Quarterly review with the investor'))}</h2>
-    <div class="grade"><span class="grade-badge">${f.grade}</span><span class="score">${Math.round(f.total*100)} / 100</span></div>
+    <div class="grade"><span class="grade-badge">${f.grade}</span><span class="score">${Math.round(f.total*100)} / 100</span>${(()=>{ const p = prevRun(); if(!p) return ''; const dl = Math.round(f.total*100) - p.score; return `<span class="vs-prev ${dl>0?'up':(dl<0?'down':'')}">${dl===0 ? L('как в прошлой партии','same as last run') : (dl>0?'+':'−') + Math.abs(dl) + L(' к прошлой партии',' vs. last run')}</span><button class="link-btn" data-act="runs">${L('Все мои партии →','All my runs →')}</button>`; })()}</div>
     ${lbOn() ? `<div class="end-cta">${certEligible() ? `<button class="chip" data-act="goto" data-target="cert-sec">🏅 ${L('Получить сертификат','Get your certificate')} ↓</button>` : ''}<button class="chip" data-act="goto" data-target="lb-sec">🏆 ${L('Попасть в лидерборд','Join the leaderboard')} ↓</button></div>` : ''}
     <p class="lead">${L(`Качество решений: ${Math.round(f.s1*100)}% · задачи: ${Math.round(f.s2*100)}% · бизнес-результат: ${Math.round(f.biz*100)}%. Грейд на 60% зависит от решений и задач, на 40% — от метрик продукта.`,
       `Decision quality: ${Math.round(f.s1*100)}% · challenges: ${Math.round(f.s2*100)}% · business results: ${Math.round(f.biz*100)}%. Your grade is 60% decisions and challenges, 40% product metrics.`)}</p>
@@ -3427,6 +3489,7 @@ document.addEventListener('click', e=>{
   if(e.target.id==='sheet'){ closeSheet(); return; }
   if(e.target.id==='board'){ closeBoard(); return; }
   if(e.target.id==='matrix'){ closeMatrix(); return; }
+  if(e.target.id==='runs'){ closeRuns(); return; }
   const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
   const a = b.dataset.act;
   if(a==='lang'){ setLang(b.dataset.lang); return; }
@@ -3447,6 +3510,8 @@ document.addEventListener('click', e=>{
   if(a==='matrix'){ closeTerm(); openMatrix(); return; }
   if(a==='compInfo'){ openCompInfo(b); return; }
   if(a==='matrixClose'){ closeMatrix(); return; }
+  if(a==='runs'){ openRuns(); return; }
+  if(a==='runsClose'){ closeRuns(); return; }
   if(a==='shareLi'){ shareLinkedIn(); return; }
   if(a==='sheet'){ openSheet(); return; }
   if(a==='sheetClose'){ closeSheet(); return; }
@@ -3469,7 +3534,7 @@ document.addEventListener('input', e=>{
   else if(e.target.id==='gsearch') filterSheet(e.target.value);
 });
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){ const mx = document.getElementById('matrix'); if(mx && !mx.hidden){ closeMatrix(); return; } const bd = document.getElementById('board'); if(bd && !bd.hidden){ closeBoard(); return; } const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
+  if(e.key==='Escape'){ const rn = document.getElementById('runs'); if(rn && !rn.hidden){ closeRuns(); return; } const mx = document.getElementById('matrix'); if(mx && !mx.hidden){ closeMatrix(); return; } const bd = document.getElementById('board'); if(bd && !bd.hidden){ closeBoard(); return; } const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
   if(e.target.id==='lb-name' || e.target.id==='lb-li'){ if(e.key==='Enter'){ e.preventDefault(); lbSubmit(); } return; }
   if(e.target.id==='cert-name'){ if(e.key==='Enter'){ e.preventDefault(); certIssue(); } return; }
   if(e.target.id==='ans-num'){ if(e.key==='Enter'){ e.preventDefault(); answerChallenge(e.target.value); } return; }
