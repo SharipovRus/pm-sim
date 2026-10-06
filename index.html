@@ -245,6 +245,9 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.plain-toggle{display:flex; gap:8px; align-items:flex-start; font-size:13px; color:var(--muted); cursor:pointer; margin-top:2px}
+.plain-toggle input{margin-top:2px; accent-color:var(--accent)}
+
 .comp-lbl{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
 button.chip.comp{cursor:pointer; font:inherit; font-size:12px; font-weight:600; text-decoration:underline dotted; text-underline-offset:3px}
 button.chip.comp:hover{border-color:var(--accent); color:var(--accent)}
@@ -2532,8 +2535,21 @@ function shareText(){
     : L(`Прошёл «Ритм» — симулятор продакт-менеджера: ${f.grade}, ${Math.round(f.total*100)}/100. ${g}. Попробуй сам: ${shareUrl()}`,
         `I played Rhythm, a product manager simulator: ${f.grade}, ${Math.round(f.total*100)}/100. ${g}. Try it yourself: ${shareUrl()}`);
 }
+// "no numbers" card: grade and competency levels only, for people who don't want to show score and metrics
+const CARD_PLAIN_KEY = 'ritm-card-plain';
+function cardPlain(){ try{ return localStorage.getItem(CARD_PLAIN_KEY)==='1'; }catch(e){ return false; } }
+// text for an image post: no link (the card itself shows where the game lives)
+function postText(plain){
+  const f = finalScore(), d = derive(S.m), top = compTop(2).map(compName).join(L(' и ',' and '));
+  if(plain) return S.m.cash<0
+    ? L(`Прошёл «Ритм» — симулятор продакт-менеджера: ${f.grade}. До конца не дотянул, но выводы сделал 😅 #ProductManagement`, `I played Rhythm, a product manager simulator: ${f.grade}. Didn’t make it to the end, but learned a lot 😅 #ProductManagement`)
+    : L(`Прошёл «Ритм» — симулятор продакт-менеджера: ${f.grade}. Сильнее всего — ${top}. #ProductManagement`, `I played Rhythm, a product manager simulator: ${f.grade}. Strongest at ${top}. #ProductManagement`);
+  return S.m.cash<0
+    ? L(`Прошёл «Ритм» — симулятор продакт-менеджера: ${f.grade}, ${Math.round(f.total*100)}/100. Кэш кончился на ${S.month}-м месяце. #ProductManagement`, `I played Rhythm, a product manager simulator: ${f.grade}, ${Math.round(f.total*100)}/100. Ran out of cash in month ${S.month}. #ProductManagement`)
+    : L(`Прошёл «Ритм» — симулятор продакт-менеджера: ${f.grade}, ${Math.round(f.total*100)}/100. MRR ×${dec(f.growth,2)}, LTV / CAC ${dec(d.ratio,1)}. #ProductManagement`, `I played Rhythm, a product manager simulator: ${f.grade}, ${Math.round(f.total*100)}/100. MRR ×${dec(f.growth,2)}, LTV / CAC ${dec(d.ratio,1)}. #ProductManagement`);
+}
 async function drawCard(){
-  const f = finalScore(), d = derive(S.m), bust = S.m.cash<0, H = S.history;
+  const f = finalScore(), d = derive(S.m), bust = S.m.cash<0, H = S.history, plain = cardPlain();
   try{ await Promise.all(['700 60px Unbounded','700 24px Onest','400 22px Onest','600 24px "JetBrains Mono"'].map(x=>document.fonts.load(x, FONT_SAMPLE))); }catch(e){}
   const c = document.createElement('canvas'); c.width = 1200; c.height = 630;
   const x = c.getContext('2d');
@@ -2550,15 +2566,33 @@ async function drawCard(){
   pill(L('МОЙ РЕЗУЛЬТАТ','MY RESULT'),64,122,C.accent,C.accentSoft,'700 16px Onest');
   x.letterSpacing = '0px';
   text(f.grade,64,250,'700 64px Unbounded',C.ink,630);
-  const sw = pill(`${Math.round(f.total*100)} / 100`,64,282,C.xp,C.xpSoft,'600 24px "JetBrains Mono"');
-  text(bust ? L(`Кэш кончился на ${S.month}-м месяце`,`Ran out of cash in month ${S.month}`) : L('10 месяцев пройдено','All 10 months played'),64+sw+16,310,'600 22px Onest',bust?C.bad:C.muted);
-  text(L(`Решения: ${Math.round(f.s1*100)}% · задачи: ${Math.round(f.s2*100)}% · бизнес: ${Math.round(f.biz*100)}%`,`Decisions: ${Math.round(f.s1*100)}% · challenges: ${Math.round(f.s2*100)}% · business: ${Math.round(f.biz*100)}%`),64,385,'400 22px Onest',C.ink,630);
-  const b = badges(); text(L(`Достижения: ${b.filter(z=>z.on).length} из ${b.length}`,`Achievements: ${b.filter(z=>z.on).length} of ${b.length}`),64,425,'400 22px Onest',C.ink);
+  const sw = plain ? -16 : pill(`${Math.round(f.total*100)} / 100`,64,282,C.xp,C.xpSoft,'600 24px "JetBrains Mono"');
+  text(bust ? L(`Дошёл до ${S.month}-го месяца из 10`,`Made it to month ${S.month} of 10`) : L('10 месяцев пройдено','All 10 months played'),64+sw+16,310,'600 22px Onest',bust?C.bad:C.muted);
+  if(!plain) text(L(`Решения: ${Math.round(f.s1*100)}% · задачи: ${Math.round(f.s2*100)}% · бизнес: ${Math.round(f.biz*100)}%`,`Decisions: ${Math.round(f.s1*100)}% · challenges: ${Math.round(f.s2*100)}% · business: ${Math.round(f.biz*100)}%`),64,385,'400 22px Onest',C.ink,630);
+  const b = badges(); text(L(`Достижения: ${b.filter(z=>z.on).length} из ${b.length}`,`Achievements: ${b.filter(z=>z.on).length} of ${b.length}`),64,plain?385:425,'400 22px Onest',C.ink);
   text(SITE.replace('https://','').replace(/\/$/,'')+(LANG==='en'?'/en':''),64,548,'700 24px Onest',C.accent);
   text(L('Сыграй сам — бесплатно, в браузере','Play it yourself — free, in your browser'),64,580,'400 19px Onest',C.muted);
-  const top = compTop(2); if(top.length) text(L('Сильнее всего: ','Strongest: ') + top.map(compName).join(' · '),64,465,'400 22px Onest',C.ink,630);
-  // right column: MRR card
+  const top = compTop(2); if(top.length) text(L('Сильнее всего: ','Strongest: ') + top.map(compName).join(' · '),64,plain?425:465,'400 22px Onest',C.ink,630);
   const RX = 760, RW = 376;
+  if(plain){
+    // right column: competency levels instead of business numbers
+    const cs = compScores(), LC = [[C.muted,'#F2F4EF'],[C.warn,C.warnSoft],[C.accent,C.accentSoft],[C.good,C.goodSoft],[C.xp,C.xpSoft]];
+    rr(RX,64,RW,486,18,'#FFFFFF',C.line);
+    x.letterSpacing = '1px'; text(L('КОМПЕТЕНЦИИ PM','PM COMPETENCIES'),RX+24,102,'700 15px Onest',C.muted); x.letterSpacing = '0px';
+    COMP.forEach((cp,i)=>{
+      const y = 152 + i*56, r = cs[cp.k];
+      const lvTxt = r.score===null ? '—' : COMP_LVL[r.level][1];
+      x.font = '700 15px Onest'; const cw = x.measureText(lvTxt).width + 24;
+      if(r.score!==null){ const [fg,bg] = LC[r.level]; rr(RX+RW-24-cw,y-22,cw,32,16,bg); text(lvTxt,RX+RW-24-cw+12,y,'700 15px Onest',fg); }
+      else text(lvTxt,RX+RW-40,y,'700 15px Onest',C.muted);
+      // long names shrink to fit next to the level chip (text() never goes below 18px)
+      let fs = 17; const maxW = RW-48-cw-12; x.font = `500 ${fs}px Onest`; while(x.measureText(cp.name[LANG]).width > maxW && fs > 12){ fs--; x.font = `500 ${fs}px Onest`; }
+      text(cp.name[LANG],RX+24,y,`500 ${fs}px Onest`,C.ink);
+      if(i<COMP.length-1){ x.strokeStyle = C.line; x.lineWidth = 1; x.beginPath(); x.moveTo(RX+24,y+20); x.lineTo(RX+RW-24,y+20); x.stroke(); }
+    });
+    return c;
+  }
+  // right column: MRR card
   rr(RX,64,RW,214,18,'#FFFFFF',C.line);
   text('MRR',RX+24,100,'400 16px Onest',C.muted);
   text(money(d.mrr),RX+24,158,'700 46px Onest',C.ink);
@@ -2584,15 +2618,37 @@ async function drawCard(){
   text(S.review ? {full:L('полный','full'), half:L('половина','half'), none:L('отказ','declined')}[lv] : '—',RX+214,510,'700 24px Onest',{full:C.good,half:C.warn,none:C.bad}[lv]);
   return c;
 }
-let cardSeq = 0;
+let cardSeq = 0, CARD = null;
 function paintCard(){
-  const seq = ++cardSeq;
-  drawCard().then(c=>{ const img = $('#share-img'); if(img && seq===cardSeq) img.src = c.toDataURL('image/png'); }).catch(()=>{});
+  const seq = ++cardSeq; CARD = null;
+  drawCard().then(c=>{ if(seq!==cardSeq) return; const img = $('#share-img'); if(img) img.src = c.toDataURL('image/png'); c.toBlob(b=>{ if(seq===cardSeq) CARD = b; }, 'image/png'); }).catch(()=>{});
+}
+async function cardBlob(){ if(CARD) return CARD; const c = await drawCard(); return new Promise(r=>c.toBlob(r,'image/png')); }
+const isTouch = () => !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+function downloadBlob(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000); }
+// image post on LinkedIn: phones get the system share sheet (LinkedIn app attaches the image),
+// desktops get the image downloaded, the text copied and LinkedIn's post composer opened
+async function publishImage(){
+  const plain = cardPlain(), text = postText(plain), name = L('ritm-rezultat.png','rhythm-result.png');
+  if(isTouch() && CARD && navigator.canShare){
+    const file = new File([CARD], name, {type:'image/png'});
+    if(navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], text}); track('share-li-image-native'); return; }
+      catch(e){ if(e.name==='AbortError') return; }
+    }
+  }
+  const copied = copyText(text);
+  if(CARD) downloadBlob(CARD, name);
+  window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(text), '_blank', 'noopener');
+  if(!CARD) downloadBlob(await cardBlob(), name);
+  track(plain ? 'share-li-image-plain' : 'share-li-image');
+  const ok = await copied;
+  shareHint(L(`Картинка скачана${ok?', текст скопирован':''}. В LinkedIn нажми «Добавить медиа» (иконка фото), выбери картинку${ok?' и вставь текст':''}.`, `Image downloaded${ok?' and text copied':''}. In LinkedIn, click “Add media” (the photo icon) and pick the image${ok?', then paste the text':''}.`));
 }
 function shareHint(t){ const h = $('#share-hint'); if(h) h.textContent = t; }
 async function copyText(t){ try{ await navigator.clipboard.writeText(t); return true; }catch(e){ return false; } }
 async function shareCard(){
-  const c = await drawCard(); const blob = await new Promise(r=>c.toBlob(r,'image/png'));
+  const blob = await cardBlob();
   const file = new File([blob], L('ritm-rezultat.png','rhythm-result.png'), {type:'image/png'});
   if(navigator.canShare && navigator.canShare({files:[file]})){
     try{ await navigator.share({files:[file], text:shareText()}); track('share-native'); return; }
@@ -2608,10 +2664,6 @@ async function shareLinkedIn(){
   window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(shareUrl()), '_blank', 'noopener');
   track('share-linkedin');
   shareHint(ok ? L('Текст поста скопирован — вставь его в LinkedIn.','Post text copied — paste it into LinkedIn.') : '');
-}
-async function copyResult(){
-  const ok = await copyText(shareText()); track('share-copy');
-  shareHint(ok ? L('Скопировано.','Copied.') : shareText());
 }
 
 /* ============ competency matrix (texts) ============ */
@@ -3332,9 +3384,10 @@ function renderEnd(){
     <div class="share">
       <img id="share-img" alt="${L('Карточка результата','Result card')}">
       <div class="share-btns">
-        <button class="btn primary" data-act="shareCard">${L('Поделиться карточкой','Share the card')}</button>
-        <button class="btn" data-act="shareLi">${L('Опубликовать в LinkedIn','Post on LinkedIn')}</button>
-        <button class="btn" data-act="copyRes">${L('Скопировать результат','Copy my result')}</button>
+        <button class="btn primary" data-act="publishImg">${L('Опубликовать картинкой в LinkedIn','Post the image on LinkedIn')}</button>
+        <button class="btn" data-act="shareLi">${L('Поделиться ссылкой в LinkedIn','Share a link on LinkedIn')}</button>
+        <button class="btn" data-act="shareCard">${L('Скачать картинку','Download the image')}</button>
+        <label class="plain-toggle"><input type="checkbox" id="card-plain"${cardPlain()?' checked':''}> ${L('Без цифр на картинке: только грейд и компетенции','No numbers on the image: just the grade and competencies')}</label>
         <p class="hint" id="share-hint" aria-live="polite"></p>
       </div>
     </div>
@@ -3380,6 +3433,7 @@ document.addEventListener('click', e=>{
   if(a==='hint'){ if(S && S.phase==='challenge' && !S.cur.hintUsed){ S.cur.hintUsed = true; track('hint'); save(); render(); } return; }
   if(a==='theme'){ setTheme(themeNow()==='dark' ? 'light' : 'dark'); return; }
   if(a==='shareCard'){ shareCard(); return; }
+  if(a==='publishImg'){ publishImage(); return; }
   if(a==='lbSubmit'){ lbSubmit(); return; }
   if(a==='certIssue'){ certIssue(); return; }
   if(a==='certLi'){ window.open(liAddUrl(S.cert), '_blank', 'noopener'); const fl = $('#cert-fields'); if(fl) fl.hidden = false; track('cert-linkedin'); return; }
@@ -3394,7 +3448,6 @@ document.addEventListener('click', e=>{
   if(a==='compInfo'){ openCompInfo(b); return; }
   if(a==='matrixClose'){ closeMatrix(); return; }
   if(a==='shareLi'){ shareLinkedIn(); return; }
-  if(a==='copyRes'){ copyResult(); return; }
   if(a==='sheet'){ openSheet(); return; }
   if(a==='sheetClose'){ closeSheet(); return; }
   if(a==='popClose'){ closeTerm(); return; }
@@ -3408,6 +3461,9 @@ document.addEventListener('click', e=>{
   else if(a==='next'){ nextMonth(); window.scrollTo({top:0}); }
 });
 document.addEventListener('toggle', e=>{ if(e.target.id==='goal'){ try{ localStorage.setItem(GOAL_KEY, e.target.open ? '1' : '0'); }catch(err){} } }, true);
+document.addEventListener('change', e=>{
+  if(e.target.id==='card-plain'){ try{ localStorage.setItem(CARD_PLAIN_KEY, e.target.checked ? '1' : '0'); }catch(err){} shareHint(''); paintCard(); }
+});
 document.addEventListener('input', e=>{
   if(e.target.id==='budget' || e.target.id==='debtShare') updateBudget();
   else if(e.target.id==='gsearch') filterSheet(e.target.value);
