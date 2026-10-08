@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Кейсы с собеседований продакт-менеджера: пишешь ответ своими словами, ИИ-интервьюер оценивает его по критериям и задаёт уточняющий вопрос.">
+<meta name="author" content="Ruslan Sharipov">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232A4FE6'/%3E%3Cpath d='M7 22 L13 13 L18 18 L25 9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Ритм · кейсы PM</title>
+<script>try{var t=localStorage.getItem('ritm-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* tokens and base components are the same as in ../index.html */
+:root{
+  color-scheme:light dark;
+  --bg:#EDF0EA; --surface:#FFFFFF; --surface2:#F5F7F2; --ink:#16202A; --muted:#5A6570; --line:#D5DBD1;
+  --accent:#2A4FE6; --accent-soft:#E3E8FD; --accent-ink:#FFFFFF;
+  --xp:#D98E0B; --xp-soft:#FBEFD6;
+  --good:#1D8657; --good-soft:#DDF2E7; --warn:#B87200; --warn-soft:#FAEBCF; --bad:#C23E2C; --bad-soft:#F8E0DB;
+  --shadow:0 1px 0 rgba(22,32,42,.04), 0 8px 24px -12px rgba(22,32,42,.18);
+  --display:"Unbounded", "Onest", system-ui, sans-serif;
+  --body:"Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1217; --surface:#161B22; --surface2:#1C222A; --ink:#E6EBEE; --muted:#96A1AB; --line:#29313B;
+    --accent:#7B93FF; --accent-soft:#1F2847; --accent-ink:#0E1217;
+    --xp:#F0B340; --xp-soft:#3A2E14;
+    --good:#43C488; --good-soft:#15301F; --warn:#E6A844; --warn-soft:#342812; --bad:#F2705B; --bad-soft:#3A1C17;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1217; --surface:#161B22; --surface2:#1C222A; --ink:#E6EBEE; --muted:#96A1AB; --line:#29313B;
+  --accent:#7B93FF; --accent-soft:#1F2847; --accent-ink:#0E1217;
+  --xp:#F0B340; --xp-soft:#3A2E14;
+  --good:#43C488; --good-soft:#15301F; --warn:#E6A844; --warn-soft:#342812; --bad:#F2705B; --bad-soft:#3A1C17;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.6);
+}
+:root[data-theme="light"]{color-scheme:light} :root[data-theme="dark"]{color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+[hidden]{display:none !important}
+button, textarea, input{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3{text-wrap:balance; margin:0}
+p{margin:0 0 12px}
+a{color:var(--accent)}
+.app{max-width:900px; margin:0 auto; padding:18px 16px 56px}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.h-display{font-family:var(--display); font-weight:700; letter-spacing:-.015em; line-height:1.15}
+.lead{color:var(--muted); max-width:64ch}
+.hint{font-size:12px; color:var(--muted)}
+.chip{display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; background:var(--surface2); border:1px solid var(--line); color:var(--ink)}
+.chip.acc{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+.chip.good{background:var(--good-soft); border-color:var(--good); color:var(--good)}
+.chip.warn{background:var(--warn-soft); border-color:var(--warn); color:var(--warn)}
+.chip.xp{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:11px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-weight:600; text-decoration:none; color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.55; cursor:default; filter:none}
+.link-btn{background:none; border:0; padding:0; color:var(--accent); cursor:pointer; font-size:13px; font-weight:600; text-decoration:none}
+.link-btn:hover{text-decoration:underline}
+.task-box{background:var(--surface2); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; overflow-x:auto}
+table.t{border-collapse:collapse; width:100%; font-size:14px; min-width:360px}
+table.t th, table.t td{padding:7px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+table.t th:first-child, table.t td:first-child{text-align:left; white-space:normal}
+table.t th{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+table.t td{font-family:var(--mono); font-variant-numeric:tabular-nums}
+table.t td:first-child{font-family:var(--body)}
+table.t tr:last-child td{border-bottom:0}
+.bar{height:8px; border-radius:4px; background:var(--surface2); border:1px solid var(--line); overflow:hidden}
+.bar i{display:block; height:100%; border-radius:4px; background:var(--accent); transition:width .5s}
+.bar i.good{background:var(--good)} .bar i.warn{background:var(--warn)} .bar i.bad{background:var(--bad)}
+.fade{animation:fadeIn .35s ease both}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px)}}
+
+/* header */
+.hud{display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; margin-bottom:18px}
+.brand{display:flex; align-items:baseline; gap:10px; flex:1; min-width:0; text-decoration:none; color:var(--ink)}
+.brand b{font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:-.01em}
+.brand span{color:var(--muted); font-size:13px}
+.hud-right{display:flex; align-items:center; gap:10px}
+.hud-btn{display:inline-flex; align-items:center; justify-content:center; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; color:var(--ink)}
+.hud-btn:hover{border-color:var(--accent); color:var(--accent)}
+.theme-btn{width:34px; height:34px; padding:0}
+.theme-btn svg{width:17px; height:17px; flex:none}
+.lang{display:inline-flex; padding:3px; gap:2px; border:1px solid var(--line); border-radius:999px; background:var(--surface)}
+.lang button{padding:4px 10px; border:0; border-radius:999px; background:none; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:.04em; color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+
+.stage{background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:26px; min-width:0}
+@media (max-width:560px){ .stage{padding:18px} }
+.eyebrow{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:14px}
+h1.h-display{font-size:clamp(24px,3.2vw,34px); margin-bottom:12px}
+h2.h-display{font-size:clamp(20px,2.4vw,26px); margin-bottom:8px}
+.section-h{font-family:var(--display); font-size:17px; font-weight:700; margin:26px 0 4px}
+
+/* list */
+.notice{border:1px solid var(--line); background:var(--surface2); border-radius:12px; padding:14px 16px; margin:16px 0}
+.notice.acc{border-color:var(--accent); background:var(--accent-soft)}
+.notice.warn{border-color:var(--warn); background:var(--warn-soft)}
+.notice b.t{display:block; margin-bottom:4px}
+.gate{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+.gate input{flex:1 1 200px; min-width:0; padding:11px 14px; border-radius:11px; border:1px solid var(--line); background:var(--surface)}
+.theme-h{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:26px 0 8px}
+.theme-h h3{font-family:var(--display); font-size:17px}
+.theme-h span{font-size:13px; color:var(--muted)}
+.cards{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+@media (max-width:620px){ .cards{grid-template-columns:minmax(0,1fr)} }
+.ccard{display:flex; flex-direction:column; gap:8px; text-align:left; padding:14px 16px; background:var(--surface2); border:1px solid var(--line); border-radius:12px; cursor:pointer; transition:border-color .15s, background .15s}
+.ccard:hover{border-color:var(--accent); background:var(--accent-soft)}
+.ccard b{font-size:16px}
+.ccard .co{font-size:13px; color:var(--muted)}
+.ccard .meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto}
+.ccard.soon{cursor:default; opacity:.6}
+.ccard.soon:hover{border-color:var(--line); background:var(--surface2)}
+
+/* case */
+.back{display:inline-block; margin-bottom:14px}
+.company{color:var(--muted); margin-bottom:16px}
+.prompt ul{margin:0 0 12px; padding-left:20px}
+.prompt li{margin-bottom:4px}
+.task{border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:0 12px 12px 0; padding:12px 16px; margin:16px 0; font-weight:600}
+details.more{border:1px solid var(--line); border-radius:12px; margin:10px 0; background:var(--surface)}
+details.more summary{cursor:pointer; padding:10px 14px; font-weight:600; font-size:14px}
+details.more > div{padding:0 14px 12px; font-size:14px}
+details.more ul, details.more ol{margin:0; padding-left:20px}
+.answer-box{margin-top:18px}
+.answer-box label{display:block; font-weight:600; margin-bottom:8px}
+textarea{width:100%; min-height:260px; resize:vertical; padding:14px 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface2); line-height:1.55}
+textarea.short{min-height:130px}
+textarea:focus{border-color:var(--accent); outline:none}
+.row{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-top:10px}
+.row .grow{flex:1}
+.err{color:var(--bad); font-size:13px; font-weight:600}
+.loading{display:flex; align-items:center; gap:12px; padding:16px; border:1px dashed var(--line); border-radius:12px; margin-top:16px; color:var(--muted)}
+.spin{width:20px; height:20px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--accent); animation:spin 1s linear infinite; flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* result */
+.result{margin-top:22px; border-top:1px solid var(--line); padding-top:20px}
+.score-head{display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; margin-bottom:10px}
+.score-big{font-family:var(--display); font-weight:700; font-size:40px; line-height:1}
+.score-big small{font-size:18px; color:var(--muted); font-weight:500}
+.crit{display:grid; gap:12px; margin:14px 0}
+.crit-row{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface2)}
+.crit-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px}
+.crit-top b{font-size:14px}
+.dots{display:inline-flex; gap:4px; flex:none}
+.dots i{width:10px; height:10px; border-radius:50%; background:var(--line)}
+.dots.s1 i:nth-child(-n+1){background:var(--bad)}
+.dots.s2 i:nth-child(-n+2){background:var(--warn)}
+.dots.s3 i:nth-child(-n+3){background:var(--good)}
+.crit-row p{margin:8px 0 0; font-size:14px}
+.fb{border-radius:12px; padding:12px 16px; margin:10px 0; border:1px solid}
+.fb b.t{display:block; font-size:12px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px}
+.fb ul{margin:0; padding-left:20px} .fb li{margin-bottom:4px}
+.fb.good{background:var(--good-soft); border-color:var(--good)} .fb.good b.t{color:var(--good)}
+.fb.warn{background:var(--warn-soft); border-color:var(--warn)} .fb.warn b.t{color:var(--warn)}
+.fb.bad{background:var(--bad-soft); border-color:var(--bad)} .fb.bad b.t{color:var(--bad)}
+.followup{border:1px solid var(--accent); background:var(--accent-soft); border-radius:12px; padding:14px 16px; margin:16px 0}
+.followup .q{font-weight:600; margin-bottom:10px}
+.followup textarea{background:var(--surface)}
+.reference{font-size:14px}
+.footer-note{margin-top:22px; font-size:12px; color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hud" id="hud"></header>
+  <main class="stage" id="view"><p class="hint">…</p></main>
+  <p class="footer-note" id="foot"></p>
+</div>
+<script>
+/* ============ language, theme, analytics (same keys as the game) ============ */
+const LANGS = ['ru','en'], LANG_KEY = 'ritm-lang';
+let LANG = (()=>{
+  try{
+    const q = new URLSearchParams(location.search).get('lang'); if(LANGS.includes(q)) return q;
+    const s = localStorage.getItem(LANG_KEY); if(LANGS.includes(s)) return s;
+  }catch(e){}
+  return (navigator.languages||[navigator.language||'']).some(l=>/^(ru|uk|be|kk)/i.test(l)) ? 'ru' : 'en';
+})();
+const L = (ru, en) => LANG==='en' ? en : ru;
+const T = o => o ? (o[LANG] ?? o.ru) : '';
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+  raw(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+};
+const THEME_KEY = 'ritm-theme';
+const themeNow = () => document.documentElement.dataset.theme || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>';
+const ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
+const GC_CODE = 'sharipovrus';
+(()=>{
+  if(!GC_CODE || location.protocol==='file:' || /^(localhost|127\.|\[::1\])/.test(location.hostname)) return;
+  window.goatcounter = {path: ()=>location.pathname + (LANG==='en' ? '?lang=en' : '')};
+  const s = document.createElement('script');
+  s.async = true; s.src = 'https://gc.zgo.at/count.js'; s.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
+  document.head.appendChild(s);
+})();
+function track(ev){ try{ window.goatcounter?.count?.({path:`cases-${ev}-${LANG}`, title:'cases-'+ev, event:true}); }catch(e){} }
+const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = s => document.querySelector(s);
+
+/* ============ server ============ */
+const FN = {url:'https://xcqnfeebhxjarxcsjrop.supabase.co/functions/v1/case-trainer', key:'sb_publishable_L6S8ESxoLEJj5HU9rKY0Gw_tL6m-m9Y'};
+const ID_KEY = 'ritm-cases-id', CODE_KEY = 'ritm-cases-code', RESULTS_KEY = 'ritm-cases-results', DRAFT_KEY = id => 'ritm-cases-draft-' + id;
+function playerId(){
+  let id = store.get(ID_KEY, null);
+  if(!id || !/^[a-z0-9]{16,64}$/i.test(id)){
+    const a = new Uint8Array(16); crypto.getRandomValues(a); id = [...a].map(b=>b.toString(16).padStart(2,'0')).join('');
+    store.set(ID_KEY, id);
+  }
+  return id;
+}
+// ?code=… once, then it's remembered in this browser
+(()=>{ try{
+  const u = new URL(location.href), c = u.searchParams.get('code');
+  if(c){ store.set(CODE_KEY, c.trim()); u.searchParams.delete('code'); history.replaceState(null, '', u); }
+}catch(e){} })();
+async function call(action, body = {}){
+  let r;
+  try{
+    r = await fetch(FN.url, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':FN.key},
+      body: JSON.stringify({action, lang:LANG, player:playerId(), code:store.get(CODE_KEY, ''), ...body})});
+  }catch(e){ return {status:0, data:{error:'network'}}; }
+  let data = {}; try{ data = await r.json(); }catch(e){}
+  return {status:r.status, data};
+}
+
+/* ============ data ============ */
+let DATA = null, STATUS = null, CUR = null;
+const SESSION = {};            // per case: {answer, result, reply, fres} for this visit
+const COMP_NAMES = {user:{ru:'Пользователь и дискавери', en:'Customer insight & discovery'}, strategy:{ru:'Стратегия и видение', en:'Strategy & vision'}, exec:{ru:'Приоритизация и execution', en:'Prioritization & execution'}, data:{ru:'Данные и эксперименты', en:'Data & experimentation'}, biz:{ru:'Бизнес и экономика продукта', en:'Business & product economics'}, stake:{ru:'Стейкхолдеры и коммуникации', en:'Stakeholders & communication'}, lead:{ru:'Лидерство и решения', en:'Leadership & decision-making'}};
+const LVL = ['Junior','Middle','Senior','Lead','Head'];
+const themeOf = id => DATA.themes.find(t=>t.id===id);
+const casesOf = th => DATA.cases.filter(c=>c.theme===th);
+const results = () => store.get(RESULTS_KEY, {});
+function saveResult(id, total){
+  const r = results(), p = r[id] || {best:0, n:0};
+  r[id] = {best:Math.max(p.best, total), last:total, n:p.n+1, at:Date.now()};
+  store.set(RESULTS_KEY, r);
+}
+const levelChip = lv => `<span class="chip ${({Junior:'warn', Middle:'acc', Senior:'good', Lead:'xp'})[lv] || ''}">${L('уровень ответа','answer level')} ≈ ${lv}</span>`;
+
+// weakest competency of the last finished run in the game → a theme to start with
+function recommendation(){
+  const runs = store.get('ritm-runs', []); const last = runs[0];
+  if(!last || !last.comps) return null;
+  const order = Object.entries(last.comps).filter(([,v])=>v!==null && v!==undefined).sort((a,b)=>a[1]-b[1]);
+  for(const [k, v] of order){
+    const th = DATA.themes.find(t=>t.comp.includes(k) && casesOf(t.id).length);
+    if(th) return {comp:k, level:v, theme:th, c:casesOf(th.id)[0]};
+  }
+  return null;
+}
+
+/* ============ render ============ */
+function renderHud(){
+  $('#hud').innerHTML = `<a class="brand" href="../${LANG==='en'?'?lang=en':''}"><b>${L('Ритм','Rhythm')}</b><span>${L('кейсы с собеседований · бета','interview cases · beta')}</span></a>
+    <div class="hud-right">
+      <a class="hud-btn" href="../${LANG==='en'?'?lang=en':''}">${L('Игра','The game')}</a>
+      <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
+      <div class="lang" role="group" aria-label="${L('Язык','Language')}">${LANGS.map(l=>`<button data-act="lang" data-lang="${l}" aria-pressed="${l===LANG}">${l.toUpperCase()}</button>`).join('')}</div>
+    </div>`;
+  document.documentElement.lang = LANG;
+  document.title = L('Ритм · кейсы PM','Rhythm · PM cases');
+  $('#foot').innerHTML = L('Ответы проверяет ИИ (Claude от Anthropic): текст ответа уходит на проверку и у нас не хранится. Не пиши в ответах личных данных. Кейсы и компании вымышлены.',
+    'Answers are graded by AI (Claude by Anthropic): your text is sent for grading and not stored by us. Don’t include personal data. Cases and companies are fictional.');
+}
+
+function statusLine(){
+  if(!STATUS) return '';
+  if(STATUS.error==='code') return '';
+  if(STATUS.error) return `<div class="notice warn"><b class="t">${L('Проверка ответов сейчас недоступна','Answer grading is unavailable right now')}</b>${L('Кейсы можно читать и писать ответы — черновики сохраняются. Попробуй отправить чуть позже.','You can still read cases and write answers — drafts are saved. Try submitting a bit later.')}</div>`;
+  if(STATUS.owner || STATUS.limit===null) return `<p class="hint">${L('Бета · проверок без ограничений','Beta · unlimited checks')}</p>`;
+  const left = Math.max(0, STATUS.limit - (STATUS.used||0));
+  return `<p class="hint">${L(`Бета · проверок на сегодня осталось: ${left} из ${STATUS.limit}`, `Beta · checks left today: ${left} of ${STATUS.limit}`)}</p>`;
+}
+function gateCard(){
+  if(!STATUS || STATUS.error!=='code') return '';
+  return `<div class="notice acc"><b class="t">${L('Закрытая бета','Private beta')}</b>${L('Чтобы отправлять ответы на проверку, введи код доступа.','Enter the access code to get your answers graded.')}
+    ${STATUS.given ? `<div class="err" style="margin-top:6px">${L('Код не подошёл.','That code didn’t work.')}</div>` : ''}
+    <form class="gate" data-form="code"><input id="code" autocomplete="off" placeholder="${L('Код доступа','Access code')}" aria-label="${L('Код доступа','Access code')}"><button class="btn primary">${L('Войти','Enter')}</button></form></div>`;
+}
+
+function renderList(){
+  CUR = null;
+  const rec = recommendation(), res = results();
+  $('#view').innerHTML = `<div class="fade">
+    <div class="eyebrow"><span class="chip">${L('Бета','Beta')}</span><span>${L(`${DATA.cases.length} кейса · 10–15 минут на каждый`,`${DATA.cases.length} cases · 10–15 minutes each`)}</span></div>
+    <h1 class="h-display">${L('Кейсы с собеседований продакта','PM interview cases')}</h1>
+    <p class="lead">${L('Пишешь ответ своими словами, как на собеседовании. ИИ-интервьюер оценивает его по критериям, задаёт уточняющий вопрос и показывает, как ответил бы сильный кандидат.','Write your answer in your own words, like in an interview. An AI interviewer grades it against a rubric, asks a follow-up question and shows how a strong candidate would answer.')}</p>
+    ${statusLine()}${gateCard()}
+    ${rec ? `<div class="notice acc"><b class="t">${L('С чего начать','Where to start')}</b>${L(`В последней партии «Ритма» слабее всего вышла компетенция «${T(COMP_NAMES[rec.comp])}» (${LVL[rec.level]}). Попробуй кейс «${T(rec.c.title)}».`,`In your last Rhythm run, your weakest competency was “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Try the “${T(rec.c.title)}” case.`)}
+      <div style="margin-top:10px"><button class="btn primary" data-act="open" data-id="${rec.c.id}">${L('Открыть кейс','Open the case')}</button></div></div>` : ''}
+    ${DATA.themes.map(th=>{ const cs = casesOf(th.id);
+      return `<div class="theme-h"><h3>${T(th.name)}</h3><span>${T(th.blurb)}</span></div>
+      <div class="cards">${cs.length ? cs.map(c=>{ const r = res[c.id];
+        return `<button class="ccard" data-act="open" data-id="${c.id}"><b>${T(c.title)}</b><span class="co">${escH(T(c.company).split(/ — | - /)[0])}</span>
+          <span class="meta"><span class="chip">~${c.minutes} ${L('мин','min')}</span>${r ? `<span class="chip ${r.best>=65?'good':'acc'}">${L('лучший','best')}: ${r.best} / 100</span>` : ''}</span></button>`; }).join('')
+        : `<div class="ccard soon"><b>${L('Скоро','Coming soon')}</b><span class="co">${L('Кейсы появятся к релизу','Cases arrive with the release')}</span></div>`}</div>`; }).join('')}
+  </div>`;
+}
+
+const TIPS = () => L(
+  '<ol><li>Уточни цель и допущения — одной-двумя фразами.</li><li>Проговори структуру ответа до деталей.</li><li>Используй цифры из условия, считай вслух.</li><li>Сравни варианты и выбери один — с причиной.</li><li>Закончи метрикой успеха и следующим шагом.</li></ol><p class="hint" style="margin:8px 0 0">Обычно хватает 150–400 слов. Списки и короткие абзацы — нормально.</p>',
+  '<ol><li>Clarify the goal and assumptions in a sentence or two.</li><li>Lay out the structure before the details.</li><li>Use the numbers from the brief and show your math.</li><li>Compare options and pick one, with a reason.</li><li>End with a success metric and the next step.</li></ol><p class="hint" style="margin:8px 0 0">150–400 words is usually enough. Lists and short paragraphs are fine.</p>');
+
+function renderCase(id){
+  const c = DATA.cases.find(x=>x.id===id); if(!c){ renderList(); return; }
+  CUR = c; const s = SESSION[id] || (SESSION[id] = {answer: store.get(DRAFT_KEY(id), '')});
+  const th = themeOf(c.theme);
+  $('#view').innerHTML = `<div class="fade">
+    <button class="link-btn back" data-act="list">← ${L('Все кейсы','All cases')}</button>
+    <div class="eyebrow"><span class="chip">${T(th.name)}</span><span>~${c.minutes} ${L('минут','minutes')}</span></div>
+    <h2 class="h-display">${T(c.title)}</h2>
+    <p class="company">${escH(T(c.company))}</p>
+    <div class="prompt">${T(c.prompt)}</div>
+    <div class="task">${escH(T(c.task))}</div>
+    <details class="more"><summary>${L('Подсказка','Hint')}</summary><div><p style="margin:0">${escH(T(c.hint))}</p></div></details>
+    <details class="more"><summary>${L('На что смотрит интервьюер','What the interviewer looks for')}</summary><div><ul>${c.rubric.map(r=>`<li>${escH(T(r.name))}</li>`).join('')}</ul></div></details>
+    <details class="more"><summary>${L('Как отвечать','How to answer')}</summary><div>${TIPS()}</div></details>
+    ${statusLine()}${gateCard()}
+    <div class="answer-box">
+      <label for="answer">${L('Твой ответ','Your answer')}</label>
+      <textarea id="answer" placeholder="${L('Рассуждай так, как говорил бы вслух на собеседовании…','Reason the way you’d think out loud in an interview…')}">${escH(s.answer)}</textarea>
+      <div class="row"><span class="hint grow" id="count"></span><span class="err" id="err" aria-live="polite"></span>
+        <button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again') : L('Отправить интервьюеру','Send to the interviewer')}</button></div>
+    </div>
+    <div id="out">${s.result ? resultHtml(c, s) : ''}</div>
+  </div>`;
+  updateCount(); window.scrollTo({top:0});
+}
+function updateCount(){
+  const a = $('#answer'), n = $('#count'); if(!a || !n) return;
+  const words = (a.value.trim().match(/\S+/g) || []).length;
+  n.textContent = L(`${words} слов · ${a.value.length} знаков`, `${words} words · ${a.value.length} characters`);
+}
+
+function resultHtml(c, s){
+  const g = s.result, names = Object.fromEntries(c.rubric.map(r=>[r.id, T(r.name)]));
+  const list = (cls, title, items) => items && items.length ? `<div class="fb ${cls}"><b class="t">${title}</b><ul>${items.map(x=>`<li>${escH(x)}</li>`).join('')}</ul></div>` : '';
+  const f = s.fres;
+  return `<div class="result fade">
+    <div class="score-head"><span class="score-big num">${g.total}<small> / 100</small></span>${levelChip(g.level)}</div>
+    <p>${escH(g.summary)}</p>
+    <div class="crit">${g.scores.map(sc=>`<div class="crit-row"><div class="crit-top"><b>${escH(names[sc.id] || sc.id)}</b><span class="dots s${sc.score}" aria-label="${sc.score} / 3"><i></i><i></i><i></i></span></div>
+      <div class="bar"><i class="${sc.score>=3?'good':sc.score===2?'':sc.score===1?'warn':'bad'}" style="width:${Math.round(sc.score/3*100)}%"></i></div><p>${escH(sc.comment)}</p></div>`).join('')}</div>
+    ${list('good', L('Что получилось','What worked'), g.strengths)}
+    ${list('warn', L('Что добавить','What to add'), g.gaps)}
+    ${list('bad', L('Красные флаги','Red flags'), g.red_flags)}
+    ${g.follow_up ? `<div class="followup"><b class="t" style="display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">${L('Интервьюер уточняет','Follow-up question')}</b>
+      <p class="q">${escH(g.follow_up)}</p>
+      ${f ? `<p><span class="dots s${f.score}" aria-label="${f.score} / 3"><i></i><i></i><i></i></span> ${escH(f.comment)}</p>${f.missing ? `<p class="hint" style="font-size:13px;margin:0">${L('Сильный ответ добавил бы: ','A strong reply would add: ')}${escH(f.missing)}</p>` : ''}`
+        : `<textarea class="short" id="reply" placeholder="${L('Ответь коротко, 2–5 предложений','Answer briefly, 2–5 sentences')}">${escH(s.reply || '')}</textarea>
+      <div class="row"><span class="err grow" id="ferr" aria-live="polite"></span><button class="btn" data-act="followup" id="fsend">${L('Ответить','Reply')}</button></div>`}</div>` : ''}
+    <details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>
+    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
+  </div>`;
+}
+const nextCase = c => { const i = DATA.cases.indexOf(c); return DATA.cases[(i+1) % DATA.cases.length] === c ? null : DATA.cases[(i+1) % DATA.cases.length]; };
+
+function errorText(r){
+  const e = r.data && r.data.error;
+  if(e==='limit') return r.data.reason==='global' ? L('Бета сегодня перегружена — попробуй завтра.','The beta is at capacity today — try again tomorrow.') : L('На сегодня проверки закончились — приходи завтра.','You’ve used today’s checks — come back tomorrow.');
+  if(e==='length') return L('Ответ слишком короткий или слишком длинный.','The answer is too short or too long.');
+  if(e==='refusal') return L('Не получилось проверить этот ответ. Попробуй переформулировать.','Couldn’t grade this answer. Try rephrasing it.');
+  if(e==='code') return L('Нужен код доступа — он выше.','You need the access code — see above.');
+  return L('Сервер проверки не ответил. Попробуй ещё раз через минуту.','The grading server didn’t respond. Try again in a minute.');
+}
+const LOADING = () => [L('Интервьюер читает ответ…','The interviewer is reading your answer…'), L('Сверяет с критериями…','Checking it against the rubric…'), L('Ищет, что можно усилить…','Looking for what to strengthen…'), L('Формулирует уточняющий вопрос…','Preparing a follow-up question…')];
+function startLoading(where){
+  const box = document.createElement('div'); box.className = 'loading';
+  box.innerHTML = `<span class="spin"></span><span class="lt"></span><span class="hint num" style="margin-left:auto"></span>`;
+  where.appendChild(box);
+  const msgs = LOADING(), t0 = Date.now(); let i = 0;
+  const tick = () => { box.querySelector('.lt').textContent = msgs[Math.min(Math.floor((Date.now()-t0)/6000), msgs.length-1)]; box.querySelector('.num').textContent = Math.round((Date.now()-t0)/1000) + L(' с',' s'); };
+  tick(); const h = setInterval(tick, 1000);
+  return () => { clearInterval(h); box.remove(); };
+}
+
+async function grade(){
+  const c = CUR, s = SESSION[c.id], a = $('#answer'), err = $('#err'), btn = $('#send');
+  s.answer = a.value; store.set(DRAFT_KEY(c.id), s.answer);
+  if(s.answer.trim().length < 60){ err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to grade.'); return; }
+  if(s.answer.length > 6000){ err.textContent = L('Слишком длинно: уложись в 6000 знаков.','Too long: keep it under 6,000 characters.'); return; }
+  err.textContent = ''; btn.disabled = true; a.readOnly = true;
+  const stop = startLoading($('.answer-box')); track('submit');
+  const r = await call('grade', {caseId:c.id, answer:s.answer});
+  stop(); btn.disabled = false; a.readOnly = false;
+  if(r.status===200 && r.data.ok){
+    s.result = r.data; s.reply = ''; s.fres = null; saveResult(c.id, r.data.total);
+    if(STATUS && !STATUS.error) STATUS.used = r.data.used ?? STATUS.used;
+    track('graded'); renderCase(c.id);
+    $('#out').scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+  if(r.data && r.data.error==='code'){ STATUS = {error:'code', given:true}; renderCase(c.id); return; }
+  err.textContent = errorText(r);
+}
+async function followup(){
+  const c = CUR, s = SESSION[c.id], ta = $('#reply'), err = $('#ferr'), btn = $('#fsend');
+  s.reply = ta.value;
+  if(s.reply.trim().length < 20){ err.textContent = L('Ответь хотя бы парой предложений.','Reply with at least a couple of sentences.'); return; }
+  err.textContent = ''; btn.disabled = true; ta.readOnly = true;
+  const stop = startLoading(ta.parentElement);
+  const r = await call('followup', {caseId:c.id, answer:s.answer, question:s.result.follow_up, reply:s.reply});
+  stop(); btn.disabled = false; ta.readOnly = false;
+  if(r.status===200 && r.data.ok){ s.fres = r.data; if(STATUS && !STATUS.error) STATUS.used = r.data.used ?? STATUS.used; track('followup'); $('#out').innerHTML = resultHtml(c, s); return; }
+  err.textContent = errorText(r);
+}
+
+async function refreshStatus(){
+  const r = await call('status');
+  STATUS = r.status===200 ? r.data : (r.data && r.data.error==='code' ? {error:'code', given:r.data.given} : {error:'server'});
+}
+function route(){
+  const m = location.hash.match(/^#case=([\w-]+)/);
+  if(m) renderCase(m[1]); else renderList();
+}
+
+/* ============ events ============ */
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const a = b.dataset.act;
+  if(a==='lang'){ LANG = b.dataset.lang; try{ localStorage.setItem(LANG_KEY, LANG); }catch(err){} renderHud(); route(); return; }
+  if(a==='theme'){ const t = themeNow()==='dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = t; try{ localStorage.setItem(THEME_KEY, t); }catch(err){} renderHud(); return; }
+  if(a==='open'){ location.hash = 'case=' + b.dataset.id; track('open'); return; }
+  if(a==='list'){ history.pushState(null, '', location.pathname + location.search); renderList(); window.scrollTo({top:0}); return; }
+  if(a==='grade'){ grade(); return; }
+  if(a==='followup'){ followup(); return; }
+});
+document.addEventListener('submit', async e=>{
+  if(e.target.dataset.form!=='code') return;
+  e.preventDefault();
+  store.set(CODE_KEY, $('#code').value.trim());
+  await refreshStatus(); route();
+});
+document.addEventListener('input', e=>{
+  if(e.target.id==='answer' && CUR){ SESSION[CUR.id].answer = e.target.value; store.set(DRAFT_KEY(CUR.id), e.target.value); updateCount(); }
+  if(e.target.id==='reply' && CUR){ SESSION[CUR.id].reply = e.target.value; }
+});
+window.addEventListener('hashchange', route);
+
+(async ()=>{
+  renderHud();
+  try{ DATA = await (await fetch('cases.json', {cache:'no-cache'})).json(); }
+  catch(e){ $('#view').innerHTML = `<p>${L('Не удалось загрузить кейсы. Обнови страницу.','Couldn’t load the cases. Reload the page.')}</p>`; return; }
+  route();
+  await refreshStatus(); route();
+})();
+</script>
+</body>
+</html>
