@@ -13,6 +13,7 @@
   "cases": [
     {
       "id": "orders-drop",
+      "comp": ["data", "exec"],
       "theme": "metrics",
       "minutes": 15,
       "title": {"ru": "Заказы упали на 12%", "en": "Orders dropped 12%"},
@@ -39,6 +40,7 @@
     },
     {
       "id": "commute-app",
+      "comp": ["user", "strategy"],
       "theme": "product",
       "minutes": 15,
       "title": {"ru": "Приложение для тех, кто ездит на работу", "en": "An app for daily commuters"},
@@ -65,6 +67,7 @@
     },
     {
       "id": "food-delivery-almaty",
+      "comp": ["biz", "data"],
       "theme": "estimation",
       "minutes": 10,
       "title": {"ru": "Рынок доставки еды в Алматы", "en": "Food delivery market in Almaty"},
@@ -91,6 +94,7 @@
     },
     {
       "id": "annual-plan",
+      "comp": ["biz", "lead"],
       "theme": "economics",
       "minutes": 15,
       "title": {"ru": "Годовая подписка", "en": "The annual plan"},

@@ -171,6 +171,20 @@ textarea:focus{border-color:var(--accent); outline:none}
 .followup .q{font-weight:600; margin-bottom:10px}
 .followup textarea{background:var(--surface)}
 .reference{font-size:14px}
+.chip.lvl.l0{background:var(--surface2); color:var(--muted)}
+.chip.lvl.l1{background:var(--warn-soft); border-color:var(--warn); color:var(--warn)}
+.chip.lvl.l2{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+.chip.lvl.l3{background:var(--good-soft); border-color:var(--good); color:var(--good)}
+.chip.lvl.l4{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.prof{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 18px}
+@media (max-width:620px){ .prof{grid-template-columns:minmax(0,1fr)} }
+.prof-row{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:6px 10px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--surface2)}
+.prof-row b{font-size:14px; font-weight:600}
+.prof-row .bar{grid-column:1 / -1}
+.prof-row.muted b{color:var(--muted)}
+.fb.lvlup{background:var(--xp-soft); border-color:var(--xp)} .fb.lvlup b.t{color:var(--xp)}
+.fb.lvlup li b{color:var(--good)}
+
 .footer-note{margin-top:22px; font-size:12px; color:var(--muted)}
 </style>
 </head>
@@ -244,6 +258,48 @@ let DATA = null, STATUS = null, CUR = null;
 const SESSION = {};            // per case: {answer, result, reply, fres} for this visit
 const COMP_NAMES = {user:{ru:'Пользователь и дискавери', en:'Customer insight & discovery'}, strategy:{ru:'Стратегия и видение', en:'Strategy & vision'}, exec:{ru:'Приоритизация и execution', en:'Prioritization & execution'}, data:{ru:'Данные и эксперименты', en:'Data & experimentation'}, biz:{ru:'Бизнес и экономика продукта', en:'Business & product economics'}, stake:{ru:'Стейкхолдеры и коммуникации', en:'Stakeholders & communication'}, lead:{ru:'Лидерство и решения', en:'Leadership & decision-making'}};
 const LVL = ['Junior','Middle','Senior','Lead','Head'];
+const COMP_KEYS = ['user','strategy','exec','data','biz','stake','lead'];
+/* ============ competency profile from cases ============ */
+// each case trains 1–2 of the game's 7 competencies: the first counts fully, the second at half weight.
+// A competency's score is the weighted average of the best scores in its cases; like in the game,
+// a high level also needs breadth: 1 case caps it at Senior, 2 at Lead, 3+ allow Head.
+const LVL_AT = [0, 50, 65, 80, 90];
+const caseComps = c => (c.comp && c.comp.length ? c.comp : themeOf(c.theme).comp);
+function profile(){
+  const res = results(), out = {};
+  COMP_KEYS.forEach(k=>{
+    let sw = 0, sum = 0, n = 0;
+    DATA.cases.forEach(c=>{ const r = res[c.id], i = caseComps(c).indexOf(k); if(!r || i<0) return; const w = i===0 ? 1 : 0.5; sw += w; sum += w*r.best; n++; });
+    if(!n){ out[k] = null; return; }
+    const score = sum/sw; let lv = 0; LVL_AT.forEach((t,i)=>{ if(score>=t) lv = i; });
+    const cap = n>=3 ? 4 : n===2 ? 3 : 2;
+    out[k] = {score, n, level:Math.min(lv, cap), capped:lv>cap};
+  });
+  return out;
+}
+const lvlChip = i => `<span class="chip lvl l${i}">${LVL[i]}</span>`;
+function profileHtml(){
+  const p = profile(), any = COMP_KEYS.some(k=>p[k]);
+  if(!any) return `<p class="hint" style="margin-top:14px">${L('Реши первый кейс — здесь появится твой профиль компетенций: те же 7, что в игре, от Junior до Head.','Solve your first case and your competency profile shows up here: the same 7 as in the game, from Junior to Head.')}</p>`;
+  return `<div class="section-h">${L('Твой профиль по кейсам','Your case profile')}</div>
+    <p class="hint" style="margin:0 0 10px">${L('Уровень — по лучшим баллам в кейсах на эту компетенцию. Для Lead нужно минимум 2 кейса, для Head — 3.','Levels come from your best scores in cases for each competency. Lead takes at least 2 cases, Head takes 3.')}</p>
+    <div class="prof">${COMP_KEYS.map(k=>{ const r = p[k];
+      return r ? `<div class="prof-row"><b>${T(COMP_NAMES[k])} <span class="hint">${L(`кейсов: ${r.n}`, `${r.n} ${r.n===1?'case':'cases'}`)}</span></b>${lvlChip(r.level)}<div class="bar"><i style="width:${Math.round(r.score)}%"></i></div></div>`
+        : `<div class="prof-row muted"><b>${T(COMP_NAMES[k])}</b><span class="hint">${L('ещё не прокачивалась','not trained yet')}</span></div>`; }).join('')}</div>`;
+}
+// what changed for the case's competencies after a graded answer
+function levelUps(before, after, c){
+  return caseComps(c).map(k=>({k, from:before[k] ? before[k].level : null, to:after[k].level, capped:after[k].capped}));
+}
+function levelUpHtml(ups){
+  if(!ups) return '';
+  return `<div class="fb lvlup"><b class="t">${L('Прокачка компетенций','Competency progress')}</b><ul>${ups.map(u=>{
+    const name = T(COMP_NAMES[u.k]);
+    const what = u.from===null ? `<b>${LVL[u.to]}</b> ${L('— первый кейс','— first case')}`
+      : u.to>u.from ? `${LVL[u.from]} → <b>${LVL[u.to]}</b> ↑`
+      : `${LVL[u.to]}${L(', без изменений',', no change')}`;
+    return `<li>${name}: ${what}${u.capped ? `<div class="hint">${L('Балл уже тянет выше — реши ещё кейс на эту компетенцию.','Your score is already higher — solve another case for this competency.')}</div>` : ''}</li>`; }).join('')}</ul></div>`;
+}
 const themeOf = id => DATA.themes.find(t=>t.id===id);
 const casesOf = th => DATA.cases.filter(c=>c.theme===th);
 const results = () => store.get(RESULTS_KEY, {});
@@ -305,6 +361,7 @@ function renderList(){
     ${statusLine()}${gateCard()}
     ${rec ? `<div class="notice acc"><b class="t">${L('С чего начать','Where to start')}</b>${L(`В последней партии «Ритма» слабее всего вышла компетенция «${T(COMP_NAMES[rec.comp])}» (${LVL[rec.level]}). Попробуй кейс «${T(rec.c.title)}».`,`In your last Rhythm run, your weakest competency was “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Try the “${T(rec.c.title)}” case.`)}
       <div style="margin-top:10px"><button class="btn primary" data-act="open" data-id="${rec.c.id}">${L('Открыть кейс','Open the case')}</button></div></div>` : ''}
+    ${profileHtml()}
     ${DATA.themes.map(th=>{ const cs = casesOf(th.id);
       return `<div class="theme-h"><h3>${T(th.name)}</h3><span>${T(th.blurb)}</span></div>
       <div class="cards">${cs.length ? cs.map(c=>{ const r = res[c.id];
@@ -325,6 +382,7 @@ function renderCase(id){
   $('#view').innerHTML = `<div class="fade">
     <button class="link-btn back" data-act="list">← ${L('Все кейсы','All cases')}</button>
     <div class="eyebrow"><span class="chip">${T(th.name)}</span><span>~${c.minutes} ${L('минут','minutes')}</span></div>
+    <p class="hint" style="margin:-6px 0 12px">${L('Прокачивает','Trains')}: ${caseComps(c).map(k=>T(COMP_NAMES[k])).join(' · ')}</p>
     <h2 class="h-display">${T(c.title)}</h2>
     <p class="company">${escH(T(c.company))}</p>
     <div class="prompt">${T(c.prompt)}</div>
@@ -356,6 +414,7 @@ function resultHtml(c, s){
   return `<div class="result fade">
     <div class="score-head"><span class="score-big num">${g.total}<small> / 100</small></span>${levelChip(g.level)}</div>
     <p>${escH(g.summary)}</p>
+    ${levelUpHtml(s.ups)}
     <div class="crit">${g.scores.map(sc=>`<div class="crit-row"><div class="crit-top"><b>${escH(names[sc.id] || sc.id)}</b><span class="dots s${sc.score}" aria-label="${sc.score} / 3"><i></i><i></i><i></i></span></div>
       <div class="bar"><i class="${sc.score>=3?'good':sc.score===2?'':sc.score===1?'warn':'bad'}" style="width:${Math.round(sc.score/3*100)}%"></i></div><p>${escH(sc.comment)}</p></div>`).join('')}</div>
     ${list('good', L('Что получилось','What worked'), g.strengths)}
@@ -401,7 +460,8 @@ async function grade(){
   const r = await call('grade', {caseId:c.id, answer:s.answer});
   stop(); btn.disabled = false; a.readOnly = false;
   if(r.status===200 && r.data.ok){
-    s.result = r.data; s.reply = ''; s.fres = null; saveResult(c.id, r.data.total);
+    const before = profile(); saveResult(c.id, r.data.total);
+    s.result = r.data; s.reply = ''; s.fres = null; s.ups = levelUps(before, profile(), c);
     if(STATUS && !STATUS.error) STATUS.used = r.data.used ?? STATUS.used;
     track('graded'); renderCase(c.id);
     $('#out').scrollIntoView({behavior:'smooth', block:'start'});
