@@ -228,6 +228,9 @@ const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':
 const $ = s => document.querySelector(s);
 
 /* ============ server ============ */
+// false = internal test without the grading server: the answer is copied together with the case and rubric
+// for grading in any AI chat, and the reference answer opens for self-comparison. true = the case-trainer function.
+const GRADING = false;
 const FN = {url:'https://xcqnfeebhxjarxcsjrop.supabase.co/functions/v1/case-trainer', key:'sb_publishable_L6S8ESxoLEJj5HU9rKY0Gw_tL6m-m9Y'};
 const ID_KEY = 'ritm-cases-id', CODE_KEY = 'ritm-cases-code', RESULTS_KEY = 'ritm-cases-results', DRAFT_KEY = id => 'ritm-cases-draft-' + id;
 function playerId(){
@@ -332,11 +335,12 @@ function renderHud(){
     </div>`;
   document.documentElement.lang = LANG;
   document.title = L('Ритм · кейсы PM','Rhythm · PM cases');
-  $('#foot').innerHTML = L('Ответы проверяет ИИ (Claude от Anthropic): текст ответа уходит на проверку и у нас не хранится. Не пиши в ответах личных данных. Кейсы и компании вымышлены.',
+  $('#foot').innerHTML = !GRADING ? L('Ответы никуда не отправляются: черновики хранятся только в этом браузере. Кейсы и компании вымышлены.','Your answers aren’t sent anywhere: drafts stay in this browser. Cases and companies are fictional.') : L('Ответы проверяет ИИ (Claude от Anthropic): текст ответа уходит на проверку и у нас не хранится. Не пиши в ответах личных данных. Кейсы и компании вымышлены.',
     'Answers are graded by AI (Claude by Anthropic): your text is sent for grading and not stored by us. Don’t include personal data. Cases and companies are fictional.');
 }
 
 function statusLine(){
+  if(!GRADING) return `<div class="notice"><b class="t">${L('Внутренний тест','Internal test')}</b>${L('Автоматическая проверка пока выключена. Напиши ответ, скопируй его вместе с кейсом и критериями в чат с ИИ (Claude, ChatGPT) — он оценит как интервьюер. Потом сравни с эталонным ответом.','Automatic grading is off for now. Write your answer, copy it together with the case and rubric into an AI chat (Claude, ChatGPT) to get it graded like an interviewer would, then compare with the reference answer.')}</div>`;
   if(!STATUS) return '';
   if(STATUS.error==='code') return '';
   if(STATUS.error) return `<div class="notice warn"><b class="t">${L('Проверка ответов сейчас недоступна','Answer grading is unavailable right now')}</b>${L('Кейсы можно читать и писать ответы — черновики сохраняются. Попробуй отправить чуть позже.','You can still read cases and write answers — drafts are saved. Try submitting a bit later.')}</div>`;
@@ -395,7 +399,8 @@ function renderCase(id){
       <label for="answer">${L('Твой ответ','Your answer')}</label>
       <textarea id="answer" placeholder="${L('Рассуждай так, как говорил бы вслух на собеседовании…','Reason the way you’d think out loud in an interview…')}">${escH(s.answer)}</textarea>
       <div class="row"><span class="hint grow" id="count"></span><span class="err" id="err" aria-live="polite"></span>
-        <button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again') : L('Отправить интервьюеру','Send to the interviewer')}</button></div>
+        ${GRADING ? `<button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again') : L('Отправить интервьюеру','Send to the interviewer')}</button>`
+          : `<button class="btn primary" data-act="copyPrompt">${L('Скопировать для проверки ИИ','Copy for AI grading')}</button><button class="btn" data-act="showRef">${L('Сравнить с эталоном','Compare with the reference')}</button>`}</div>
     </div>
     <div id="out">${s.result ? resultHtml(c, s) : ''}</div>
   </div>`;
@@ -438,6 +443,91 @@ function errorText(r){
   if(e==='refusal') return L('Не получилось проверить этот ответ. Попробуй переформулировать.','Couldn’t grade this answer. Try rephrasing it.');
   if(e==='code') return L('Нужен код доступа — он выше.','You need the access code — see above.');
   return L('Сервер проверки не ответил. Попробуй ещё раз через минуту.','The grading server didn’t respond. Try again in a minute.');
+}
+// same rules as GRADER in supabase/functions/case-trainer/index.ts, as a plain prompt for any chat
+const htmlText = html => html
+  .replace(/<\/(td|th)>/gi, ' | ').replace(/<\/tr>/gi, '\n').replace(/<li[^>]*>/gi, '- ')
+  .replace(/<br\s*\/?>|<\/(p|li|div|table|ul|ol|h\d)>/gi, '\n').replace(/<[^>]+>/g, '')
+  .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+  .replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+function gradePrompt(c, answer){
+  const crit = c.rubric.map(r=>`- ${T(r.name)} (${r.id}): ${r.desc}`).join('\n');
+  const flags = c.red_flags.map(f=>'- '+f).join('\n');
+  return L(
+`Ты — требовательный, но справедливый интервьюер на собеседовании продакт-менеджера в сильной компании. Оцени письменный ответ кандидата на кейс по критериям ниже.
+
+Шкала для каждого критерия: 0 — нет или неверно; 1 — поверхностно или общими словами; 2 — по делу и с опорой на кейс, но с пробелами; 3 — как ответил бы сильный senior PM: конкретно, с цифрами из кейса, аргументированно. Тройку нужно заслужить. Оценивай суть, а не длину и умные слова; фреймворк, названный, но не применённый к кейсу, — максимум 1. Ошибки в расчётах снижают оценку.
+
+КЕЙС: ${T(c.title)}
+${T(c.company)}
+
+${htmlText(T(c.prompt))}
+
+Задание: ${T(c.task)}
+
+КРИТЕРИИ (описания для интервьюера — на английском):
+${crit}
+
+КРАСНЫЕ ФЛАГИ:
+${flags}
+
+ОТВЕТ КАНДИДАТА:
+${answer}
+
+Ответь на русском, обращайся на «ты»:
+1. По каждому критерию — оценка 0–3 и 1–2 предложения, что именно сильно или чего не хватило.
+2. Итог: сумма оценок / ${c.rubric.length*3} × 100 и уровень ответа (85+ Lead, 65+ Senior, 45+ Middle, ниже — Junior).
+3. 1–3 сильные стороны и 1–4 главных улучшения.
+4. Красные флаги, если есть.
+5. Один уточняющий вопрос, который задал бы интервьюер.`,
+`You are a demanding but fair product manager interviewer at a top company. Grade the candidate's written answer to the case against the rubric below.
+
+Scale for each criterion: 0 = missing or wrong; 1 = superficial or generic; 2 = solid and specific to the case, with gaps; 3 = what a strong senior PM would say: specific, uses the case's numbers, well reasoned. A 3 must be earned. Judge substance, not length or buzzwords; a framework named but not applied to this case scores at most 1. Arithmetic errors lower the score.
+
+CASE: ${T(c.title)}
+${T(c.company)}
+
+${htmlText(T(c.prompt))}
+
+Task: ${T(c.task)}
+
+RUBRIC:
+${crit}
+
+RED FLAGS:
+${flags}
+
+CANDIDATE'S ANSWER:
+${answer}
+
+Reply in English:
+1. For each criterion, a 0–3 score and 1–2 sentences on what exactly was strong or missing.
+2. Total: sum of scores / ${c.rubric.length*3} × 100 and the answer level (85+ Lead, 65+ Senior, 45+ Middle, otherwise Junior).
+3. 1–3 strengths and the 1–4 most valuable improvements.
+4. Red flags, if any.
+5. One follow-up question an interviewer would ask next.`);
+}
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); return true; }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); let ok = false; try{ ok = document.execCommand('copy'); }catch(err){} ta.remove(); return ok;
+  }
+}
+async function copyPrompt(){
+  const c = CUR, s = SESSION[c.id], err = $('#err'); s.answer = $('#answer').value;
+  if(s.answer.trim().length < 60){ err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to grade.'); return; }
+  const ok = await copyText(gradePrompt(c, s.answer.trim()));
+  err.style.color = ok ? 'var(--good)' : ''; err.textContent = ok ? L('Скопировано — вставь в чат с ИИ.','Copied — paste it into an AI chat.') : L('Не удалось скопировать.','Couldn’t copy.');
+  track('copy');
+}
+function showRef(){
+  const c = CUR;
+  $('#out').innerHTML = `<div class="result fade"><div class="section-h" style="margin-top:0">${L('Сравни по критериям','Compare by criteria')}</div>
+    <ul>${c.rubric.map(r=>`<li>${escH(T(r.name))}</li>`).join('')}</ul>
+    <details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>
+    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div></div>`;
+  $('#out').scrollIntoView({behavior:'smooth', block:'start'}); track('reference');
 }
 const LOADING = () => [L('Интервьюер читает ответ…','The interviewer is reading your answer…'), L('Сверяет с критериями…','Checking it against the rubric…'), L('Ищет, что можно усилить…','Looking for what to strengthen…'), L('Формулирует уточняющий вопрос…','Preparing a follow-up question…')];
 function startLoading(where){
@@ -501,6 +591,8 @@ document.addEventListener('click', e=>{
   if(a==='list'){ history.pushState(null, '', location.pathname + location.search); renderList(); window.scrollTo({top:0}); return; }
   if(a==='grade'){ grade(); return; }
   if(a==='followup'){ followup(); return; }
+  if(a==='copyPrompt'){ copyPrompt(); return; }
+  if(a==='showRef'){ showRef(); return; }
 });
 document.addEventListener('submit', async e=>{
   if(e.target.dataset.form!=='code') return;
@@ -519,7 +611,7 @@ window.addEventListener('hashchange', route);
   try{ DATA = await (await fetch('cases.json', {cache:'no-cache'})).json(); }
   catch(e){ $('#view').innerHTML = `<p>${L('Не удалось загрузить кейсы. Обнови страницу.','Couldn’t load the cases. Reload the page.')}</p>`; return; }
   route();
-  await refreshStatus(); route();
+  if(GRADING){ await refreshStatus(); route(); }
 })();
 </script>
 </body>
