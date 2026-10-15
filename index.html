@@ -2477,7 +2477,10 @@ function closeMonth(){
   const m = S.m;
   const fired = S.queue.filter(q=>q.at<=S.month); S.queue = S.queue.filter(q=>q.at>S.month);
   fired.forEach(q=>applyFx(q.fx));
-  const before = derive(m); const prev = {users:m.users, mrr:before.mrr, cash:m.cash, ratio:before.ratio};
+  // the summary compares with the end of last month, like the dashboard charts. The month's own decisions
+  // (and delayed effects that just fired) already moved MRR before the tick: that part is shown separately
+  const last = S.history[S.history.length-1], before = derive(m), startUsers = m.users;
+  const prev = {users:last.users, mrr:last.mrr, cash:last.cash, ratio:last.ratio};
   const d = derive(m);
   // team share on tech debt: fewer features ship, so organic growth drops
   const ds = m.debtShare||0;
@@ -2496,7 +2499,7 @@ function closeMonth(){
     track('review-'+lvl);
   }
   S.history.push({month:S.month, users:m.users, mrr:fin.mrr, cash:m.cash, ratio:fin.ratio, ret:fin.effRet});
-  S.summary = {prev, fired:fired.map(f=>({sid:f.sid, oi:f.oi})), newUsers:organic+paid, paid, organic, churned:prev.users*(1-d.effRet), debtWarn:d.debtPen>0, review};
+  S.summary = {prev, fired:fired.map(f=>({sid:f.sid, oi:f.oi})), newUsers:organic+paid, paid, organic, churned:startUsers*(1-d.effRet), decisionMrr:before.mrr-last.mrr, debtWarn:d.debtPen>0, review};
   S.phase = m.cash<0 ? 'end' : (S.month>=MONTHS ? 'end' : 'summary');
   if(S.phase==='end'){ S.ended = true; track(m.cash<0 ? 'bust' : 'finish'); saveRun(); }
   save(); render();
@@ -3392,6 +3395,7 @@ function renderSummary(){
     </div>
     <p class="lead">${L(`Пришло ${int(s.newUsers)} новых пользователей (${int(s.paid)} из рекламы, ${int(s.organic)} органически), ушло ${int(s.churned)}. Валовая выручка ${money(d.gross)} против расходов ${money(d.burn)}.`,
       `${int(s.newUsers)} new users came in (${int(s.paid)} from ads, ${int(s.organic)} organic) and ${int(s.churned)} churned. Revenue after store fees: ${money(d.gross)} vs. costs of ${money(d.burn)}.`)}</p>
+    ${Math.abs(s.decisionMrr||0) >= 0.03*s.prev.mrr ? `<p class="hint" style="margin-top:-4px">${L(`Решения этого месяца сразу изменили MRR на ${s.decisionMrr>0?'+':'−'}${money(Math.abs(s.decisionMrr))} — через цену, конверсию или отложенные эффекты прошлых решений. Остальное — приток и отток пользователей за месяц.`,`This month’s decisions moved MRR by ${s.decisionMrr>0?'+':'−'}${money(Math.abs(s.decisionMrr))} right away — through price, conversion or delayed effects of earlier calls. The rest is users coming and going over the month.`)}</p>` : ''}
     ${s.review ? `<div class="notes"><div class="note ${s.review.lvl==='full'?'':'warn'}"><b>${L('Ревью инвестора.','Investor review.')}</b> ${reviewText(s.review)}</div></div>` : ''}
     ${(s.fired.length||s.debtWarn) ? `<div class="notes">${s.fired.map(r=>`<div class="note">${laterNote(r)}</div>`).join('')}${s.debtWarn?`<div class="note warn">${L('Техдолг выше 50 — релизы ломаются, retention снижается. Отдай часть команды на техдолг ниже.','Tech debt is above 50 — releases break and retention drops. Put part of the team on it below.')}</div>`:''}</div>`:''}
     <section class="move" aria-label="${L('Твой ход','Your move')}">
