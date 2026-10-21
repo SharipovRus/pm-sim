@@ -155,7 +155,30 @@
      "good": {
       "ru": "Переводишь «открывать чаще» в измеримую цель и учитываешь, что на автобусы и расписание повлиять нельзя.",
       "en": "You turn “open more often” into a measurable goal and account for not controlling buses or schedules."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "цель выражена метрикой: частота, retention, WAU",
+        "en": "the goal as a metric: frequency, retention, WAU"
+       },
+       "re": "retention|ретеншн|удержани|wau|dau|mau|частот|frequency|раз в недел|times a week|дн\\p{L}* в недел|days a week|метрик|metric"
+      },
+      {
+       "label": {
+        "ru": "ограничение: на автобусы и расписание не влияем",
+        "en": "the constraint: no control over buses or schedules"
+       },
+       "re": "расписан|schedule|не (можем|можешь|влияем|влияет|контролир)|can.?t (change|control)|cannot (change|control)|no control|огранич|constraint"
+      },
+      {
+       "label": {
+        "ru": "бизнес-смысл: выручка, конкуренты",
+        "en": "the business reason: revenue, competitors"
+       },
+       "re": "бизнес|business|выручк|revenue|комисси|commission|реклам|\\bads?\\b|конкурент|competitor"
+      }
+     ]
     },
     {
      "id": "users",
@@ -167,7 +190,23 @@
      "good": {
       "ru": "Выбираешь конкретный сегмент — например, ежедневные поездки «дом — работа» в час пик — и объясняешь почему.",
       "en": "You pick a specific segment — e.g. daily home–work trips at peak hours — and explain why."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "конкретный сегмент пассажиров",
+        "en": "a specific commuter segment"
+       },
+       "re": "сегмент|segment|ежедневн|каждый день|daily|commuter|дом.{0,6}работ|home.{0,6}work|час\\p{L}* пик|peak|студент|student|пересадк|transfer"
+      },
+      {
+       "label": {
+        "ru": "опора на факты: 70% поездок, треть только платит",
+        "en": "grounded in the facts: 70% of trips, a third only pay"
+       },
+       "re": "70\\s?%|треть|third|только (чтобы )?оплат|only to pay|pay the fare"
+      }
+     ]
     },
     {
      "id": "pains",
@@ -179,7 +218,37 @@
      "good": {
       "ru": "Ранжируешь боли по частоте и силе и опираешься на главную жалобу: «автобус на карте есть, а на остановке нет».",
       "en": "You rank pains by frequency and severity and build on the top complaint: the bus on the map that isn’t at the stop."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "главная боль: непредсказуемое время прибытия",
+        "en": "the top pain: unreliable arrival times"
+       },
+       "re": "на карте|on the map|призрак|ghost|время прибыти|arrival|\\beta\\b|неточн|inaccura|неопредел|uncertain|не приезжа|isn.?t at the stop|на остановке"
+      },
+      {
+       "label": {
+        "ru": "другие боли: давка, пересадки, холод, оплата",
+        "en": "other pains: crowding, transfers, cold, payment"
+       },
+       "re": "давк|crowd|заполненн|пересадк|transfer|мерзн|холод|cold|weather|погод|оплат\\p{L}* (медлен|долг)|slow pay"
+      },
+      {
+       "label": {
+        "ru": "приоритет болей по частоте и силе",
+        "en": "pains prioritized by frequency and severity"
+       },
+       "re": "частот\\p{L}*.{0,30}(сил|остр|боль)|frequency.{0,30}severity|приоритиз|prioriti|главн\\p{L}* (боль|проблем|жалоб)|top (pain|complaint|problem)|самая (частая|главная)"
+      },
+      {
+       "label": {
+        "ru": "как проверить: интервью, данные GPS",
+        "en": "how to validate: interviews, GPS data"
+       },
+       "re": "интервью|interview|опрос|survey|исследован|research|gps.{0,25}(данн|data|качеств|quality|точност|accura)|проверить гипотез|validate"
+      }
+     ]
     },
     {
      "id": "solutions",
@@ -191,7 +260,37 @@
      "good": {
       "ru": "Сравниваешь 3+ разных решения по эффекту и затратам, выбираешь одно и описываешь конкретный MVP.",
       "en": "You compare 3+ distinct solutions by impact and effort, pick one and describe a concrete MVP."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "честное время прибытия, отсев устаревшего GPS",
+        "en": "honest ETAs, filtering stale GPS"
+       },
+       "re": "честн|honest|свеж\\p{L}* gps|fresh gps|stale|устаревш|уверенност|confidence"
+      },
+      {
+       "label": {
+        "ru": "сохранённый маршрут и уведомление «выходи»",
+        "en": "a saved route and a “leave now” alert"
+       },
+       "re": "сохран\\p{L}* маршрут|saved route|уведомлен|notif|пуш|push|выход\\p{L}* через|leave in"
+      },
+      {
+       "label": {
+        "ru": "другие варианты: заполненность, виджет, пересадки",
+        "en": "other options: crowding, widget, transfers"
+       },
+       "re": "заполненн|crowd|виджет|widget|пересадк|transfer planner|экран\\p{L}* блокировк|lock.?screen"
+      },
+      {
+       "label": {
+        "ru": "конкретный MVP",
+        "en": "a concrete MVP"
+       },
+       "re": "\\bmvp\\b|минимальн|перв\\p{L}* верси|first version|пилот|pilot|\\bscope\\b"
+      }
+     ]
     },
     {
      "id": "metrics",
@@ -203,7 +302,30 @@
      "good": {
       "ru": "Называешь главную метрику, guardrails и как будешь запускать и проверять решение.",
       "en": "You name a primary metric, guardrails, and how you’d launch and test the solution."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "главная метрика успеха",
+        "en": "a primary success metric"
+       },
+       "re": "главн\\p{L}* метрик|основн\\p{L}* метрик|primary metric|north star|метрик\\p{L}* успех|success metric|retention|d30|d7|\\bwau\\b|4\\+|дн\\p{L}* в недел|days a week"
+      },
+      {
+       "label": {
+        "ru": "guardrails: отписки, конверсия в оплату, жалобы",
+        "en": "guardrails: opt-outs, payment conversion, complaints"
+       },
+       "re": "guardrail|гардрейл|отписк|opt.?out|конверси\\p{L}* в оплат|payment conversion|жалоб|complaint|не ухудш"
+      },
+      {
+       "label": {
+        "ru": "план запуска или эксперимента",
+        "en": "a launch or experiment plan"
+       },
+       "re": "a/?b|аб.?тест|эксперимент|experiment|пилот|pilot|раскат|roll.?out|10\\s?%|район|district|контрольн|control group"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -215,8 +337,8 @@
    ],
    "followup_hint": "Good follow-ups: what if the city’s GPS data is too unreliable for honest ETAs; or how they’d prioritize this against the ads team’s request for more ad slots.",
    "reference": {
-    "ru": "<p><b>Цель.</b> «Открывать чаще» перевожу в метрику: доля пользователей, которые открывают приложение 4+ будних дня в неделю, и их retention через 30 дней. Ограничение — на автобусы и расписание мы не влияем, работаем с информацией и удобством.</p><p><b>Сегмент.</b> Люди с постоянным маршрутом «дом — работа» в часы пик: это 70% поездок, и они ездят каждый день — у них есть повод открывать приложение ежедневно.</p><p><b>Боли.</b> Главная — неопределённость: «на карте автобус есть, а на остановке нет». Человек выходит слишком рано и мёрзнет или опаздывает. Дальше — давка, пересадки, медленная оплата. Неопределённость частая и болезненная — с неё и начинаю.</p><p><b>Варианты.</b> 1) Честное время прибытия: скрывать автобусы с устаревшим GPS, показывать уверенность прогноза. 2) «Моя поездка»: сохранённый маршрут и уведомление «выходи через 4 минуты». 3) Индикатор заполненности. 4) Оплата QR с виджета на экране блокировки. Выбираю 1 + 2 вместе: это бьёт в главную жалобу и создаёт ежедневный повод открыть приложение не ради оплаты. Заполненность — дорого и нужны новые данные; виджет — быстрый выигрыш, но не про частоту.</p><p><b>MVP.</b> Пользователь сохраняет 1–2 маршрута и время выхода; ETA считаем только по автобусам со свежим GPS; пуш в выбранное время. Запуск на одном районе или 10% новых пользователей.</p><p><b>Метрики.</b> Главная — доля сохранивших маршрут, кто открывает приложение 4+ будних дня. Guardrails — отписки от пушей, конверсия в оплату, жалобы на неверное время. Если GPS у части автобусов плохой — честно показываем «нет данных», а не выдуманное время.</p>",
-    "en": "<p><b>Goal.</b> I’d turn “open more often” into a metric: the share of users who open the app 4+ weekdays a week, and their 30-day retention. Constraint: we can’t change buses or schedules, so we work with information and convenience.</p><p><b>Segment.</b> People with a fixed home–work route at peak hours: that’s 70% of trips, and they ride every day — they have a reason to open the app daily.</p><p><b>Pain points.</b> The top one is uncertainty: “the bus is on the map but not at the stop.” People leave too early and freeze, or miss the bus. Then crowding, transfers, slow payment. Uncertainty is both frequent and painful, so I start there.</p><p><b>Options.</b> 1) Honest arrival times: hide buses with stale GPS and show prediction confidence. 2) “My commute”: a saved route plus a “leave in 4 minutes” notification. 3) A crowding indicator. 4) QR payment from a lock-screen widget. I’d pick 1 + 2 together: they hit the top complaint and create a daily reason to open the app beyond paying. Crowding is expensive and needs new data; the widget is a quick win but doesn’t drive frequency.</p><p><b>MVP.</b> Users save 1–2 routes and a departure time; ETAs only from buses with fresh GPS; a push at the chosen time. Launch in one district or for 10% of new users.</p><p><b>Metrics.</b> Primary: share of route-savers who open the app 4+ weekdays a week. Guardrails: push opt-outs, payment conversion, complaints about wrong times. Where a bus’s GPS is bad, we honestly show “no data” instead of a made-up time.</p>"
+    "ru": "<p><b>Цель.</b> «Открывать чаще» перевожу в метрику: доля пользователей, которые открывают приложение 4+ будних дня в неделю, и их retention через 30 дней. Ограничение — на автобусы и расписание мы не влияем, работаем с информацией и удобством. Для бизнеса это важно: больше открытий — больше оплат проезда через приложение и меньше ухода к конкурентам.</p><p><b>Сегмент.</b> Люди с постоянным маршрутом «дом — работа» в часы пик: это 70% поездок, и они ездят каждый день — у них есть повод открывать приложение ежедневно.</p><p><b>Боли.</b> Главная — неопределённость: «на карте автобус есть, а на остановке нет». Человек выходит слишком рано и мёрзнет или опаздывает. Дальше — давка, пересадки, медленная оплата. Неопределённость частая и болезненная — с неё и начинаю. Проверю это на 8–10 интервью с пассажирами и по данным: как часто GPS автобусов устаревает.</p><p><b>Варианты.</b> 1) Честное время прибытия: скрывать автобусы с устаревшим GPS, показывать уверенность прогноза. 2) «Моя поездка»: сохранённый маршрут и уведомление «выходи через 4 минуты». 3) Индикатор заполненности. 4) Оплата QR с виджета на экране блокировки. Выбираю 1 + 2 вместе: это бьёт в главную жалобу и создаёт ежедневный повод открыть приложение не ради оплаты. Заполненность — дорого и нужны новые данные; виджет — быстрый выигрыш, но не про частоту.</p><p><b>MVP.</b> Пользователь сохраняет 1–2 маршрута и время выхода; ETA считаем только по автобусам со свежим GPS; пуш в выбранное время. Запуск на одном районе или 10% новых пользователей.</p><p><b>Метрики.</b> Главная — доля сохранивших маршрут, кто открывает приложение 4+ будних дня. Guardrails — отписки от пушей, конверсия в оплату, жалобы на неверное время. Если GPS у части автобусов плохой — честно показываем «нет данных», а не выдуманное время.</p>",
+    "en": "<p><b>Goal.</b> I’d turn “open more often” into a metric: the share of users who open the app 4+ weekdays a week, and their 30-day retention. Constraint: we can’t change buses or schedules, so we work with information and convenience. It matters for the business: more opens mean more fare payments through the app and fewer users drifting to competitors.</p><p><b>Segment.</b> People with a fixed home–work route at peak hours: that’s 70% of trips, and they ride every day — they have a reason to open the app daily.</p><p><b>Pain points.</b> The top one is uncertainty: “the bus is on the map but not at the stop.” People leave too early and freeze, or miss the bus. Then crowding, transfers, slow payment. Uncertainty is both frequent and painful, so I start there. I’d confirm it with 8–10 commuter interviews and by checking how often the buses’ GPS data goes stale.</p><p><b>Options.</b> 1) Honest arrival times: hide buses with stale GPS and show prediction confidence. 2) “My commute”: a saved route plus a “leave in 4 minutes” notification. 3) A crowding indicator. 4) QR payment from a lock-screen widget. I’d pick 1 + 2 together: they hit the top complaint and create a daily reason to open the app beyond paying. Crowding is expensive and needs new data; the widget is a quick win but doesn’t drive frequency.</p><p><b>MVP.</b> Users save 1–2 routes and a departure time; ETAs only from buses with fresh GPS; a push at the chosen time. Launch in one district or for 10% of new users.</p><p><b>Metrics.</b> Primary: share of route-savers who open the app 4+ weekdays a week. Guardrails: push opt-outs, payment conversion, complaints about wrong times. Where a bus’s GPS is bad, we honestly show “no data” instead of a made-up time.</p>"
    }
   },
   {
@@ -258,7 +380,30 @@
      "good": {
       "ru": "Прежде чем искать причину, проверяешь, что падение настоящее: трекинг после релиза Android, что считается заказом, сезонность.",
       "en": "Before hunting for causes, you check the drop is real: tracking after the Android release, what counts as an order, seasonality."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "проверить трекинг после релиза",
+        "en": "check tracking after the release"
+       },
+       "re": "трекинг|tracking|событи|\\bevents?\\b|логирован|logging|сломал\\p{L}* (аналитик|трекинг|отправк)|broke\\p{L}* (tracking|analytics)"
+      },
+      {
+       "label": {
+        "ru": "сверить с бэкендом или оплатами",
+        "en": "reconcile with backend or payment data"
+       },
+       "re": "бэкенд|бекенд|backend|базы? данн|database|данн\\p{L}* оплат|payment data|свер|reconcile|cross.?check"
+      },
+      {
+       "label": {
+        "ru": "сезонность или определение заказа",
+        "en": "seasonality or what counts as an order"
+       },
+       "re": "сезон|season|год назад|last year|year ago|праздник|holiday|что считается заказом|what counts|определени\\p{L}* заказ|placed vs|delivered"
+      }
+     ]
     },
     {
      "id": "segment",
@@ -270,7 +415,30 @@
      "good": {
       "ru": "Раскладываешь падение по таблицам и видишь два сигнала: Android даёт ~85% потерь, а Гамбург падает сильнее, чем объясняет Android.",
       "en": "You break the drop down with the tables and see two signals: Android accounts for ~85% of the loss, and Hamburg fell more than Android explains."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "Android даёт ~85% потерь",
+        "en": "Android is ~85% of the loss"
+       },
+       "re": "85\\s?%|8[\\s,.]?600|22\\s?%"
+      },
+      {
+       "label": {
+        "ru": "Гамбург — отдельный второй сигнал",
+        "en": "Hamburg as a separate second signal"
+       },
+       "re": "(гамбург|hamburg).{0,120}(29|втор|second|отдельн|separate|сильнее|more than|ещ)|29\\s?%"
+      },
+      {
+       "label": {
+        "ru": "разрез «город × платформа» или новые/постоянные",
+        "en": "a city × platform cut or new vs returning"
+       },
+       "re": "город\\p{L}* ?[×x] ?платформ|city ?[×x] ?platform|кросс|cross.?tab|разрез|разби\\p{L}* по|break\\p{L}* (it )?down|сегментир|segment|нов\\p{L}* и (стар|постоянн)|new (vs|and) (returning|old)"
+      }
+     ]
     },
     {
      "id": "hypotheses",
@@ -282,7 +450,30 @@
      "good": {
       "ru": "Ранжируешь причины по вкладу и объясняешь, почему дождь и сокращение рекламы в Мюнхене — не главное.",
       "en": "You rank causes by impact and explain why the rain and the Munich ad cut aren’t the main story."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "главная причина — экран оплаты в 5.2",
+        "en": "main cause: the 5.2 payment screen"
+       },
+       "re": "экран\\p{L}* оплат|payment screen|checkout|5\\.2"
+      },
+      {
+       "label": {
+        "ru": "вторая — конкурент с промо",
+        "en": "second: the competitor’s promo"
+       },
+       "re": "конкурент|competitor|промо|promo|скидк|discount"
+      },
+      {
+       "label": {
+        "ru": "дождь и бюджет Мюнхена отброшены с объяснением",
+        "en": "rain and the Munich ad cut dismissed with reasons"
+       },
+       "re": "дожд\\p{L}*.{0,80}(увелич|рост|не |больше)|rain.{0,80}(increase|more|not|lift|boost)|(бюджет|реклам)\\p{L}*.{0,80}(медлен|постеп|не объясн|мал)|(budget|ad cut).{0,80}(slow|gradual|doesn|can.?t explain|small)"
+      }
+     ]
     },
     {
      "id": "verify",
@@ -294,7 +485,30 @@
      "good": {
       "ru": "Для каждой гипотезы называешь конкретную проверку: воронка Android по версиям, ошибки оплаты, новые и постоянные клиенты в Гамбурге.",
       "en": "For each hypothesis you name a concrete check: Android funnel by version, payment errors, new vs returning customers in Hamburg."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "воронка Android по версиям",
+        "en": "Android funnel by app version"
+       },
+       "re": "воронк|funnel|по верси|by version|5\\.1"
+      },
+      {
+       "label": {
+        "ru": "ошибки оплаты и крэши",
+        "en": "payment errors and crashes"
+       },
+       "re": "ошибк|error|крэш|краш|crash|сбо[йи]|failure"
+      },
+      {
+       "label": {
+        "ru": "новые и постоянные клиенты в Гамбурге",
+        "en": "new vs returning customers in Hamburg"
+       },
+       "re": "нов\\p{L}*.{0,25}(постоянн|стар|вернувш)|new.{0,20}(returning|existing|loyal)|лояльн|loyal|частот\\p{L}* заказ|order frequency|когорт|cohort"
+      }
+     ]
     },
     {
      "id": "action",
@@ -306,7 +520,37 @@
      "good": {
       "ru": "Предлагаешь действия по приоритету с целью и сроком: откат или хотфикс экрана оплаты сегодня, а в Гамбурге — без слепого копирования скидки.",
       "en": "You propose prioritized actions with a goal and timeline: roll back or hotfix the payment screen today, and no blind matching of the discount in Hamburg."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "откат или хотфикс экрана оплаты",
+        "en": "roll back or hotfix the payment screen"
+       },
+       "re": "откат|rollback|roll back|hotfix|хотфикс|фичефлаг|feature flag|останов\\p{L}* раскатк|halt|pause the rollout|верну\\p{L}* стар|old (payment )?screen"
+      },
+      {
+       "label": {
+        "ru": "цель и срок",
+        "en": "a target and a deadline"
+       },
+       "re": "48|24 час|сутк|сегодня|today|за \\d+ (час|дн)|within \\d+|срок|deadline|target|цел[ьи]"
+      },
+      {
+       "label": {
+        "ru": "не копировать скидку, юнит-экономика",
+        "en": "no blind discount matching, unit economics"
+       },
+       "re": "юнит.?экономик|unit economics|не (копир|повтор|снижа)|wouldn.?t match|not match|don.?t match|точечн|targeted|удерж|retain"
+      },
+      {
+       "label": {
+        "ru": "сообщить CEO масштаб",
+        "en": "tell the CEO the sizing"
+       },
+       "re": "\\bceo\\b|руководств|сообщ|сказать|\\btell\\b|communicat|предупред|inform|stakeholder|стейкхолдер"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -361,7 +605,30 @@
      "good": {
       "ru": "Определяешь, что считаешь: доставка готовой еды за год, оборот (GMV), а не выручка платформ.",
       "en": "You define what you’re counting: restaurant delivery per year, as GMV rather than platform revenue."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "оборот (GMV), а не выручка платформ",
+        "en": "GMV, not platform revenue"
+       },
+       "re": "gmv|оборот|выручк\\p{L}* платформ|platform revenue|комисси|commission|take rate"
+      },
+      {
+       "label": {
+        "ru": "что входит: рестораны, без продуктов",
+        "en": "what’s in: restaurants, no groceries"
+       },
+       "re": "продукт\\p{L}* не|без продукт|не (считаю|включ)|exclud|groceries|ресторан|restaurant|агрегатор|aggregator"
+      },
+      {
+       "label": {
+        "ru": "за год и в какой валюте",
+        "en": "per year, and the currency"
+       },
+       "re": "в год|за год|per year|annual|a year|\\$|доллар|dollar|usd"
+      }
+     ]
     },
     {
      "id": "structure",
@@ -373,7 +640,23 @@
      "good": {
       "ru": "Строишь понятную формулу из множителей, а лучше — с сегментами.",
       "en": "You build a clear formula from factors, ideally with segments."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "формула из множителей",
+        "en": "a formula of factors"
+       },
+       "re": "[×x\\*].{0,40}[×x\\*]|умнож|multipl|формул|formula"
+      },
+      {
+       "label": {
+        "ru": "сегменты",
+        "en": "segments"
+       },
+       "re": "сегмент|segment|офис|office|обед|lunch|вечер|evening|выходн|weekend|возраст|\\bage\\b|доход|income|молод|young"
+      }
+     ]
     },
     {
      "id": "assumptions",
@@ -385,7 +668,37 @@
      "good": {
       "ru": "Каждое допущение называешь и обосновываешь, а итог попадает в разумные пределы — примерно $0,4–3 млрд в год.",
       "en": "You state and justify every assumption, and the result lands in a sensible range — roughly $0.4–3B a year."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "база: население или взрослые",
+        "en": "the base: population or adults"
+       },
+       "re": "18.{0,3}(60|64|65)|взросл|adult|3[,.]8|населени|population"
+      },
+      {
+       "label": {
+        "ru": "доля тех, кто заказывает",
+        "en": "the share who order"
+       },
+       "re": "\\d{2}\\s?%|доля|share"
+      },
+      {
+       "label": {
+        "ru": "частота заказов",
+        "en": "order frequency"
+       },
+       "re": "раз\\p{L}* в (месяц|недел)|в месяц|per month|a month|times a (month|week)|частот|frequency"
+      },
+      {
+       "label": {
+        "ru": "средний чек",
+        "en": "average order value"
+       },
+       "re": "средн\\p{L}* чек|average (order|check|basket)|\\baov\\b|\\$\\s?\\d{2}|\\d{2}\\s?\\$|\\d{2} доллар"
+      }
+     ]
     },
     {
      "id": "math",
@@ -397,7 +710,23 @@
      "good": {
       "ru": "Считаешь без ошибок, единицы сходятся, округляешь разумно.",
       "en": "Your math is right, units are consistent, rounding is sensible."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "расчёт по шагам",
+        "en": "the math shown step by step"
+       },
+       "re": "=|≈|~|итого|\\btotal\\b|получа|equals|gives"
+      },
+      {
+       "label": {
+        "ru": "итог за год в правдоподобных порядках",
+        "en": "an annual total of the right magnitude"
+       },
+       "re": "млрд|billion|\\$\\s?\\d([.,]\\d)?\\s?b\\b|\\d{3}\\s?(млн|m\\b|million)"
+      }
+     ]
     },
     {
      "id": "sanity",
@@ -409,7 +738,30 @@
      "good": {
       "ru": "Проверяешь результат вторым способом, даёшь диапазон и называешь самое чувствительное допущение.",
       "en": "You check the result a second way, give a range and name the most sensitive assumption."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "проверка вторым способом",
+        "en": "a cross-check with a second method"
+       },
+       "re": "друг\\p{L}* (способ|сторон|метод)|second (method|way)|cross.?check|предложени|supply|ресторан\\p{L}*.{0,40}(заказ|в день)|restaurants?.{0,40}(orders|a day|per day)|курьер|courier|top.?down|bottom.?up"
+      },
+      {
+       "label": {
+        "ru": "диапазон",
+        "en": "a range"
+       },
+       "re": "диапазон|\\brange\\b|от \\$?\\d.{0,20}до|between|\\d\\s?[-–]\\s?\\$?\\d"
+      },
+      {
+       "label": {
+        "ru": "самое чувствительное допущение",
+        "en": "the most sensitive assumption"
+       },
+       "re": "чувствит|sensitiv|сильнее всего|most (sensitive|impact)|ключев\\p{L}* допущ|key assumption|опрос|survey"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -464,7 +816,30 @@
      "good": {
       "ru": "Уточняешь, зачем расти именно сейчас, и сравниваешь Варшаву с альтернативами: довести до нуля Мюнхен и Гамбург, другие города Германии.",
       "en": "You clarify why expand now and compare Warsaw with alternatives: getting Munich and Hamburg to break even, other German cities."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "зачем: история роста против прибыли",
+        "en": "why: a growth story vs profitability"
+       },
+       "re": "зачем|why (now|expand)|истори\\p{L}* рост|growth story|раунд|\\bround\\b|прибыл|profit|break.?even|в ноль"
+      },
+      {
+       "label": {
+        "ru": "альтернативы: довести Мюнхен и Гамбург",
+        "en": "alternatives: fix Munich and Hamburg"
+       },
+       "re": "альтернатив|alternative|вместо|instead|мюнхен|munich|гамбург|hamburg|други\\p{L}* город|other cities|углуб|deepen"
+      },
+      {
+       "label": {
+        "ru": "цена упущенной возможности: деньги и команда",
+        "en": "opportunity cost: money and team"
+       },
+       "re": "упущенн|opportunity cost|runway|ранвей|14 месяц|14 months|€\\s?2|2 млн|\\b2m\\b|команд\\p{L}*.{0,30}(та же|одн|не хват|растян)|same (team|engineers)|stretch"
+      }
+     ]
     },
     {
      "id": "economics",
@@ -476,7 +851,30 @@
      "good": {
       "ru": "Используешь цифры: из-за чека €25 и доли онлайна 3% онлайн-рынок продуктов в Варшаве — примерно пятая часть берлинского, а доставка съедает бо́льшую долю чека.",
       "en": "You use the numbers: with a €25 order and 3% online share, Warsaw’s online grocery market is roughly a fifth of Berlin’s, and delivery eats a bigger share of each order."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "рынок ~в 5 раз меньше берлинского",
+        "en": "a market ~5× smaller than Berlin’s"
+       },
+       "re": "пят\\p{L}* част|fifth|0[,.]19|в \\d раз\\p{L}* меньш|\\d+ times smaller|меньш\\p{L}* рын|smaller market|рын\\p{L}*.{0,40}меньш|market.{0,40}(smaller|tiny|limited)"
+      },
+      {
+       "label": {
+        "ru": "ниже чек и доля онлайна",
+        "en": "lower order value and online share"
+       },
+       "re": "чек|order value|average order|€\\s?25|25\\s?€|3\\s?%|онлайн|online share"
+      },
+      {
+       "label": {
+        "ru": "доставка съедает бо́льшую долю, дольше окупаемость",
+        "en": "delivery eats more of the order, slower payback"
+       },
+       "re": "14\\s?%|11\\s?%|доставк\\p{L}*.{0,40}(дол|съеда|чек)|delivery.{0,40}(share|eats|of the order)|окупа|payback|pays? back|марж|margin"
+      }
+     ]
     },
     {
      "id": "risks",
@@ -488,7 +886,30 @@
      "good": {
       "ru": "Называешь главные риски: сильный конкурент весной, деньги на 14 месяцев, одна команда на четыре города, другая валюта, поставщики и платежи.",
       "en": "You name the main risks: a strong competitor in spring, 14 months of cash, one team across four cities, a different currency, suppliers and payments."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "сильный конкурент весной",
+        "en": "a strong competitor in spring"
+       },
+       "re": "конкурент|competitor|маркетплейс|marketplace|весн|spring"
+      },
+      {
+       "label": {
+        "ru": "деньги и runway",
+        "en": "cash and runway"
+       },
+       "re": "деньг|\\bcash\\b|runway|ранвей|14 месяц|14 months|\\bburn\\b"
+      },
+      {
+       "label": {
+        "ru": "команда, валюта, поставщики",
+        "en": "team, currency, suppliers"
+       },
+       "re": "команд|\\bteam\\b|инженер|engineer|разработчик|валют|currency|злот|zloty|поставщик|supplier|регулир|regulat|логистик|logistic"
+      }
+     ]
     },
     {
      "id": "plan",
@@ -500,7 +921,30 @@
      "good": {
       "ru": "Предлагаешь дешёвую поэтапную проверку: пилот на одном дарксторе или партнёрство с местной сетью, с метриками (заказы в день, маржа заказа, повторные покупки) и критериями остановки.",
       "en": "You propose a cheap staged test: a one-dark-store pilot or a local partnership, with metrics (orders per day, margin per order, repeat rate) and stop criteria."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "пилот или партнёрство вместо полного запуска",
+        "en": "a pilot or partnership instead of a full launch"
+       },
+       "re": "пилот|pilot|один даркстор|one dark ?store|партнер|partner|исследован|research"
+      },
+      {
+       "label": {
+        "ru": "метрики пилота",
+        "en": "pilot metrics"
+       },
+       "re": "заказ\\p{L}* в день|orders? (a|per) day|марж|margin|повторн|repeat|загрузк|utiliz"
+      },
+      {
+       "label": {
+        "ru": "критерии остановки",
+        "en": "stop criteria"
+       },
+       "re": "критери\\p{L}* (остановк|выход|успех)|\\bkill\\b|\\bstop\\b|останов|если.{0,50}(не |меньш)|if.{0,50}(doesn|not|below)|порог|threshold"
+      }
+     ]
     },
     {
      "id": "decision",
@@ -512,7 +956,30 @@
      "good": {
       "ru": "Даёшь ясную рекомендацию с условиями, говоришь, что её изменит, и как ответить инвестору, которому нужна история роста.",
       "en": "You give a clear recommendation with conditions, say what would change it, and how to answer an investor who wants a growth story."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "ясная рекомендация",
+        "en": "a clear recommendation"
+       },
+       "re": "рекоменд|recommend|не запуска|wouldn.?t launch|don.?t launch|not (launch|this year)|решени|decision"
+      },
+      {
+       "label": {
+        "ru": "что изменит решение",
+        "en": "what would change it"
+       },
+       "re": "передума|change my mind|если.{0,50}(покаж|получ)|if the pilot|при условии|condition"
+      },
+      {
+       "label": {
+        "ru": "ответ инвестору",
+        "en": "an answer for the investor"
+       },
+       "re": "инвестор|investor"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -567,7 +1034,23 @@
      "good": {
       "ru": "Связываешь выбор с целью квартала и разделяешь инициативы, которые двигают D30 новых, и те, что работают на другие цели.",
       "en": "You tie the picks to the quarter goal and separate initiatives that move new-user D30 from those that serve other goals."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "опора на цель квартала: D30 +2 п.п.",
+        "en": "anchored on the goal: D30 +2 pp"
+       },
+       "re": "d30|цел\\p{L}* квартал|quarter.?s goal|goal of the quarter|retention|удержани|2 ?п\\.?п|2 ?pp"
+      },
+      {
+       "label": {
+        "ru": "отделены инициативы под другие цели",
+        "en": "initiatives for other goals set apart"
+       },
+       "re": "не (про|двига|влия)|doesn.?t (move|serve)|other goals?|друг\\p{L}* цел|выручк|revenue|отток\\p{L}* платящ|paying.{0,15}churn|\\bpr\\b"
+      }
+     ]
     },
     {
      "id": "scoring",
@@ -579,7 +1062,30 @@
      "good": {
       "ru": "Считаешь ожидаемый эффект с поправкой на уверенность: онбординг даёт ≈ +2,1 п.п. — одного его хватает на цель квартала.",
       "en": "You compute expected impact adjusted for confidence: onboarding gives ≈ +2.1 pp, enough for the quarter’s goal on its own."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "эффект с поправкой на уверенность",
+        "en": "impact adjusted for confidence"
+       },
+       "re": "0[,.]7|уверенност|confidence|ожидаем|expected|rice|\\bice\\b"
+      },
+      {
+       "label": {
+        "ru": "онбординг ≈ +2,1 п.п. закрывает цель",
+        "en": "onboarding ≈ +2.1 pp covers the goal"
+       },
+       "re": "2[,.]1|онбординг.{0,80}(хват|достаточ|покрыв|цел)|onboarding.{0,80}(enough|cover|alone|goal)"
+      },
+      {
+       "label": {
+        "ru": "сравнение других инициатив в цифрах",
+        "en": "other initiatives compared in numbers"
+       },
+       "re": "0[,.]5|0[,.]2|0[,.]4"
+      }
+     ]
     },
     {
      "id": "capacity",
@@ -591,7 +1097,30 @@
      "good": {
       "ru": "Укладываешь план в 12 недель с запасом на баги и неизвестное и расставляешь порядок: например, сначала баг синхронизации, потом онбординг.",
       "en": "You fit the plan into 12 weeks with a buffer and set an order: e.g. the sync bug first, then onboarding."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "план влезает в 12 недель",
+        "en": "the plan fits into 12 weeks"
+       },
+       "re": "12.?недел|12.?weeks?|3 ?\\+ ?6|9 недел|9 weeks|влеза|\\bfits?\\b"
+      },
+      {
+       "label": {
+        "ru": "запас на баги и неизвестное",
+        "en": "a buffer for bugs and unknowns"
+       },
+       "re": "буфер|запас|buffer|резерв|slack"
+      },
+      {
+       "label": {
+        "ru": "порядок работ",
+        "en": "an order of work"
+       },
+       "re": "сначала|\\bfirst\\b|потом|\\bthen\\b|порядок|\\border\\b|sequence"
+      }
+     ]
     },
     {
      "id": "tradeoffs",
@@ -603,7 +1132,37 @@
      "good": {
       "ru": "Объясняешь, что не вошло и почему, и предлагаешь дешёвые шаги вместо отказа — например, проверить спрос на семейную подписку кнопкой с листом ожидания.",
       "en": "You explain what didn’t make it and why, and offer cheap next steps instead of a flat no — e.g. test demand for the family plan with a waitlist button."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "почему не Apple Health",
+        "en": "why not Apple Health"
+       },
+       "re": "(apple )?health.{0,100}(не |низк|дорог|8 недел|отлож|откаж)|(apple )?health.{0,100}(not|low|expensive|8 weeks|later|out|skip)"
+      },
+      {
+       "label": {
+        "ru": "дешёвая проверка семейной подписки",
+        "en": "a cheap test for the family plan"
+       },
+       "re": "фейк|fake|кнопк|button|лист\\p{L}* ожидани|wait.?list|тест\\p{L}* спрос|test demand|опрос|survey"
+      },
+      {
+       "label": {
+        "ru": "баг синхронизации берём, хоть он не про цель",
+        "en": "the sync bug stays even though it isn’t the goal"
+       },
+       "re": "баг|\\bbug\\b|синхрониз|\\bsync\\b"
+      },
+      {
+       "label": {
+        "ru": "виджет — если останется время",
+        "en": "the widget only if there’s room"
+       },
+       "re": "виджет|widget|stretch"
+      }
+     ]
     },
     {
      "id": "comms",
@@ -615,7 +1174,30 @@
      "good": {
       "ru": "Продумываешь разговоры: общие критерии, встречи с Леной и Андреем до планирования, что каждый получит вместо отказа и когда вернёмся к идее.",
       "en": "You plan the conversations: shared criteria, talking to Lena and Andrew before planning, what each gets instead of a no, and when you’ll revisit."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "общие прозрачные критерии",
+        "en": "shared, transparent criteria"
+       },
+       "re": "критери|criteria|прозрачн|transparen|shared|расчет|calculation"
+      },
+      {
+       "label": {
+        "ru": "разговоры с Андреем и Леной заранее",
+        "en": "talking to Andrew and Lena up front"
+       },
+       "re": "андре|andrew|лен[аеуы]|\\blena\\b|кир[аеуы]|\\bkira\\b|1:1|один на один|one.?on.?one|лично|отдельно|separately"
+      },
+      {
+       "label": {
+        "ru": "что взамен и когда вернёмся",
+        "en": "what instead and when to revisit"
+       },
+       "re": "следующ\\p{L}* квартал|next quarter|вернемся|revisit|дат\\p{L}* решени|decision date|взамен|instead|вместо"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -670,7 +1252,30 @@
      "good": {
       "ru": "Формулируешь гипотезу и одну главную метрику до теста — конверсию посетителя пейвола в оплату — и минимальный эффект +1 п.п.",
       "en": "You state the hypothesis and one primary metric before the test — paywall visitor to paid conversion — and the +1 pp minimum effect."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "главная метрика — конверсия в оплату",
+        "en": "primary metric: paid conversion"
+       },
+       "re": "конверси|conversion|выручк\\p{L}* на (посетит|пользоват)|revenue per (visitor|user)|главн\\p{L}* метрик|primary metric"
+      },
+      {
+       "label": {
+        "ru": "гипотеза",
+        "en": "a hypothesis"
+       },
+       "re": "гипотез|hypothes|ожида|expect"
+      },
+      {
+       "label": {
+        "ru": "минимальный эффект +1 п.п.",
+        "en": "a +1 pp minimum effect"
+       },
+       "re": "1 ?п\\.?п|1 ?pp|\\+ ?1|6\\s?%|\\bmde\\b|минимальн\\p{L}* эффект|minimum (detectable )?effect"
+      }
+     ]
     },
     {
      "id": "sample",
@@ -682,7 +1287,30 @@
      "good": {
       "ru": "Считаешь выборку: по правилу Лера ≈ 7 600 человек на группу, это около 4 дней трафика, — и округляешь до полной недели, чтобы поймать будни и выходные.",
       "en": "You compute the sample: by Lehr’s rule ≈ 7,600 per group, about 4 days of traffic — and round up to a full week to cover weekdays and weekends."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "размер выборки ≈ 7 600 на группу",
+        "en": "sample size ≈ 7,600 per group"
+       },
+       "re": "7[\\s,.]?[56]\\d\\d|лер|lehr|16 ?[×x\\*·]|размер\\p{L}* выборк|sample size|мощност|\\bpower\\b"
+      },
+      {
+       "label": {
+        "ru": "сколько дней трафика",
+        "en": "how many days of traffic"
+       },
+       "re": "4 (дн|day)|четыре дн|~ ?4|двух? недел|two weeks|\\d+ (дн|day)"
+      },
+      {
+       "label": {
+        "ru": "полная неделя ради будней и выходных",
+        "en": "a full week for weekdays and weekends"
+       },
+       "re": "полн\\p{L}* недел|full week|выходн|weekend|будн|weekday|недел|\\bweeks?\\b"
+      }
+     ]
     },
     {
      "id": "guardrails",
@@ -694,7 +1322,23 @@
      "good": {
       "ru": "Называешь guardrails: возвраты и отмены пробного периода, retention новых платящих, ARPPU — крупная кнопка пробного может привести менее мотивированных.",
       "en": "You name guardrails: refunds and trial cancellations, new payers’ retention, ARPPU — a bigger trial button can bring in less committed payers."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "возвраты и отмены пробного",
+        "en": "refunds and trial cancellations"
+       },
+       "re": "возврат|refund|отмен|cancel"
+      },
+      {
+       "label": {
+        "ru": "retention или ARPPU платящих",
+        "en": "payer retention or ARPPU"
+       },
+       "re": "retention|удержани|d7|d30|arppu|\\barpu\\b|\\bltv\\b|рейтинг|rating"
+      }
+     ]
     },
     {
      "id": "peeking",
@@ -706,7 +1350,30 @@
      "good": {
       "ru": "Объясняешь Андрею, почему рано: подглядывание завышает ложные находки, набрана половина выборки, нет полной недели, — и называешь дату решения.",
       "en": "You explain to Andrew why it’s too early: peeking inflates false positives, only half the sample is in, there’s no full week yet — and you name the decision date."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "рано: подглядывание завышает ложные находки",
+        "en": "too early: peeking inflates false positives"
+       },
+       "re": "подгляд|\\bpeek|рано|too early|ложн|false positive|каждый день|every day|на первом|at the first"
+      },
+      {
+       "label": {
+        "ru": "набрана только половина выборки",
+        "en": "only half the sample is in"
+       },
+       "re": "половин|\\bhalf\\b|4[\\s,.]?000|не набрал|not enough|мало данн|too few"
+      },
+      {
+       "label": {
+        "ru": "ответ Андрею с датой решения",
+        "en": "a reply to Andrew with a decision date"
+       },
+       "re": "андре|andrew|понедельн|monday|через неделю|in a week|дат[ау]|\\bdate\\b|когда набер|once we"
+      }
+     ]
     },
     {
      "id": "decision",
@@ -718,7 +1385,30 @@
      "good": {
       "ru": "Заранее фиксируешь правило: при каком результате раскатываем, дорабатываем или отказываемся и какие guardrails не должны ухудшиться.",
       "en": "You set the rule up front: which result means roll out, iterate or drop, and which guardrails must not get worse."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "правило решения заранее",
+        "en": "a decision rule set up front"
+       },
+       "re": "заранее|up ?front|before the test|до теста|правил|\\brule\\b|критери|criteria"
+      },
+      {
+       "label": {
+        "ru": "когда раскатываем, дорабатываем, отказываемся",
+        "en": "when to roll out, iterate or drop"
+       },
+       "re": "раскат|roll ?out|дорабат|iterate|отказ|\\bdrop\\b|\\bkill\\b"
+      },
+      {
+       "label": {
+        "ru": "сегменты — только как проверка",
+        "en": "segments only as a sanity check"
+       },
+       "re": "сегмент|segment|\\bios\\b|android|андроид|fishing|p.?hacking|множествен|multiple"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -773,7 +1463,30 @@
      "good": {
       "ru": "Считаешь, что средний месячный подписчик приносит ≈ $60 ($51 после комиссии) — столько же, сколько годовой план.",
       "en": "You work out that the average monthly subscriber brings ≈ $60 ($51 after fees) — the same as the annual plan."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "средняя жизнь ≈ 1 / 0,15 ≈ 6,7 мес.",
+        "en": "average lifetime ≈ 1 / 0.15 ≈ 6.7 months"
+       },
+       "re": "1 ?/ ?0[,.]15|6[,.][67]|срок\\p{L}* жизни|lifetime|средн\\p{L}* (жизн|длит)"
+      },
+      {
+       "label": {
+        "ru": "LTV ≈ $60 ($51 после комиссии)",
+        "en": "LTV ≈ $60 ($51 after fees)"
+       },
+       "re": "\\$\\s?(60|51)|(60|51)\\s?\\$|\\bltv\\b"
+      },
+      {
+       "label": {
+        "ru": "учтена комиссия магазинов",
+        "en": "the store fee accounted for"
+       },
+       "re": "комисси|\\bfee|15\\s?%|app store|google play|магазин"
+      }
+     ]
     },
     {
      "id": "cannibal",
@@ -785,7 +1498,23 @@
      "good": {
       "ru": "Объясняешь, что годовой выберут лояльные (на месячном они принесли бы $108), и оцениваешь, сколько их: до года доживает ≈ 14%.",
       "en": "You explain that loyal users pick annual (on monthly they’d pay $108) and estimate how many there are: ≈ 14% last a year."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "годовой выберут лояльные — каннибализация",
+        "en": "loyal users pick annual — cannibalization"
+       },
+       "re": "лояльн|loyal|каннибал|cannibal|самоотбор|self.?select"
+      },
+      {
+       "label": {
+        "ru": "цифры: $108 или ~14% доживают до года",
+        "en": "numbers: $108 or ~14% last a year"
+       },
+       "re": "108|14\\s?%|0[,.]85 ?\\^|0[,.]85¹²|12 месяц|12 months"
+      }
+     ]
     },
     {
      "id": "cash",
@@ -797,7 +1526,30 @@
      "good": {
       "ru": "Взвешиваешь деньги сейчас для runway против потерь выручки в будущем — с оценкой.",
       "en": "You weigh cash now for runway against future revenue lost — with an estimate."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "деньги сразу продлевают runway",
+        "en": "cash up front extends runway"
+       },
+       "re": "runway|ранвей|кэш|\\bcash\\b|деньги сразу|up ?front|8 месяц|8 months"
+      },
+      {
+       "label": {
+        "ru": "оценка суммы",
+        "en": "an estimate of the amount"
+       },
+       "re": "204|\\d{3}\\s?(тыс|k\\b)|\\$\\s?\\d{3}"
+      },
+      {
+       "label": {
+        "ru": "риски: возвраты, продления, долгосрочная выручка",
+        "en": "risks: refunds, renewals, long-term revenue"
+       },
+       "re": "возврат|refund|продлени|renewal|признани\\p{L}* выручк|revenue recogn|долгосроч|long.?term"
+      }
+     ]
     },
     {
      "id": "test",
@@ -809,7 +1561,30 @@
      "good": {
       "ru": "Предлагаешь A/B на пейволле для новых пользователей с главной метрикой — выручкой на посетителя.",
       "en": "You propose a paywall A/B test for new users with revenue per visitor as the primary metric."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "A/B на пейволле для новых",
+        "en": "a paywall A/B test for new users"
+       },
+       "re": "a/?b|аб.?тест|эксперимент|experiment|пейвол|paywall|нов\\p{L}* пользоват|new users"
+      },
+      {
+       "label": {
+        "ru": "главная метрика — выручка на посетителя",
+        "en": "primary metric: revenue per visitor"
+       },
+       "re": "выручк\\p{L}* на (посетит|пользоват)|revenue per (visitor|user)|\\barpu\\b|конверси|conversion"
+      },
+      {
+       "label": {
+        "ru": "варианты цены",
+        "en": "price variants"
+       },
+       "re": "\\$\\s?(69|79|70|75)|(69|79)\\s?\\$|цен\\p{L}*.{0,15}(вариант|тест)|price (test|point|variant)|скидк|discount"
+      }
+     ]
     },
     {
      "id": "decision",
@@ -821,7 +1596,23 @@
      "good": {
       "ru": "Даёшь ясную рекомендацию с условиями и говоришь, какой результат её изменит.",
       "en": "You give a clear recommendation with conditions and say what result would change it."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "ясная рекомендация",
+        "en": "a clear recommendation"
+       },
+       "re": "рекоменд|recommend|решени|decision|не стоит|запускать|launch"
+      },
+      {
+       "label": {
+        "ru": "условия решения",
+        "en": "conditions for the decision"
+       },
+       "re": "если|\\bif\\b|при условии|condition|только (для|на) нов|only for new|точечн|targeted"
+      }
+     ]
     }
    ],
    "red_flags": [
@@ -876,7 +1667,30 @@
      "good": {
       "ru": "Считаешь обе стороны: клиент ≈ €180 тыс. оборота и ≈ €18 тыс. маржи в месяц, новые зоны ≈ €160 тыс. и ≈ €16 тыс., — и цену задержки.",
       "en": "You size both sides: the client ≈ €180k GMV and ≈ €18k margin a month, the new zones ≈ €160k and ≈ €16k — and the cost of delay."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "посчитан клиент: оборот или маржа",
+        "en": "the client sized: GMV or margin"
+       },
+       "re": "180|€\\s?18|18 ?(тыс|k\\b)|клиент\\p{L}*.{0,50}(марж|оборот)|client.{0,50}(margin|gmv)"
+      },
+      {
+       "label": {
+        "ru": "посчитаны новые зоны",
+        "en": "the new zones sized"
+       },
+       "re": "160|€\\s?16|16 ?(тыс|k\\b)|зон\\p{L}*.{0,50}(марж|оборот)|zones?.{0,50}(margin|gmv)"
+      },
+      {
+       "label": {
+        "ru": "цена задержки",
+        "en": "the cost of delay"
+       },
+       "re": "задержк|\\bdelay|сдвиг|push\\p{L}*.{0,25}back|postpon|стоимост\\p{L}* (задерж|сдвиг)|cost of (delay|pushing)"
+      }
+     ]
     },
     {
      "id": "needs",
@@ -888,7 +1702,23 @@
      "good": {
       "ru": "Выясняешь, что клиенту нужно в первый день, и предлагаешь ручной MVP: счета выставляет бухгалтерия, отчёт собирает аналитик, автоматизация — позже.",
       "en": "You find out what the client needs on day one and propose a manual MVP: accounting issues invoices, an analyst builds the report, automation comes later."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "что нужно в первый день, а что позже",
+        "en": "what’s needed on day one vs later"
+       },
+       "re": "перв\\p{L}* день|day one|с первого дня|from day one|на старт|to start|раз в месяц|monthly"
+      },
+      {
+       "label": {
+        "ru": "ручной MVP без разработки",
+        "en": "a manual MVP with no engineering"
+       },
+       "re": "вручную|ручн|manual|бухгалтер|accounting|excel|таблиц|spreadsheet|аналитик|analyst|\\bmvp\\b"
+      }
+     ]
     },
     {
      "id": "align",
@@ -900,7 +1730,30 @@
      "good": {
       "ru": "Говоришь с Максом и Аней сначала по отдельности, потом вместе — с вариантами и цифрами, а к CEO идёшь только с ясным выбором, если не договорились.",
       "en": "You talk to Max and Anna separately, then together with options and numbers, and go to the CEO only with a clear choice if you can’t agree."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "сначала разговоры по отдельности",
+        "en": "separate conversations first"
+       },
+       "re": "по отдельност|отдельно|separately|один на один|1:1|one.?on.?one"
+      },
+      {
+       "label": {
+        "ru": "потом вместе с вариантами и цифрами",
+        "en": "then together with options and numbers"
+       },
+       "re": "вместе|втроем|together|three of us|встреч|meeting|вариант|option"
+      },
+      {
+       "label": {
+        "ru": "CEO — только если не договорились",
+        "en": "the CEO only if you can’t agree"
+       },
+       "re": "\\bceo\\b|эскал|escalat|не договор|can.?t agree"
+      }
+     ]
     },
     {
      "id": "client",
@@ -912,7 +1765,30 @@
      "good": {
       "ru": "Помогаешь Максу честно перестроить обещание: что клиент получит через три недели, что — позже и когда.",
       "en": "You help Max reset the promise honestly: what the client gets in three weeks, what comes later and when."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "честно перестроить ожидания клиента",
+        "en": "reset the client’s expectations honestly"
+       },
+       "re": "честн|honest|ожидани|expectation|сообщени|message|письм|текст|tell the client"
+      },
+      {
+       "label": {
+        "ru": "что через три недели, что позже и когда",
+        "en": "what in three weeks, what later and when"
+       },
+       "re": "через три недели|in three weeks|3 недел|3 weeks|к (такой|дате)|позже|\\blater\\b|дат[уае]|\\bdate\\b"
+      },
+      {
+       "label": {
+        "ru": "отношения ведёт Макс",
+        "en": "Max owns the relationship"
+       },
+       "re": "макс\\p{L}*.{0,50}(вед|владе|отношен)|max.{0,50}(owns|relationship)|отношени|relationship"
+      }
+     ]
     },
     {
      "id": "process",
@@ -924,7 +1800,23 @@
      "good": {
       "ru": "Предлагаешь простое правило без поиска виноватых: сроки по новым функциям клиентам называют только после сверки с продуктом и разработкой.",
       "en": "You propose a simple rule without blame: dates for new features go to clients only after a check with product and engineering."
-     }
+     },
+     "points": [
+      {
+       "label": {
+        "ru": "правило: сроки только после сверки",
+        "en": "a rule: dates only after a check"
+       },
+       "re": "правил|\\brule\\b|процесс|process|свер|check with|согласов|шаблон|template|лог решени|decision log"
+      },
+      {
+       "label": {
+        "ru": "без поиска виноватых",
+        "en": "without blame"
+       },
+       "re": "без (поиска )?виноват|no blame|blameless|не (обвин|винить)|without blam"
+      }
+     ]
     }
    ],
    "red_flags": [

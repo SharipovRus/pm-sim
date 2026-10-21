@@ -176,16 +176,11 @@ textarea:focus{border-color:var(--accent); outline:none}
 .followup .q{font-weight:600; margin-bottom:10px}
 .followup textarea{background:var(--surface)}
 .reference{font-size:14px}
-.self{display:grid; gap:10px}
-.self-row{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface2)}
-.self-row > b{font-size:14px}
-.self-row p.hint{margin:4px 0 10px; font-size:13px}
-.seg{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px}
-.seg button{display:flex; flex-direction:column; align-items:center; gap:1px; padding:6px 4px; border:1px solid var(--line); border-radius:9px; background:var(--surface); cursor:pointer; font-size:12px; color:var(--muted); line-height:1.25}
-.seg button b{font-family:var(--mono); font-size:15px; color:var(--ink)}
-.seg button:hover{border-color:var(--accent)}
-.seg button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
-.seg button[aria-pressed="true"] b{color:var(--accent)}
+.pts{list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:13.5px}
+.pts li{display:flex; gap:8px}
+.pts li::before{content:'✓'; color:var(--good); font-weight:700; flex:none}
+.pts li.miss{color:var(--muted)}
+.pts li.miss::before{content:'✗'; color:var(--bad)}
 .dots.s0 i{background:var(--line)}
 
 .chip.lvl.l0{background:var(--surface2); color:var(--muted)}
@@ -379,7 +374,7 @@ function renderList(){
     <div class="eyebrow"><span>${casesCount(DATA.cases.length)} · ${L('10–15 минут на каждый','10–15 minutes each')}</span></div>
     <h1 class="h-display">${L('Кейсы с собеседований продакта','PM interview cases')}</h1>
     <p class="lead">${GRADING ? L('Пишешь ответ своими словами, как на собеседовании. ИИ-интервьюер оценивает его по критериям, задаёт уточняющий вопрос и показывает, как ответил бы сильный кандидат.','Write your answer in your own words, like in an interview. An AI interviewer grades it against a rubric, asks a follow-up question and shows how a strong candidate would answer.')
-      : L('Пишешь ответ своими словами, как на собеседовании. Потом сравниваешь его с ответом сильного кандидата и оцениваешь себя по тем же критериям, что и интервьюер. Решённые кейсы прокачивают те же 7 компетенций, что в игре.','Write your answer in your own words, like in an interview. Then compare it with a strong candidate’s answer and rate yourself on the same criteria an interviewer uses. Solved cases level up the same 7 competencies as the game.')}</p>
+      : L('Пишешь ответ своими словами, как на собеседовании. Игра проверяет его по критериям интервьюера: что ты учёл, а что упустил, — ставит балл и показывает ответ сильного кандидата. Решённые кейсы прокачивают те же 7 компетенций, что в игре.','Write your answer in your own words, like in an interview. The game checks it against an interviewer’s criteria — what you covered and what you missed — gives you a score and shows a strong candidate’s answer. Solved cases level up the same 7 competencies as the game.')}</p>
     ${statusLine()}${gateCard()}
     ${rec ? `<div class="notice acc"><b class="t">${L('С чего начать','Where to start')}</b>${L(`В последней партии «Ритма» слабее всего вышла компетенция «${T(COMP_NAMES[rec.comp])}» (${LVL[rec.level]}). Попробуй кейс «${T(rec.c.title)}».`,`In your last Rhythm run, your weakest competency was “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Try the “${T(rec.c.title)}” case.`)}
       <div style="margin-top:10px"><button class="btn primary" data-act="open" data-id="${rec.c.id}">${L('Открыть кейс','Open the case')}</button></div></div>` : ''}
@@ -418,10 +413,10 @@ function renderCase(id){
       <textarea id="answer" placeholder="${L('Рассуждай так, как говорил бы вслух на собеседовании…','Reason the way you’d think out loud in an interview…')}">${escH(s.answer)}</textarea>
       <div class="row"><span class="hint grow" id="count"></span><span class="err" id="err" aria-live="polite"></span>
         ${GRADING ? `<button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again') : L('Отправить интервьюеру','Send to the interviewer')}</button>`
-          : `<button class="btn primary" data-act="selfCheck">${L('Сравнить с эталоном','Compare with the reference')}</button><button class="btn" data-act="copyPrompt">${L('Проверить в своём ИИ','Check with your AI')}</button>`}</div>
-      ${GRADING ? '' : `<p class="hint" style="margin:8px 0 0">${L('«Проверить в своём ИИ» скопирует кейс, критерии и твой ответ одним текстом: вставь его в ChatGPT или Claude — и получишь разбор, как от интервьюера.','“Check with your AI” copies the case, the rubric and your answer as one text: paste it into ChatGPT or Claude to get an interviewer-style review.')}</p>`}
+          : `<button class="btn primary" data-act="autoCheck">${L('Проверить ответ','Check my answer')}</button><button class="btn" data-act="copyPrompt">${L('Проверить в своём ИИ','Check with your AI')}</button>`}</div>
+      ${GRADING ? '' : `<p class="hint" style="margin:8px 0 0">${L('Игра ищет в ответе ключевые пункты, которые ждёт интервьюер, и ставит оценку по каждому критерию. «Проверить в своём ИИ» скопирует кейс, критерии и ответ одним текстом для ChatGPT или Claude.','The game looks for the key points an interviewer expects and scores each criterion. “Check with your AI” copies the case, the rubric and your answer as one text for ChatGPT or Claude.')}</p>`}
     </div>
-    <div id="out">${s.result ? resultHtml(c, s) : (s.selfOpen ? selfHtml(c, s) : '')}</div>
+    <div id="out">${s.result ? resultHtml(c, s) : (s.auto ? autoHtml(c, s) : '')}</div>
   </div>`;
   updateCount(); window.scrollTo({top:0});
 }
@@ -541,48 +536,39 @@ async function copyPrompt(){
   err.style.color = ok ? 'var(--good)' : ''; err.textContent = ok ? L('Скопировано — вставь в чат с ИИ.','Copied — paste it into an AI chat.') : L('Не удалось скопировать.','Couldn’t copy.');
   track('copy');
 }
-/* ============ self-check: compare with the reference and rate yourself on the rubric ============ */
-const SELF_LV = () => [L('нет','missing'), L('вскользь','briefly'), L('частично','partly'), L('полностью','fully')];
+/* ============ automatic check: key points per criterion ============ */
+// every criterion in cases.json has 2–4 key points with a regex ("re", unicode, case-insensitive).
+// A criterion scores round(3 × found / total); the case score is the share of the maximum, like the AI grading.
 const levelOf = t => t>=85 ? 'Lead' : t>=65 ? 'Senior' : t>=45 ? 'Middle' : 'Junior';
 const refBlock = c => `<details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>`;
-function selfHtml(c, s){
-  const sc = s.self || {};
-  if(s.selfResult){
-    const r = s.selfResult, weak = c.rubric.filter(x=>sc[x.id]<=1);
-    return `<div class="result fade" id="self-res">
-      <div class="score-head"><span class="score-big num">${r.total}<small> / 100</small></span>${levelChip(r.level)}<span class="chip">${L('самооценка','self-assessed')}</span></div>
-      ${levelUpHtml(s.ups)}
-      <div class="crit">${c.rubric.map(x=>`<div class="crit-row"><div class="crit-top"><b>${escH(T(x.name))}</b><span class="dots s${sc[x.id]}" aria-label="${sc[x.id]} / 3"><i></i><i></i><i></i></span></div><p>${escH(T(x.good))}</p></div>`).join('')}</div>
-      ${weak.length ? `<div class="fb warn"><b class="t">${L('Что подтянуть','What to work on')}</b><ul>${weak.map(x=>`<li>${escH(T(x.name))}: ${escH(T(x.good)).replace(/^./, ch=>ch.toLowerCase())}</li>`).join('')}</ul></div>` : ''}
-      <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn" data-act="selfRedo">${L('Переоценить','Rate again')}</button><button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
-    </div>${refBlock(c)}`;
-  }
-  return `<div class="result fade">${refBlock(c)}
-    <div class="section-h">${L('Оцени свой ответ','Rate your answer')}</div>
-    <p class="hint" style="margin:0 0 10px">${L('Сравни с эталоном и по каждому критерию отметь, насколько твой ответ его закрывает. Оценивай честно: на собеседовании интервьюер увидит то же самое.','Compare with the reference and mark how well your answer covers each criterion. Be honest: in an interview, the interviewer will see the same thing.')}</p>
-    <div class="self">${c.rubric.map(x=>`<div class="self-row"><b>${escH(T(x.name))}</b><p class="hint">${escH(T(x.good))}</p>
-      <div class="seg" role="group" aria-label="${escH(T(x.name))}">${SELF_LV().map((t,v)=>`<button data-act="selfMark" data-k="${x.id}" data-v="${v}" aria-pressed="${sc[x.id]===v}"><b>${v}</b>${t}</button>`).join('')}</div></div>`).join('')}</div>
-    <div class="row"><span class="err grow" id="serr" aria-live="polite"></span><button class="btn primary" data-act="selfScore">${L('Посчитать результат','Get my score')}</button></div>
-  </div>`;
+const normAnswer = t => t.toLowerCase().replace(/ё/g,'е').replace(/[\u00a0\u202f]/g,' ').replace(/\u2212/g,'-');
+const RE_CACHE = new Map();
+const pointRe = p => { if(!RE_CACHE.has(p.re)) RE_CACHE.set(p.re, new RegExp(p.re, 'ius')); return RE_CACHE.get(p.re); };
+function autoGrade(c, answer){
+  const t = normAnswer(answer);
+  const crit = c.rubric.map(r=>{ const found = r.points.map(p=>pointRe(p).test(t)), n = found.filter(Boolean).length;
+    return {id:r.id, score:Math.round(3*n/r.points.length), found}; });
+  const total = Math.round(crit.reduce((a,x)=>a+x.score, 0) / (3*crit.length) * 100);
+  return {crit, total, level:levelOf(total)};
 }
-function selfCheck(){
+function autoHtml(c, s){
+  const g = s.auto, byId = Object.fromEntries(g.crit.map(x=>[x.id, x]));
+  return `<div class="result fade" id="auto-res">
+    <div class="score-head"><span class="score-big num">${g.total}<small> / 100</small></span>${levelChip(g.level)}</div>
+    ${levelUpHtml(s.ups)}
+    <div class="crit">${c.rubric.map(r=>{ const x = byId[r.id];
+      return `<div class="crit-row"><div class="crit-top"><b>${escH(T(r.name))}</b><span class="dots s${x.score}" aria-label="${x.score} / 3"><i></i><i></i><i></i></span></div>
+        <ul class="pts">${r.points.map((p,i)=>`<li class="${x.found[i]?'':'miss'}">${escH(T(p.label))}</li>`).join('')}</ul></div>`; }).join('')}</div>
+    <p class="hint">${L('Проверка ищет в ответе ключевые пункты, а логику целиком не оценивает. Сверь своё рассуждение с ответом сильного кандидата ниже.','The check looks for key points in your answer; it doesn’t judge the whole line of reasoning. Compare your thinking with the strong answer below.')}</p>
+    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn" data-act="editAnswer">${L('Улучшить ответ','Improve my answer')}</button><button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
+  </div>${refBlock(c)}`;
+}
+function autoCheck(){
   const c = CUR, s = SESSION[c.id], err = $('#err'); s.answer = $('#answer').value; store.set(DRAFT_KEY(c.id), s.answer);
-  if(s.answer.trim().length < 60){ err.style.color = ''; err.textContent = L('Сначала напиши ответ хотя бы в пару абзацев — так сравнение будет честным.','Write at least a couple of paragraphs first, so the comparison is fair.'); return; }
-  err.textContent = ''; s.selfOpen = true; s.self = s.self || {}; s.selfResult = null;
-  $('#out').innerHTML = selfHtml(c, s); $('#out').scrollIntoView({behavior:'smooth', block:'start'}); track('self-open');
-}
-function selfMark(b){
-  const s = SESSION[CUR.id]; s.self[b.dataset.k] = +b.dataset.v;
-  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
-  const e = $('#serr'); if(e) e.textContent = '';
-}
-function selfScore(){
-  const c = CUR, s = SESSION[c.id], sc = s.self || {};
-  if(c.rubric.some(x=>sc[x.id]===undefined)){ $('#serr').textContent = L('Отметь все критерии.','Rate every criterion.'); return; }
-  const total = Math.round(c.rubric.reduce((a,x)=>a+sc[x.id], 0) / (3*c.rubric.length) * 100);
-  const before = profile(); saveResult(c.id, total);
-  s.selfResult = {total, level:levelOf(total)}; s.ups = levelUps(before, profile(), c);
-  $('#out').innerHTML = selfHtml(c, s); document.getElementById('self-res').scrollIntoView({behavior:'smooth', block:'start'}); track('self-score');
+  if(s.answer.trim().length < 60){ err.style.color = ''; err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to check.'); return; }
+  err.textContent = '';
+  const before = profile(); s.auto = autoGrade(c, s.answer); saveResult(c.id, s.auto.total); s.ups = levelUps(before, profile(), c);
+  $('#out').innerHTML = autoHtml(c, s); document.getElementById('auto-res').scrollIntoView({behavior:'smooth', block:'start'}); track('auto-check');
 }
 const LOADING = () => [L('Интервьюер читает ответ…','The interviewer is reading your answer…'), L('Сверяет с критериями…','Checking it against the rubric…'), L('Ищет, что можно усилить…','Looking for what to strengthen…'), L('Формулирует уточняющий вопрос…','Preparing a follow-up question…')];
 function startLoading(where){
@@ -647,10 +633,8 @@ document.addEventListener('click', e=>{
   if(a==='grade'){ grade(); return; }
   if(a==='followup'){ followup(); return; }
   if(a==='copyPrompt'){ copyPrompt(); return; }
-  if(a==='selfCheck'){ selfCheck(); return; }
-  if(a==='selfMark'){ selfMark(b); return; }
-  if(a==='selfScore'){ selfScore(); return; }
-  if(a==='selfRedo'){ const s = SESSION[CUR.id]; s.selfResult = null; $('#out').innerHTML = selfHtml(CUR, s); return; }
+  if(a==='autoCheck'){ autoCheck(); return; }
+  if(a==='editAnswer'){ const t = $('#answer'); if(t){ t.scrollIntoView({behavior:'smooth', block:'center'}); t.focus({preventScroll:true}); } return; }
 });
 document.addEventListener('submit', async e=>{
   if(e.target.dataset.form!=='code') return;
