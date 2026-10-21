@@ -245,6 +245,18 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+#pop.wide{width:460px; max-height:min(72vh,640px); overflow:auto}
+#pop.sheet{max-height:82vh; overflow:auto}
+#pop .recall-prompt{font-size:13.5px; margin-bottom:8px}
+#pop .recall-prompt .task-box{padding:10px; margin-bottom:10px}
+#pop .recall-prompt table.t{min-width:0; font-size:12.5px}
+.comp-moves{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:4px 0 10px}
+.move-chip{display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font:inherit; font-size:12px; cursor:pointer; text-align:left}
+.move-chip::before{content:''; width:7px; height:7px; border-radius:50%; flex:none; background:var(--muted)}
+.move-chip.good::before{background:var(--good)} .move-chip.ok::before{background:var(--warn)} .move-chip.bad::before{background:var(--bad)}
+.move-chip:hover{border-color:var(--accent); color:var(--accent)}
+.rev .link-btn{margin-top:2px}
+
 .vs-prev{font-size:14px; font-weight:600; color:var(--muted)}
 .vs-prev.up{color:var(--good)} .vs-prev.down{color:var(--bad)}
 .comp-lv{display:inline-flex; align-items:center; gap:8px}
@@ -454,9 +466,9 @@ function i18nConsts(){
     design:{name:L('Кира','Kira'), role:L('Продуктовый дизайнер','Product designer'), ini:L('КИ','KI'), color:'#8A4FBF'}
   };
   QUAL = {
-    best:{label:L('Сильное решение','Strong call'), xp:30, pts:2},
+    best:{label:L('Лучший вариант','Best option'), xp:30, pts:2},
     ok:{label:L('Рабочий вариант, но есть лучше','Workable, but there’s a better option'), xp:15, pts:1},
-    bad:{label:L('Слабое решение','Weak call'), xp:5, pts:0}
+    bad:{label:L('Неудачный вариант','Poor option'), xp:5, pts:0}
   };
   FX_META = {
     ret:{label:'Retention', fmt:v=>sgn(v)+dec(Math.abs(v)*100,1)+pp, inv:false},
@@ -678,7 +690,7 @@ const SCEN = [
     fb:'Инструмент стал лучше, но это всё ещё самоотчёт в худший момент, а новые ответы копятся неделями. Поведение уже подсказало, где искать.'}
   ], lesson:'Поведение важнее заявлений: сверяй ответы опросов с данными и копай в момент, когда человек перестал получать ценность.'},
  {id:'s20', d:'disc', from:'ceo', title:'Спросим у всех, что делать дальше?',
-  text:'Андрей хочет разослать всем 45 тысячам пользователей опрос «Какие фичи добавить в Ритм?» со списком из 15 идей: «Пусть пользователи сами выберут роадмап».',
+  text:'Андрей хочет разослать всем 45 тысячам пользователей опрос «Какие фичи добавить в Ритм?» со списком из 15 идей: «Пусть пользователи сами решат, куда развивать продукт».',
   options:[
    {t:'Разослать как есть: тысячи ответов — это уже статистика, а не мнение пары человек на планёрке.', q:'bad', fx:{trust:4}, later:{in:2, fx:{ret:0.002}, note:'Сделали фичу-победителя опроса — пользуются ей куда меньше, чем за неё голосовали.'},
     fb:'Выбор из списка фич — это вопрос о решениях, а не о проблемах. Отвечают самые вовлечённые, и выбирают то, что звучит приятно. Получишь рейтинг желаний, а не причин.'},
@@ -1070,7 +1082,7 @@ const SCEN_EN = {
    {t:'Leave it: “too expensive” is the polite default answer — people pick it at cancellation everywhere.', fb:'The observation is right — cancellation answers are unreliable. But concluding “do nothing” throws away a strong signal in the data: usage drops long before people cancel.', note:'Churn kept climbing, and nobody ever went looking for the cause.'},
    {t:'Rework the cancellation survey: add more answer options and a free-text “tell us more” field.', fb:'A better instrument helps, but it’s still self-reporting at the worst possible moment, and new answers take weeks to pile up. The behavior data has already told you where to look.', note:'The new survey produced more varied answers, but it still took another month to get to the real cause.'}
  ], lesson:'Behavior beats stated reasons: check survey answers against the data and dig into the moment people stopped getting value.'},
- s20:{title:'Just ask everyone what to build?', text:'Andrew wants to send all 45,000 users a survey — “Which features should we add to Rhythm?” — with a list of 15 ideas: “Let the users pick the roadmap themselves.”', options:[
+ s20:{title:'Just ask everyone what to build?', text:'Andrew wants to send all 45,000 users a survey — “Which features should we add to Rhythm?” — with a list of 15 ideas: “Let the users decide where the product goes.”', options:[
    {t:'Send it as is: thousands of responses are real statistics, not the opinion of a couple of people.', fb:'Picking from a feature list is a question about solutions, not problems. The most engaged users answer, and they pick whatever sounds nice. You get a ranking of wishes, not causes.', note:'You built the survey’s winning feature — far fewer people use it than voted for it.'},
    {t:'Start with 8 interviews about how people keep habits, then a survey to size what you found.', fb:'Interviews uncover problems you didn’t know about; a survey measures how widespread they are. Andrew still gets his survey — just with the right questions.', note:'Interviews surfaced 4 recurring problems, and the survey showed the biggest one: people set an “every day” goal and burn out. You added a “starter pace” — retention went up.'},
    {t:'Keep the survey but ask about problems, not features: “What gets in the way of your habits?”', fb:'Better: it asks about problems, not solutions. But open-ended answers from thousands of people are shallow and hard to analyze — without interviews, you don’t know what to dig into.', note:'Thousands of answers boiled down to “no time” and “I forget.” You made reminders smarter — the effect was modest.'},
@@ -1866,8 +1878,8 @@ const CHAL = {
     {ctx:L('Команда заранее договорилась считать результат значимым при α = 0,10. Тест нового пейвола: конверсия в оплату +6% относительно контроля, p = 0,07.',
        'The team agreed up front to treat results as significant at α = 0.10. The new paywall test: paid conversion is up 6% relative to control, p = 0.07.'),
      q:L('Как правильно прочитать этот результат?','How should you read this result?'),
-     good:L('Значим по принятому порогу, но цена этого — до 10% риска ложной находки','Significant by the agreed bar — but with up to a 10% false-positive risk'),
-     bad:L(['Не значим: значимыми считаются только результаты с p-value ниже 0,05','С вероятностью 93% новый пейвол действительно конвертирует лучше старого','Значим, и теперь точно известно, что пейвол поднимает конверсию на 6%'],
+     good:L('Результат значимый по принятому порогу, но цена — до 10% риска ложной находки','Significant by the agreed bar — but with up to a 10% false-positive risk'),
+     bad:L(['Результат не значимый: значимыми считают только тесты с p-value ниже 0,05','С вероятностью 93% новый пейвол действительно конвертирует лучше старого','Результат значимый, и теперь точно известно: пейвол даёт +6% к конверсии'],
       ['Not significant: only results with a p-value below 0.05 count as significant','There’s a 93% chance the new paywall really converts better than the old one','Significant, and now we know for sure the paywall lifts conversion by 6%']),
      why:L('Порог выбирают до теста, и p = 0,07 под α = 0,10 проходит. Цена мягкого порога: если эффекта на самом деле нет, «значимый» результат будет выпадать примерно в каждом десятом тесте, а не в каждом двадцатом. При этом p-value — не вероятность того, что пейвол лучше (93% — неверное прочтение), и не гарантия, что эффект равен ровно +6%: это точечная оценка со своим разбросом.',
       'The threshold is set before the test, and p = 0.07 clears α = 0.10. The price of a looser threshold: if there’s no real effect, a “significant” result will turn up in about one test in ten rather than one in twenty. And the p-value isn’t the probability that the paywall is better (93% is a misreading), nor a guarantee that the effect is exactly +6% — that’s a point estimate with its own spread.'),
@@ -1877,7 +1889,7 @@ const CHAL = {
        'Two teams report on their tests. The onboarding team uses α = 0.05 and got p = 0.04. The paywall team uses α = 0.10 and got p = 0.08. Both write: “Significant.”'),
      q:L('Чей результат убедительнее?','Whose result is more convincing?'),
      good:L('Онбординга: порог 5% строже, а p = 0,04 шум выдаёт реже, чем 0,08','Onboarding’s: 5% is stricter, and noise produces p = 0.04 less often'),
-     bad:L(['Пейвола: порог 10% выше, значит, и требования к её тесту были строже','Одинаково: оба результата значимы, а значимость либо есть, либо её нет','Пейвола: раз p = 0,08 больше, то и найденный эффект у неё сильнее'],
+     bad:L(['Пейвола: порог 10% выше, значит, и требования к её тесту были строже','Одинаково: оба результата значимые, а значимость либо есть, либо её нет','Пейвола: раз p = 0,08 больше, то и найденный эффект у неё сильнее'],
       ['The paywall’s: a 10% threshold is higher, so its test had the stricter bar','Equally: both are significant, and significance is a yes-or-no thing','The paywall’s: a larger p-value of 0.08 means it found a bigger effect']),
      why:L('Чем ниже α, тем строже порог: при 5% тест без реального эффекта даёт ложную находку в одном случае из двадцати, при 10% — в одном из десяти. И чем меньше p, тем хуже данные согласуются с версией «эффекта нет». Значимость — не бинарный знак качества: порог 10% пропускает вдвое больше ложных находок, чем 5%. А о размере эффекта p-value ничего не говорит — его смотрят отдельно.',
       'The lower the α, the stricter the bar: at 5%, a test with no real effect gives a false positive one time in twenty; at 10%, one time in ten. And the smaller the p, the worse the data fit the “no effect” story. Significance isn’t a binary quality badge: a 10% threshold lets through twice as many false positives as 5%. And the p-value says nothing about the size of the effect — you look at that separately.'),
@@ -2079,7 +2091,7 @@ const GLOSS = [
  {k:'ns', t:'North Star', en:'North Star Metric', ru:'Путеводная метрика', g:'Метрики',
   d:'Одна главная метрика, которая отражает получаемую пользователем ценность и опережает выручку. По ней команда сверяет все решения.', f:'', a:['North Star','North Star Metric','путеводная метрика']},
  {k:'vanity', t:'Vanity-метрика', en:'Vanity metric', ru:'Метрика тщеславия', g:'Метрики',
-  d:'Красивая, но бесполезная метрика: только растёт, ни с чем не нормирована и не подсказывает решений. Классика — «всего скачиваний».', f:'', a:['Vanity-метрика','vanity-метрика','vanity-метрику','vanity','Vanity']},
+  d:'Красивая, но бесполезная метрика: только растёт, ни с чем не нормирована и не подсказывает решений.', f:'', a:['Vanity-метрика','vanity-метрика','vanity-метрику','vanity','Vanity']},
  {k:'nps', t:'NPS', en:'Net Promoter Score', ru:'Индекс готовности рекомендовать', g:'Метрики',
   d:'Опрос «насколько вероятно, что вы порекомендуете нас» по шкале 0–10. Даёт общий сигнал настроения, но плохо объясняет причины.', f:'NPS = % промоутеров − % критиков', a:['NPS','NPS-опрос']},
  {k:'guardrail', t:'Guardrail-метрика', en:'Guardrail metric', ru:'Защитная метрика', g:'Метрики',
@@ -2109,7 +2121,9 @@ const GLOSS = [
  {k:'ice', t:'ICE', en:'Impact · Confidence · Ease', ru:'Упрощённый RICE', g:'Приоритизация',
   d:'Более быстрая версия приоритизации: эффект, уверенность, лёгкость реализации.', f:'ICE = Impact × Confidence × Ease', a:['ICE']},
  {k:'moscow', t:'MoSCoW', en:'Must · Should · Could · Won’t', ru:'Метод разделения объёма работ', g:'Приоритизация',
-  d:'Разделение требований на обязательные, желательные, возможные и отложенные. Помогает договориться, что именно входит в MVP.', f:'', a:['MoSCoW','Must have','Must','Could','Won’t']},
+  d:'Разделение требований на обязательные, желательные, возможные и отложенные. Помогает договориться, что именно входит в MVP.', f:'', a:['MoSCoW','Could','Won’t']},
+ {k:'musthave', t:'Must have', en:'—', ru:'Обязательное требование · категория метода MoSCoW', g:'Приоритизация',
+  d:'Требование, без которого релиз теряет смысл: продукт не решает задачу пользователя или нарушает обязательство. Первая из четырёх категорий метода MoSCoW: Must → Should → Could → Won’t.', f:'', a:['Must have','Must-have','must have','must-have']},
  {k:'kano', t:'Модель Кано', en:'Kano model', ru:'Модель Кано', g:'Приоритизация',
   d:'Делит функции на обязательные (их отсутствие злит), одномерные (чем лучше, тем довольнее) и привлекательные (радуют неожиданно).', f:'', a:['модели Кано','Модель Кано','модель Кано','Кано']},
  {k:'roadmap', t:'Роадмап', en:'Roadmap', ru:'Дорожная карта продукта', g:'Приоритизация',
@@ -2117,7 +2131,11 @@ const GLOSS = [
  {k:'outcome', t:'Outcome', en:'Outcome vs output', ru:'Результат, а не объём работ', g:'Приоритизация',
   d:'Outcome — изменение в поведении пользователей или метриках. Output — количество выпущенных фич. Команды оценивают по первому.', f:'', a:['outcomes','outcome','Outcome']},
  {k:'debt', t:'Техдолг', en:'Technical debt', ru:'Технический долг', g:'Приоритизация',
-  d:'Накопленные упрощения в коде, которые делают каждое следующее изменение дороже и рискованнее. Обслуживается регулярно, а не разово.', f:'', a:['Техдолг','техдолг','техдолга','техдолгом','Технический долг']},
+  d:'Накопленные упрощения в коде, которые делают каждое следующее изменение дороже и рискованнее. Обслуживается регулярно, а не разово. В игре это шкала 0–100: 0 — долгов нет, это хорошо. Сам по себе долг растёт каждый месяц, а выше 50 ломает релизы и снижает retention. Ползунок «Команда на техдолг» — не сам долг, а доля команды, которая его гасит.', f:'', a:['Техдолг','техдолг','техдолга','техдолгом','Технический долг']},
+ {k:'trust', t:'Доверие', en:'Trust', ru:'Шкала в игре, 0–100', g:'Как устроена игра',
+  d:'Насколько CEO, маркетинг и другие стейкхолдеры верят твоим решениям. Растёт от взвешенных решений и выполненных обещаний, падает от провалов и резких разворотов. От него зависит, насколько маркетинг прислушивается к твоей рекомендации по бюджету, и оно входит в итоговую оценку.', f:'', a:['Доверие','доверие']},
+ {k:'morale', t:'Мораль', en:'Morale', ru:'Шкала в игре, 0–100', g:'Как устроена игра',
+  d:'Настроение и энергия команды. Падает от авралов, заморозок и смены приоритетов, растёт, когда команда видит смысл и получает время на техдолг. Высокая мораль немного поднимает retention, низкая — тянет вниз.', f:'', a:['Мораль','мораль']},
  {k:'capacity', t:'Капасити', en:'Capacity', ru:'Ёмкость команды', g:'Приоритизация',
   d:'Сколько работы команда реально может сделать за спринт. Конечный ресурс: взяв всё сразу, не доведёшь до конца ничего.', f:'', a:['Капасити','капасити','капасити.']},
  {k:'hippo', t:'HiPPO', en:'Highest Paid Person’s Opinion', ru:'Мнение самого высокооплачиваемого', g:'Приоритизация',
@@ -2125,8 +2143,8 @@ const GLOSS = [
  {k:'postmortem', t:'Постмортем', en:'Blameless postmortem', ru:'Разбор инцидента без поиска виноватых', g:'Приоритизация',
   d:'Встреча после сбоя: восстанавливают хронологию, ищут причины в процессах и системе, а не в людях, и фиксируют, что изменить.', f:'', a:['postmortem','Postmortem','постмортем','blameless postmortem']},
 
- {k:'jtbd', t:'JTBD', en:'Jobs To Be Done', ru:'Работа, которую «нанимают» сделать', g:'Discovery',
-  d:'Подход: люди не покупают продукт, а «нанимают» его на работу в конкретной ситуации. Job story: когда [ситуация], я хочу [мотивация], чтобы [результат].', f:'', a:['JTBD','Jobs To Be Done','job story','Job story']},
+ {k:'jtbd', t:'JTBD', en:'Jobs To Be Done', ru:'Задача, ради которой продукт «нанимают»', g:'Discovery',
+  d:'Подход: люди не покупают продукт, а «нанимают» его, чтобы решить свою задачу в конкретной ситуации. Job story: когда [ситуация], я хочу [мотивация], чтобы [результат].', f:'', a:['JTBD','Jobs To Be Done','job story','Job story']},
  {k:'custdev', t:'CustDev', en:'Customer Development', ru:'Развитие клиента', g:'Discovery',
   d:'Практика проверки гипотез разговором с пользователями до разработки. Проблемное интервью спрашивает о прошлом опыте, а не о будущих намерениях.', f:'', a:['CustDev','Customer Development','проблемного интервью','проблемные интервью','проблемных интервью','интервью']},
  {k:'momtest', t:'The Mom Test', en:'The Mom Test', ru:'Правило честного интервью', g:'Discovery',
@@ -2202,7 +2220,7 @@ const GLOSS_EN = {
  ns:{t:'North Star', sub:'North Star Metric', g:'Metrics',
   d:'One key metric that reflects the value users get and leads revenue. The team checks every decision against it.', f:'', a:['north star','north star metric']},
  vanity:{t:'Vanity metric', sub:'Looks good, means little', g:'Metrics',
-  d:'A pretty but useless metric: it only goes up, isn’t normalized to anything and doesn’t point to any decision. The classic example is “total downloads”.', f:'', a:['vanity metric','vanity metrics','vanity']},
+  d:'A pretty but useless metric: it only goes up, isn’t normalized to anything and doesn’t point to any decision.', f:'', a:['vanity metric','vanity metrics','vanity']},
  nps:{t:'NPS', sub:'Net Promoter Score', g:'Metrics',
   d:'A survey asking “How likely are you to recommend us?” on a 0–10 scale. Gives an overall sentiment signal but explains the reasons poorly.', f:'NPS = % promoters − % detractors', a:['nps','nps survey']},
  guardrail:{t:'Guardrail metric', sub:'A metric that must not worsen', g:'Metrics',
@@ -2232,7 +2250,9 @@ const GLOSS_EN = {
  ice:{t:'ICE', sub:'Impact · Confidence · Ease', g:'Prioritization',
   d:'A quicker version of prioritization: impact, confidence and ease of implementation.', f:'ICE = Impact × Confidence × Ease', a:['ice','ice score']},
  moscow:{t:'MoSCoW', sub:'Must · Should · Could · Won’t', g:'Prioritization',
-  d:'Sorts requirements into must-have, should-have, could-have and won’t-have (for now). Helps agree on what exactly goes into the MVP.', f:'', a:['moscow','must-have','must-haves']},
+  d:'Sorts requirements into must-have, should-have, could-have and won’t-have (for now). Helps agree on what exactly goes into the MVP.', f:'', a:['moscow']},
+ musthave:{t:'Must have', sub:'A required item · MoSCoW category', g:'Prioritization',
+  d:'A requirement without which the release makes no sense: the product doesn’t solve the user’s problem or breaks a commitment. The first of the four MoSCoW categories: Must → Should → Could → Won’t.', f:'', a:['must have','must-have','must-haves']},
  kano:{t:'Kano model', sub:'Three kinds of features', g:'Prioritization',
   d:'Splits features into must-be (their absence annoys), one-dimensional (the better, the happier) and attractive (an unexpected delight).', f:'', a:['kano','kano model']},
  roadmap:{t:'Roadmap', sub:'Product development plan', g:'Prioritization',
@@ -2240,7 +2260,11 @@ const GLOSS_EN = {
  outcome:{t:'Outcome', sub:'Outcome vs. output', g:'Prioritization',
   d:'An outcome is a change in user behavior or metrics. An output is the number of features shipped. Teams are judged by the former.', f:'', a:['outcome','outcomes','outcome vs output','outcomes over outputs']},
  debt:{t:'Tech debt', sub:'Technical debt', g:'Prioritization',
-  d:'Accumulated shortcuts in the code that make every next change more expensive and riskier. Paid down regularly, not in one go.', f:'', a:['tech debt','technical debt']},
+  d:'Accumulated shortcuts in the code that make every next change more expensive and riskier. Paid down regularly, not in one go. In the game it’s a 0–100 scale: 0 means no debt, which is good. It grows on its own every month, and above 50 it breaks releases and cuts retention. The “Team on tech debt” slider isn’t the debt itself but the share of the team paying it down.', f:'', a:['tech debt','technical debt']},
+ trust:{t:'Trust', sub:'An in-game scale, 0–100', g:'How the game works',
+  d:'How much the CEO, marketing and other stakeholders believe in your calls. It grows with well-reasoned decisions and kept promises and drops with failures and sudden U-turns. It affects how closely marketing follows your budget recommendation and counts toward your final score.', f:'', a:['trust']},
+ morale:{t:'Morale', sub:'An in-game scale, 0–100', g:'How the game works',
+  d:'The team’s mood and energy. It drops with crunches, freezes and shifting priorities, and grows when the team sees the point and gets time for tech debt. High morale lifts retention a little; low morale drags it down.', f:'', a:['morale']},
  capacity:{t:'Capacity', sub:'What the team can deliver', g:'Prioritization',
   d:'How much work the team can realistically do in a sprint. A finite resource: take on everything at once and you’ll finish nothing.', f:'', a:['capacity','team capacity']},
  hippo:{t:'HiPPO', sub:'Highest Paid Person’s Opinion', g:'Prioritization',
@@ -2303,7 +2327,7 @@ function annotate(root){
     acceptNode(n){
       if(!n.nodeValue || n.nodeValue.trim().length<2) return NodeFilter.FILTER_REJECT;
       const p = n.parentElement;
-      if(!p || p.closest('.term, .opt, kbd, .lvl, .pill, script, style, .badge, .segs, .goal summary, .comp-lbl, .chip')) return NodeFilter.FILTER_REJECT;
+      if(!p || p.closest('.term, .opt, kbd, .lvl, .pill, script, style, .badge, .segs, .goal summary, .comp-lbl, .chip, .move-chip, button')) return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
   });
@@ -2335,15 +2359,15 @@ function openTerm(btn){
   showPop(btn, termCard(g));
 }
 // popover next to an anchor (bottom sheet on narrow screens)
-function showPop(btn, html){
+function showPop(btn, html, wide){
   let pop = document.getElementById('pop');
   if(!pop){ pop = document.createElement('div'); pop.id = 'pop'; pop.setAttribute('role','dialog'); document.body.appendChild(pop); }
   pop.innerHTML = html + `<button class="term-close" data-act="popClose" aria-label="${L('Закрыть','Close')}">×</button>`;
-  pop.hidden = false; pop.classList.remove('sheet');
+  pop.hidden = false; pop.classList.remove('sheet'); pop.classList.toggle('wide', !!wide);
   const narrow = window.innerWidth < 620;
   if(narrow){ pop.classList.add('sheet'); pop.style.left = ''; pop.style.top = ''; }
   else {
-    const r = btn.getBoundingClientRect(), w = 340;
+    const r = btn.getBoundingClientRect(), w = wide ? 460 : 340;
     let left = Math.min(Math.max(12, r.left), window.innerWidth - w - 12);
     pop.style.left = left+'px';
     pop.style.top = (r.bottom + 8)+'px';
@@ -2447,7 +2471,7 @@ function chooseScenario(i){
   if(o.later) S.queue.push({at:S.month+o.later.in-1, fx:o.later.fx, sid:sc.id, oi:i});
   S.xp[sc.d] += QUAL[o.q].xp; S.acc[sc.d][0] += QUAL[o.q].pts; S.acc[sc.d][1] += 2;
   streakHit(o.q==='best');
-  S.log.push({kind:'scen', id:sc.id, d:sc.d, q:o.q});
+  S.log.push({kind:'scen', id:sc.id, d:sc.d, q:o.q, oi:i});
   S.phase = 'scenFeedback'; save(); render();
 }
 function toChallenge(){
@@ -2470,7 +2494,12 @@ function answerChallenge(val){
   S.xp[c.d] += ok ? (hint ? HINT.xp : 40) : 10; S.acc[c.d][0] += ok ? (hint ? 1 : 2) : 0; S.acc[c.d][1] += 2;
   if(ok) applyFx(CHAL_BONUS[c.d].fx);
   streakHit(ok);
-  S.log.push({kind:'chal', key:c.key, d:c.d, ok, hint, title:{ru:c.txt.ru.title, en:c.txt.en.title}, explain:{ru:c.txt.ru.explain, en:c.txt.en.explain}});
+  // the task text in both languages, so the end screen can show it again
+  const rc = {}, keepLang = LANG;
+  try{ LANGS.forEach(lg=>{ LANG = lg; const t = c.txt[lg], fmt = v => t.unit==='$' ? '$'+int(v) : dec(v,1)+' '+t.unit;
+    rc[lg] = {prompt:t.prompt, question:t.question, right: c.type==='number' ? fmt(c.answer) : t.options[c.answer], mine: c.type==='number' ? fmt(S.cur.chalAns) : t.options[S.cur.chalAns]}; }); }
+  finally{ LANG = keepLang; }
+  S.log.push({kind:'chal', key:c.key, d:c.d, ok, hint, title:{ru:c.txt.ru.title, en:c.txt.en.title}, explain:{ru:c.txt.ru.explain, en:c.txt.en.explain}, rc});
   S.phase = 'chalFeedback'; save(); render();
 }
 function closeMonth(){
@@ -2535,7 +2564,7 @@ function badges(){
   const disc = sc.filter(l=>l.d==='disc');
   const s14 = sc.find(l=>l.id==='s14');
   return [
-    {n:L('Сначала проблема','Problem first'), t:L('Все discovery-кейсы решены сильно','Every discovery case solved with a strong call'), on: disc.length>=1 && disc.every(l=>l.q==='best')},
+    {n:L('Сначала проблема','Problem first'), t:L('Во всех discovery-кейсах — лучший вариант','The best option in every discovery case'), on: disc.length>=1 && disc.every(l=>l.q==='best')},
     {n:L('Здоровая экономика','Healthy economics'), t:L('LTV / CAC ≥ 3 в конце игры','LTV / CAC ≥ 3 at the end of the game'), on: d.ratio>=3},
     {n:L('Без подглядываний','No peeking'), t:L('Дождался конца A/B-теста','Waited for the A/B test to finish'), on: !!s14 && s14.q==='best'},
     {n:L('Серия ×5','Streak ×5'), t:L('5 верных ответов подряд','5 right answers in a row'), on: S.bestStreak>=5},
@@ -2873,9 +2902,9 @@ const chalTags = (key, d) => (key && COMP_TAGS.chal[key]) || [DOMAIN_COMP[d]];
 const compName = k => { const c = COMP.find(x=>x.k===k); return c ? c.name[LANG] : k; };
 function compLevel(x){ let i = 0; COMP_LVL.forEach(([v],j)=>{ if(x>=v) i = j; }); return i; }
 function compSignals(){
-  const m = S.m, d = derive(m), growth = d.mrr/S.initMrr;
+  const m = S.m, h = S.history[S.history.length-1], growth = h.mrr/S.initMrr;
   return {
-    biz: 0.5*clamp((growth-0.8)/1.7,0,1) + 0.5*clamp((d.ratio-1)/3,0,1),
+    biz: 0.5*clamp((growth-0.8)/1.7,0,1) + 0.5*clamp((h.ratio-1)/3,0,1),
     stake: clamp((m.trust-30)/40,0,1),
     lead: clamp((m.morale-40)/40,0,1),
     exec: clamp((80-m.debt)/60,0,1)
@@ -2927,6 +2956,116 @@ function goalBar(){
     </div></details>`;
 }
 const compTop = (n=2) => { const cs = compScores(); return COMP_KEYS.filter(k=>cs[k].score!==null).sort((a,b)=>cs[b].score-cs[a].score).slice(0,n); };
+// the same level descriptions as COMP.levels, in the second person for the player's own profile:
+// shown after "Ты " / "You " for the current level and after "На нём ты " / "At that level, you " for the next one
+const YOU = {
+  user:[
+    {ru:'пользуешься своим продуктом и замечаешь, где ломается путь пользователя. Проводишь интервью по готовому гайду и пишешь простой problem statement.',
+     en:'use the product and notice where the user journey breaks. You run interviews from a ready-made guide and write a simple problem statement.'},
+    {ru:'самостоятельно планируешь исследование и сочетаешь качественные и количественные методы. Сводишь разрозненный фидбек в одну проблему и проверяешь гипотезу до разработки.',
+     en:'plan research on your own, combining qualitative and quantitative methods. You turn scattered feedback into one clear problem and validate the hypothesis before building.'},
+    {ru:'формулируешь сложные проблемы так, что команда может пересказать их сама. Сокращаешь цикл дискавери, подтверждаешь гипотезы пилотами и разрешаешь конфликты между нуждами сегментов.',
+     en:'frame complex problems so clearly that the team can retell them. You shorten the discovery cycle, confirm hypotheses with pilots and resolve conflicts between segments’ needs.'},
+    {ru:'задаёшь повестку исследований для нескольких команд. Находишь новые рыночные возможности, обосновываешь их и учишь других проверять идеи до разработки.',
+     en:'set the research agenda for several teams. You spot new market opportunities, build the case for them and teach others to validate ideas before building.'},
+    {ru:'строишь в компании систему «сенсоров»: работу с ключевыми клиентами и research ops. Лично представляешь продукт стратегическим клиентам и задаёшь стандарт дискавери.',
+     en:'build company-wide sensing mechanisms such as key-account programs and research ops. You represent the product to strategic customers and set the bar for discovery.'}
+  ],
+  strategy:[
+    {ru:'своими словами пересказываешь стратегию продукта и видишь, как в неё ложится твоя задача. Предлагаешь бэклог под краткосрочные цели и разбираешь конкурентов.',
+     en:'can retell the product strategy in your own words and see how your work fits into it. You propose a backlog for short-term goals and analyze competitors.'},
+    {ru:'владеешь роадмапом команды и описываешь end vision: желаемый путь клиента и уникальную ценность. Объясняешь, почему выбраны именно эти приоритеты.',
+     en:'own the team’s roadmap and describe the end vision: the target customer journey and unique value. You explain why these priorities were chosen over others.'},
+    {ru:'строишь стратегию в неоднозначной зоне почти без подсказок, опираясь на рынок и целевую аудиторию. Держишь долгосрочный роадмап, и твоя стратегия влияет на соседние команды.',
+     en:'build strategy in ambiguous areas with little guidance, grounded in the market and target audience. You hold a long-term roadmap that shapes neighboring teams’ plans.'},
+    {ru:'формируешь стратегию группы команд на 12+ месяцев и раздаёшь командам миссии. Ревьюишь чужие роадмапы и берёшь самые неопределённые зоны без подсказок.',
+     en:'set a 12+ month strategy for a group of teams and give each team its mission. You review other roadmaps and take on the most uncertain areas unprompted.'},
+    {ru:'связываешь продуктовую стратегию с целями компании на горизонте 3–5 лет. Вместе с топ-менеджментом решаешь, в какие рынки и бизнесы идти, а в какие нет.',
+     en:'tie product strategy to company goals over a 3–5 year horizon. You decide with the leadership team which markets and businesses to enter and which to skip.'}
+  ],
+  exec:[
+    {ru:'декомпозируешь задачи по шаблону и сдаёшь фичи в срок. Снимаешь блокеры с помощью руководителя и прозрачно сообщаешь статус и риски.',
+     en:'break work down using a template and ship features on time. You clear blockers with your manager’s help and are open about status and risks.'},
+    {ru:'приоритизируешь бэклог по ценности и затратам, режешь scope до MVP. Говоришь с инженерами на одном языке: учитываешь реализуемость, зависимости и риски, самостоятельно снимаешь блокеры.',
+     en:'prioritize the backlog by value and cost and cut scope to an MVP. You speak engineering’s language: you weigh feasibility, dependencies and risks, and clear blockers on your own.'},
+    {ru:'балансируешь новые фичи, баги и техдолг, срочное и важное. Поднимаешь скорость и качество команды, стабильно выполняешь прогнозы по эффекту и разруливаешь зависимости между командами.',
+     en:'balance new features, bugs and tech debt, the urgent and the important. You raise the team’s speed and quality, reliably hit impact forecasts and untangle cross-team dependencies.'},
+    {ru:'отвечаешь за исполнение в нескольких командах и сложных проектах с множеством зависимостей. Вводишь фреймворки приоритизации и устраняешь системные причины низкой скорости и качества.',
+     en:'own delivery across several teams and complex projects with many dependencies. You introduce prioritization frameworks and fix the root causes of slow, low-quality delivery.'},
+    {ru:'задаёшь критерии эффективности команд, распределяешь ресурсы между направлениями и снимаешь организационные блокеры на уровне компании.',
+     en:'set effectiveness criteria for teams, allocate resources across product areas and remove organizational blockers at company level.'}
+  ],
+  data:[
+    {ru:'отслеживаешь метрики своей фичи и объясняешь, что означают цифры. Выводы о влиянии на бизнес делаешь вместе со старшими.',
+     en:'track your feature’s metrics and can explain what the numbers mean. You draw conclusions about business impact together with senior colleagues.'},
+    {ru:'задаёшь success-метрику до запуска и запускаешь A/B по чёткой гипотезе. Учитываешь шум и тренды; с помощью старших строишь дерево метрик и двигаешь input-метрики ради output.',
+     en:'set a success metric before launch and run A/B tests on a clear hypothesis. You account for noise and trends and, with support, build a metric tree and move inputs to drive outputs.'},
+    {ru:'самостоятельно строишь дерево метрик и находишь точки роста, которыми никто не занимается. Понимаешь, как метрики продукта двигают бизнес, проектируешь эксперименты и меняешь курс по их итогам.',
+     en:'build the metric tree on your own and find growth levers nobody is working on. You understand how product metrics move the business, design experiments and change course on the results.'},
+    {ru:'решаешь, какой анализ нужен нескольким командам, связываешь метрики разных продуктов и задаёшь метрики стратегии. Принимаешь решения при множестве взаимозависимых факторов.',
+     en:'decide what analysis several teams need, link metrics across products and set the metrics for the strategy. You make calls when many interdependent factors are in play.'},
+    {ru:'строишь систему метрик компании вокруг North Star и культуру экспериментов. Инвестируешь в платформу данных и экспериментов.',
+     en:'build the company’s metric system around a North Star and an experimentation culture. You invest in the data and experimentation platform.'}
+  ],
+  biz:[
+    {ru:'знаешь бизнес-модель продукта и экономику своей фичи, понимаешь целевые бизнес-метрики команды.',
+     en:'know the product’s business model and the economics of your feature, and understand the team’s target business metrics.'},
+    {ru:'считаешь эффект фичи в деньгах и с поддержкой строишь финмодель доходов. Аргументируешь финансовую привлекательность инициатив и показываешь измеримый эффект.',
+     en:'estimate a feature’s impact in money and build a revenue model with support. You make the financial case for initiatives and show measurable impact.'},
+    {ru:'строишь модели доходов и расходов со сценариями и решаешь по ROI. Пишешь бизнес-кейсы (build / buy / partner), участвуешь в прайсинге и двигаешь ключевые бизнес-метрики.',
+     en:'build revenue and cost models with scenarios and decide by ROI. You write business cases (build / buy / partner), shape pricing and move key business metrics.'},
+    {ru:'отвечаешь за бизнес-результат нескольких продуктов или направления. Готовишь инвестиционные кейсы уровня компании и находишь крупные возможности роста или экономии.',
+     en:'own business results for several products or a whole product area. You prepare company-level investment cases and find big opportunities for growth or savings.'},
+    {ru:'отвечаешь за P&L или выручку направления, запускаешь новые бизнесы и рынки и балансируешь инвестиционный портфель.',
+     en:'own the P&L or revenue of a product area, launch new businesses and markets, and balance the investment portfolio.'}
+  ],
+  stake:[
+    {ru:'кратко и ясно сообщаешь статус, проблемы и риски, аргументируешь позицию и задаёшь уточняющие вопросы. В конфликте ставишь обсуждение на паузу и подключаешь руководителя.',
+     en:'report status, problems and risks briefly and clearly, argue your position and ask clarifying questions. In a conflict, you pause the discussion and bring in your manager.'},
+    {ru:'выравниваешь команду и ключевых стейкхолдеров вокруг роадмапа, адаптируешь подачу под аудиторию. Пишешь документы «от общего к частному», даёшь и просишь обратную связь.',
+     en:'align the team and key stakeholders around the roadmap and tailor the message to the audience. You write docs that go from big picture to detail, and give and ask for feedback.'},
+    {ru:'доводишь сложные переговоры и конфликты до конструктивного решения. Уверенно защищаешь решения перед топ-менеджментом и широкой аудиторией, представляешь продукт клиентам.',
+     en:'steer difficult negotiations and conflicts to a constructive outcome. You confidently defend decisions to senior leadership and large audiences, and present the product to customers.'},
+    {ru:'строишь доверие с senior-стейкхолдерами по всей компании и выравниваешь несколько команд. Корректно эскалируешь блокеры; тебя признают экспертом внутри и снаружи.',
+     en:'build trust with senior stakeholders across the company and align several teams. You escalate blockers the right way and are recognized as an expert inside and outside.'},
+    {ru:'— публичное лицо продукта на конференциях и встречах с ключевыми клиентами. Выстраиваешь коммуникационные ритуалы организации и умеешь доносить трудные решения.',
+     en:'are the public face of the product at conferences and with key customers. You set up the organization’s communication rituals and know how to deliver hard decisions.'}
+  ],
+  lead:[
+    {ru:'отвечаешь за свои задачи и доводишь их до конца, активно участвуешь в жизни команды. Самостоятельно принимаешь решения в узкой, понятной зоне.',
+     en:'own your tasks and see them through, and take an active part in team rituals. You make decisions independently within a narrow, well-defined area.'},
+    {ru:'самостоятельно принимаешь решения в своей зоне и задаёшь ритм и договорённости команды. Поддерживаешь здоровье команды: вовремя снимаешь конфликты и инерцию.',
+     en:'make decisions in your own area and set the team’s rhythm and working agreements. You keep the team healthy by defusing conflict and inertia early.'},
+    {ru:'ведёшь как servant leader: команда сама генерирует и проверяет идеи. Решаешь при неполных данных, явно называя трейд-офы, и помогаешь расти младшим PM.',
+     en:'lead as a servant leader: the team generates and tests ideas on its own. You decide on incomplete data while naming the trade-offs explicitly, and help junior PMs grow.'},
+    {ru:'ведёшь группу команд, управляешь PM и коучишь их. Вводишь общие практики, которые поднимают планку, и строишь сильные связи между направлениями.',
+     en:'lead a group of teams, managing and coaching PMs. You introduce shared practices that raise the bar and build strong links between product areas.'},
+    {ru:'строишь продуктовую организацию: найм, структура, PM-культура. Управляешь менеджерами, коучишь людей и даёшь команде ясность в трудных решениях (поведения Project Oxygen).',
+     en:'build the product organization: hiring, structure and PM culture. You manage managers, coach people and give the team clarity on hard calls (Project Oxygen behaviors).'}
+  ]
+};
+// a past move (case or challenge) shown again in a popover: the situation, your call and the best one
+function openRecall(btn){
+  const l = S && S.log[+btn.dataset.i]; if(!l) return;
+  let html;
+  if(l.kind==='scen'){
+    const sc = scenL(l.id), best = sc.options.filter(o=>o.q==='best'), mine = l.oi!=null ? sc.options[l.oi] : null;
+    html = `<h4>${sc.title}</h4><div class="term-sub">${L('Ситуация','Situation')} · ${QUAL[l.q].label}</div><p>${sc.text}</p>
+      ${mine ? `<p><b>${L('Твой выбор:','Your call:')}</b> ${mine.t}</p>` : ''}
+      ${l.q!=='best' ? `<p><b>${L('Лучший вариант:','The best option:')}</b> ${best.map(o=>o.t).join(L(' или ',' or '))}</p>` : ''}
+      <p class="hint">${sc.lesson}</p>`;
+  } else {
+    const rc = l.rc && l.rc[LANG];
+    html = `<h4>${l.title[LANG]}</h4><div class="term-sub">${L('Задача','Challenge')} · ${l.ok ? L('верно','correct') : L('мимо','missed')}</div>
+      ${rc ? `<div class="recall-prompt">${rc.prompt}</div><p><b>${rc.question}</b></p><p>${L('Правильный ответ:','Correct answer:')} <b>${rc.right}</b>${l.ok ? '' : `<br>${L('Твой ответ:','Your answer:')} ${rc.mine}`}</p>` : ''}
+      <p>${l.explain[LANG]}</p>`;
+  }
+  showPop(btn, html, true);
+}
+// moves that trained a competency, newest last
+const compMoves = k => S.log.map((l,i)=>({l, i})).filter(({l})=>(l.kind==='scen' ? scenTags(l.id) : chalTags(l.key, l.d)).includes(k));
+const moveTitle = l => l.kind==='scen' ? scenL(l.id).title : l.title[LANG];
+const moveMark = l => l.kind==='scen' ? ({best:'good', ok:'ok', bad:'bad'})[l.q] : (l.ok ? 'good' : 'bad');
 function compProfile(){
   const cs = compScores(), prev = S.runAt ? prevRun() : null;
   return `<div class="section-h" id="comp-sec">${L('Профиль компетенций','Competency profile')}</div>
@@ -2936,8 +3075,9 @@ function compProfile(){
     const nx = Math.min(r.level+1, 4);
     return `<div class="comp-row"><div class="comp-top"><b>${c.name[LANG]} <span class="comp-n">${L(`ходов: ${r.n}`, `${r.n} ${r.n===1?'move':'moves'}`)}</span></b><span class="comp-lv">${prev && prev.comps && prev.comps[c.k]!=null && prev.comps[c.k]!==r.level ? `<span class="was">${L('было','was')} ${COMP_LVL[prev.comps[c.k]][1]}</span>` : ''}<span class="chip lvl-chip l${r.level}">${COMP_LVL[r.level][1]}</span></span></div>
       <div class="bar"><i style="width:${Math.round(r.score*100)}%"></i></div>
-      <p>${c.levels[r.level][LANG]}</p>
-      ${r.level<4 ? `<p class="hint">${r.capped ? L('Для уровня выше нужно больше ходов в этой компетенции. ','More moves in this competency are needed for a higher level. ') : ''}${L('До уровня','To reach')} ${COMP_LVL[nx][1]}: ${c.levels[nx][LANG]}</p>` : ''}</div>`; }).join('')}</div>`;
+      <p>${L('Ты ','You ')}${YOU[c.k][r.level][LANG]}</p>
+      ${(()=>{ const mv = compMoves(c.k); return mv.length ? `<div class="comp-moves"><span class="hint">${L('Твои ходы:','Your moves:')}</span>${mv.map(({l,i})=>`<button class="move-chip ${moveMark(l)}" data-act="recall" data-i="${i}" title="${L('Вспомнить','Recall it')}">${moveTitle(l)}</button>`).join('')}</div>` : ''; })()}
+      ${r.level<4 ? `<p class="hint">${L(`Следующий уровень — ${COMP_LVL[nx][1]}.`,`Next level: ${COMP_LVL[nx][1]}.`)} ${r.capped ? L('Чтобы до него дорасти, нужно больше ходов в этой компетенции. ','To get there, you need more moves in this competency. ') : ''}${L('На нём ты ','At that level, you ')}${YOU[c.k][nx][LANG]}</p>` : ''}</div>`; }).join('')}</div>`;
 }
 /* ============ run history ============ */
 // every finished run is kept in this browser so players can compare runs (the leaderboard keeps only the best one)
@@ -3240,6 +3380,7 @@ function renderHud(){
   $('#hud').innerHTML = `
     <div class="brand"><b>${L('Ритм','Rhythm')}</b><span>${L('симулятор продакт-менеджера','product manager simulator')}</span></div>
     <div class="track"><div class="track-label"><span>${S?L(`Месяц ${Math.min(month,MONTHS)} из ${MONTHS}`,`Month ${Math.min(month,MONTHS)} of ${MONTHS}`):L('10 месяцев','10 months')}</span><span>${S?int(totalXp())+' XP':''}</span></div><div class="segs">${segs}</div></div>
+    ${S ? `<button class="hud-btn" data-act="home" title="${L('Игра сохранится, вернуться можно с главного экрана','Your game is saved; continue from the main screen')}">${L('Меню','Menu')}</button>` : ''}
     <button class="hud-btn" data-act="sheet">${L('Шпаргалка','Cheat sheet')}</button>
     <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}" title="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
     <div class="lang" role="group" aria-label="Язык / Language">${LANGS.map(lg=>`<button data-act="lang" data-lang="${lg}" aria-pressed="${lg===LANG}" lang="${lg}">${lg.toUpperCase()}</button>`).join('')}</div>
@@ -3295,6 +3436,7 @@ function renderDash(){
        <div class="bar-row"><span>${L('Мораль','Morale')}</span>${bar(m.morale)}<b>${Math.round(m.morale)}</b></div>
        <div class="bar-row"><span>${L('Техдолг','Tech debt')}</span>${bar(m.debt,true)}<b>${Math.round(m.debt)}</b></div>
      </div>
+     <p class="hint" style="margin:10px 0 0">${L('Доверие и мораль — чем выше, тем лучше. Техдолг — чем ниже, тем лучше: выше 50 он режет retention.','Trust and morale: the higher the better. Tech debt: the lower the better — above 50 it cuts retention.')}</p>
    </section>
    <section class="panel" aria-label="${L('Компетенции','Competencies')}">
      <div class="panel-title"><span>${L('Компетенции PM','PM competencies')}</span><button class="link-btn" data-act="matrix">${L('Матрица','Matrix')}</button></div>
@@ -3318,6 +3460,7 @@ function renderIntro(){
     <div class="rules">
       <div class="rule"><b>${L('Ситуация','Situation')}</b><span>${L('Стейкхолдеры приносят проблемы. Выбираешь решение и получаешь разбор: почему так и что говорит практика.','Stakeholders bring you problems. You make the call and get a debrief: why it works and what practice says.')}</span></div>
       <div class="rule"><b>${L('Задача месяца','Challenge of the month')}</b><span>${L('Расчёт LTV, чтение A/B-теста, RICE, когорты, CustDev. Верный ответ даёт XP и бонус к метрикам.','LTV math, reading an A/B test, RICE, cohorts, customer interviews. A right answer earns XP and a metrics boost.')}</span></div>
+      <div class="rule"><b>${L('Дашборд','Dashboard')}</b><span>${L('Метрики продукта и три шкалы от 0 до 100. Доверие стейкхолдеров и мораль команды держи высокими, техдолг — низким: выше 50 он ломает релизы и снижает retention.','Product metrics plus three 0–100 scales. Keep stakeholder trust and team morale high and tech debt low: above 50 it breaks releases and hurts retention.')}</span></div>
       <div class="rule"><b>${L('Итоги месяца','Month in review')}</b><span>${L('Модель пересчитывает пользователей, выручку и кэш. Потом твой ход: рекомендация маркетингу по бюджету и доля команды на техдолг на следующий месяц.','The model recalculates users, revenue and cash. Then it’s your move: a budget recommendation to marketing and how much of the team goes to tech debt next month.')}</span></div>
     </div>
     <p style="margin-bottom:6px"><b>${L('Цели на игру','Your goals')}</b></p>
@@ -3336,9 +3479,9 @@ function renderIntro(){
 function altBest(sc, o){
   const others = sc.options.filter(x=>x.q==='best' && x!==o);
   if(!others.length) return '';
-  if(o.q==='best') return `<p><b>${L('Другой сильный путь:','The other strong path:')}</b> ${others[0].t}</p><p class="hint">${L('Это дилемма: бесплатного варианта нет, вопрос в том, какую цену ты готов заплатить.','This is a dilemma: there’s no free option, only the price you choose to pay.')}</p>`;
-  if(others.length===1) return `<p><b>${L('Сильнее:','Stronger:')}</b> ${others[0].t}</p>`;
-  return `<p><b>${L('Сильнее — любой из двух:','Stronger — either of these:')}</b>${others.map(x=>`<br>— ${x.t}`).join('')}</p>`;
+  if(o.q==='best') return `<p><b>${L('Другой лучший вариант:','The other best option:')}</b> ${others[0].t}</p><p class="hint">${L('Это дилемма: бесплатного варианта нет, вопрос в том, какую цену ты готов заплатить.','This is a dilemma: there’s no free option, only the price you choose to pay.')}</p>`;
+  if(others.length===1) return `<p><b>${L('Лучше было бы:','Better option:')}</b> ${others[0].t}</p>`;
+  return `<p><b>${L('Лучше — любой из двух:','Better — either of these:')}</b>${others.map(x=>`<br>— ${x.t}`).join('')}</p>`;
 }
 function renderScenario(){
   const sc = scenL(S.cur.scenId), p = PEOPLE[sc.from];
@@ -3424,7 +3567,7 @@ function updateBudget(){
   const el = $('#budget'); if(!el) return;
   S.m.budgetRec = +el.value; S.m.budget = lenaBudget(S.m.budgetRec, S.m.trust); const d = derive(S.m);
   $('#bval').textContent = money(S.m.budgetRec);
-  $('#bcalc').innerHTML = `<div class="lena"><span>${L('Лена ставит','Lena sets')} · ${L('доверие','trust')} ${Math.round(S.m.trust)}</span><b>${money(S.m.budget)}</b></div><div><span>${L('CAC установки','CAC per install')}</span><b>$${dec(d.effCac,2)}</b></div><div><span>${L('Установок из рекламы','Installs from ads')}</span><b>≈ ${int(S.m.budget/d.effCac)}</b></div><div><span>${L('CAC платящего','CAC per payer')}</span><b>$${dec(d.cacPayer,0)}</b></div><div><span>LTV / CAC</span><b>${dec(d.ratio,1)}</b></div><div><span>${L('Расходы в месяц','Monthly costs')}</span><b>${money(d.burn)}</b></div>`;
+  $('#bcalc').innerHTML = `<div class="lena"><span>${L('Лена ставит','Lena sets')}</span><b>${money(S.m.budget)}</b></div><div><span>${L('CAC установки','CAC per install')}</span><b>$${dec(d.effCac,2)}</b></div><div><span>${L('Установок из рекламы','Installs from ads')}</span><b>≈ ${int(S.m.budget/d.effCac)}</b></div><div><span>${L('CAC платящего','CAC per payer')}</span><b>$${dec(d.cacPayer,0)}</b></div><div><span>LTV / CAC</span><b>${dec(d.ratio,1)}</b></div><div><span>${L('Расходы в месяц','Monthly costs')}</span><b>${money(d.burn)}</b></div>`;
   const ds = $('#debtShare');
   if(ds){
     const m = S.m; m.debtShare = +ds.value/100;
@@ -3432,7 +3575,8 @@ function updateBudget(){
     $('#dval').textContent = Math.round(m.debtShare*100)+'%';
     $('#dcalc').innerHTML = `<div><span>${L('Техдолг через месяц','Tech debt next month')}</span><b>${Math.round(m.debt)} → ${Math.round(next)}</b></div><div><span>${L('Органика','Organic installs')}</span><b>${m.debtShare ? '−'+Math.round(m.debtShare*DEBT_WORK.organic*100)+'%' : L('без потерь','no loss')}</b></div><div><span>${L('Штраф к retention','Retention penalty')}</span><b>${next>50 ? '−'+dec((next-50)*DEBT_WORK.penalty*100,1)+L(' п.п.',' pp') : L('нет','none')}</b></div>`;
   }
-  save(); renderDash();
+  // the dashboard isn't redrawn here: results of the decisions show up only after the month
+  save();
 }
 function renderEnd(){
   const f = finalScore(), d = derive(S.m), bust = S.m.cash<0;
@@ -3469,7 +3613,7 @@ function renderEnd(){
     <div class="section-h">${L('Достижения','Achievements')}</div>
     <div class="badges">${badges().map(b=>`<div class="badge ${b.on?'on':''}"><b>${b.n}</b>${b.t}</div>`).join('')}</div>
     <div class="section-h">${L('Что подтянуть','What to work on')} · ${weak.length}</div>
-    ${weak.length ? `<div class="review">${weak.map(l=>{ if(l.kind==='scen'){ const sc = scenL(l.id); return `<div class="rev"><span class="dot ${l.q}"></span><b>${sc.title} · ${compName(scenTags(l.id)[0])}</b><p>${sc.lesson} ${L('Сильнее было:','The stronger call:')} ${sc.options.filter(x=>x.q==='best').map(x=>L('«','“')+x.t+L('»','”')).join(L(' или ',' or '))}</p></div>`; } return `<div class="rev"><span class="dot bad"></span><b>${L('Задача:','Challenge:')} ${l.title[LANG]} · ${compName(chalTags(l.key, l.d)[0])}</b><p>${l.explain[LANG]}</p></div>`; }).join('')}</div>` : `<p class="lead">${L('Ни одной ошибки. Серьёзно впечатляет.','Not a single mistake. Seriously impressive.')}</p>`}
+    ${weak.length ? `<div class="review">${weak.map(l=>{ if(l.kind==='scen'){ const sc = scenL(l.id); return `<div class="rev"><span class="dot ${l.q}"></span><b>${sc.title} · ${compName(scenTags(l.id)[0])}</b><p>${sc.lesson} ${L('Лучший вариант:','The best option:')} ${sc.options.filter(x=>x.q==='best').map(x=>L('«','“')+x.t+L('»','”')).join(L(' или ',' or '))}</p><button class="link-btn" data-act="recall" data-i="${S.log.indexOf(l)}">${L('Вспомнить ситуацию','Recall the situation')}</button></div>`; } return `<div class="rev"><span class="dot bad"></span><b>${L('Задача:','Challenge:')} ${l.title[LANG]} · ${compName(chalTags(l.key, l.d)[0])}</b><p>${l.explain[LANG]}</p><button class="link-btn" data-act="recall" data-i="${S.log.indexOf(l)}">${L('Вспомнить задачу','Recall the task')}</button></div>`; }).join('')}</div>` : `<p class="lead">${L('Ни одной ошибки. Серьёзно впечатляет.','Not a single mistake. Seriously impressive.')}</p>`}
     ${strong.length ? `<div class="section-h">${L('Что получилось','What went well')} · ${strong.length}</div><div class="review">${strong.filter(l=>l.kind==='scen').map(l=>{ const sc = scenL(l.id); return `<div class="rev"><span class="dot best"></span><b>${sc.title}</b><p>${sc.lesson}</p></div>`; }).join('')}</div>`:''}
     <div class="actions"><button class="btn primary" data-act="new" data-primary>${L('Сыграть ещё раз — новые кейсы','Play again — new cases')}</button></div>
   </div>`;
@@ -3512,6 +3656,8 @@ document.addEventListener('click', e=>{
   if(a==='board'){ openBoard(); return; }
   if(a==='boardClose'){ closeBoard(); return; }
   if(a==='matrix'){ closeTerm(); openMatrix(); return; }
+  if(a==='recall'){ openRecall(b); return; }
+  if(a==='home'){ save(); S = null; render(); window.scrollTo({top:0}); track('home'); return; }
   if(a==='compInfo'){ openCompInfo(b); return; }
   if(a==='matrixClose'){ closeMatrix(); return; }
   if(a==='runs'){ openRuns(); return; }
