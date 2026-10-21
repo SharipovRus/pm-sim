@@ -245,6 +245,11 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+a.btn{text-decoration:none; color:var(--ink)}
+a.btn.primary{color:var(--accent-ink)}
+.cases-cta{border:1px solid var(--accent); background:var(--accent-soft); border-radius:12px; padding:14px 16px; margin:18px 0}
+.cases-cta .hint{margin:4px 0 10px; font-size:13px}
+
 #pop.wide{width:460px; max-height:min(72vh,640px); overflow:auto}
 #pop.sheet{max-height:82vh; overflow:auto}
 #pop .recall-prompt{font-size:13.5px; margin-bottom:8px}
@@ -3471,6 +3476,7 @@ function renderIntro(){
       ${saved && !saved.ended ? `<button class="btn primary" data-act="continue" data-primary>${L('Продолжить · месяц','Continue · month')} ${saved.month}</button><button class="btn" data-act="new">${L('Начать заново','Start over')}</button>` : `<button class="btn primary" data-act="new" data-primary>${L('Начать игру','Start the game')}</button>`}
       ${lbOn() ? `<button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard')}</button>` : ''}
       <button class="btn ghost" data-act="matrix">${L('Матрица компетенций','Competency matrix')}</button>
+      <a class="btn ghost" href="cases/${LANG==='en'?'?lang=en':''}">${L('Кейсы с собеседований','Interview cases')}</a>
       ${getRuns().length ? `<button class="btn ghost" data-act="runs">${L('Мои партии','My runs')} · ${getRuns().length}</button>` : ''}
       <span class="hint">${L('Кейсы и цифры каждый раз новые','Cases and numbers change every run')}</span>
     </div></div>`;
@@ -3591,6 +3597,9 @@ function renderEnd(){
     <p class="lead">${L(`Качество решений: ${Math.round(f.s1*100)}% · задачи: ${Math.round(f.s2*100)}% · бизнес-результат: ${Math.round(f.biz*100)}%. Грейд на 60% зависит от решений и задач, на 40% — от метрик продукта.`,
       `Decision quality: ${Math.round(f.s1*100)}% · challenges: ${Math.round(f.s2*100)}% · business results: ${Math.round(f.biz*100)}%. Your grade is 60% decisions and challenges, 40% product metrics.`)}</p>
     ${compProfile()}
+    <div class="cases-cta"><b>${L('Потренируй слабые места на кейсах с собеседований','Practice your weak spots on interview cases')}</b>
+      <p class="hint">${L('Пишешь ответ своими словами, сравниваешь с ответом сильного кандидата и прокачиваешь те же компетенции. Подскажем, с какого кейса начать.','Write your answer in your own words, compare it with a strong candidate’s and level up the same competencies. We’ll suggest where to start.')}</p>
+      <a class="btn" href="cases/${LANG==='en'?'?lang=en':''}">${L('Открыть кейсы','Open the cases')} →</a></div>
     <div class="share">
       <img id="share-img" alt="${L('Карточка результата','Result card')}">
       <div class="share-btns">

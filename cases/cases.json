@@ -1,123 +1,944 @@
 {
-  "version": 1,
-  "themes": [
-    {"id": "product", "comp": ["user"], "name": {"ru": "Дизайн продукта", "en": "Product sense"}, "blurb": {"ru": "Для кого, какая проблема, какое решение и как понять, что сработало.", "en": "Who it’s for, what problem, which solution, and how you’ll know it worked."}},
-    {"id": "metrics", "comp": ["data"], "name": {"ru": "Метрики и диагностика", "en": "Metrics & diagnosis"}, "blurb": {"ru": "Метрика упала или выросла: разложить, найти причину, решить, что делать.", "en": "A metric moved: break it down, find the cause, decide what to do."}},
-    {"id": "estimation", "comp": ["biz"], "name": {"ru": "Оценка рынка", "en": "Estimation"}, "blurb": {"ru": "Оценить размер рынка без интернета: структура, допущения, проверка.", "en": "Size a market without Google: structure, assumptions, sanity check."}},
-    {"id": "strategy", "comp": ["strategy"], "name": {"ru": "Стратегия", "en": "Strategy"}, "blurb": {"ru": "Выход на рынок, ответ конкуренту, куда расти дальше.", "en": "Market entry, responding to a competitor, where to grow next."}},
-    {"id": "priority", "comp": ["exec"], "name": {"ru": "Приоритизация", "en": "Prioritization"}, "blurb": {"ru": "Что делать сначала, что отложить и как объяснить это команде.", "en": "What goes first, what waits, and how to explain it to the team."}},
-    {"id": "experiment", "comp": ["data"], "name": {"ru": "A/B-тесты", "en": "Experiments"}, "blurb": {"ru": "Дизайн эксперимента и чтение результатов без самообмана.", "en": "Designing experiments and reading results honestly."}},
-    {"id": "economics", "comp": ["biz"], "name": {"ru": "Юнит-экономика", "en": "Unit economics"}, "blurb": {"ru": "LTV, CAC, цены и подписки: посчитать и принять решение.", "en": "LTV, CAC, pricing and subscriptions: do the math, make the call."}},
-    {"id": "stakeholders", "comp": ["stake", "lead"], "name": {"ru": "Стейкхолдеры и лидерство", "en": "Stakeholders & leadership"}, "blurb": {"ru": "Конфликты, несогласие, плохие новости и влияние без полномочий.", "en": "Conflict, disagreement, bad news and influence without authority."}}
-  ],
-  "cases": [
+ "version": 2,
+ "themes": [
+  {
+   "id": "product",
+   "comp": [
+    "user"
+   ],
+   "name": {
+    "ru": "Дизайн продукта",
+    "en": "Product sense"
+   },
+   "blurb": {
+    "ru": "Для кого, какая проблема, какое решение и как понять, что сработало.",
+    "en": "Who it’s for, what problem, which solution, and how you’ll know it worked."
+   }
+  },
+  {
+   "id": "metrics",
+   "comp": [
+    "data"
+   ],
+   "name": {
+    "ru": "Метрики и диагностика",
+    "en": "Metrics & diagnosis"
+   },
+   "blurb": {
+    "ru": "Метрика упала или выросла: разложить, найти причину, решить, что делать.",
+    "en": "A metric moved: break it down, find the cause, decide what to do."
+   }
+  },
+  {
+   "id": "estimation",
+   "comp": [
+    "biz"
+   ],
+   "name": {
+    "ru": "Оценка рынка",
+    "en": "Estimation"
+   },
+   "blurb": {
+    "ru": "Оценить размер рынка без интернета: структура, допущения, проверка.",
+    "en": "Size a market without Google: structure, assumptions, sanity check."
+   }
+  },
+  {
+   "id": "strategy",
+   "comp": [
+    "strategy"
+   ],
+   "name": {
+    "ru": "Стратегия",
+    "en": "Strategy"
+   },
+   "blurb": {
+    "ru": "Выход на рынок, ответ конкуренту, куда расти дальше.",
+    "en": "Market entry, responding to a competitor, where to grow next."
+   }
+  },
+  {
+   "id": "priority",
+   "comp": [
+    "exec"
+   ],
+   "name": {
+    "ru": "Приоритизация",
+    "en": "Prioritization"
+   },
+   "blurb": {
+    "ru": "Что делать сначала, что отложить и как объяснить это команде.",
+    "en": "What goes first, what waits, and how to explain it to the team."
+   }
+  },
+  {
+   "id": "experiment",
+   "comp": [
+    "data"
+   ],
+   "name": {
+    "ru": "A/B-тесты",
+    "en": "Experiments"
+   },
+   "blurb": {
+    "ru": "Дизайн эксперимента и чтение результатов без самообмана.",
+    "en": "Designing experiments and reading results honestly."
+   }
+  },
+  {
+   "id": "economics",
+   "comp": [
+    "biz"
+   ],
+   "name": {
+    "ru": "Юнит-экономика",
+    "en": "Unit economics"
+   },
+   "blurb": {
+    "ru": "LTV, CAC, цены и подписки: посчитать и принять решение.",
+    "en": "LTV, CAC, pricing and subscriptions: do the math, make the call."
+   }
+  },
+  {
+   "id": "stakeholders",
+   "comp": [
+    "stake",
+    "lead"
+   ],
+   "name": {
+    "ru": "Стейкхолдеры и лидерство",
+    "en": "Stakeholders & leadership"
+   },
+   "blurb": {
+    "ru": "Конфликты, несогласие, плохие новости и влияние без полномочий.",
+    "en": "Conflict, disagreement, bad news and influence without authority."
+   }
+  }
+ ],
+ "cases": [
+  {
+   "id": "commute-app",
+   "comp": [
+    "user",
+    "strategy"
+   ],
+   "theme": "product",
+   "minutes": 15,
+   "title": {
+    "ru": "Приложение для тех, кто ездит на работу",
+    "en": "An app for daily commuters"
+   },
+   "company": {
+    "ru": "«Маршрут» — приложение общественного транспорта Чикаго: оплата проезда по QR, маршруты, время прибытия автобусов. 600 тысяч пользователей в месяц. Зарабатывает на комиссии с оплаты проезда и рекламе.",
+    "en": "Route — a public transport app in Chicago: QR fare payment, journey planning, bus arrival times. 600,000 monthly users. Revenue comes from a fee on fare payments and ads."
+   },
+   "prompt": {
+    "ru": "<p>CEO хочет, чтобы люди открывали приложение чаще и не уходили к конкурентам. Он просит: «Придумай, что сделать для тех, кто каждый день ездит на работу на автобусе».</p><p><b>Что известно</b></p><ul><li>70% поездок — в будни, с 7 до 10 и с 17 до 20.</li><li>Треть пользователей открывает приложение только чтобы оплатить проезд и сразу закрывает.</li><li>Самая частая жалоба в отзывах: «Автобус на карте есть, а на остановке его нет».</li><li>Повлиять на расписание и количество автобусов «Маршрут» не может — это решает город.</li></ul>",
+    "en": "<p>The CEO wants people to open the app more often and not switch to competitors. He asks you: “Come up with something for people who take the bus to work every day.”</p><p><b>What we know</b></p><ul><li>70% of trips happen on weekdays, 7–10 am and 5–8 pm.</li><li>A third of users open the app only to pay the fare and close it right away.</li><li>The most common complaint in reviews: “The bus is on the map, but not at the stop.”</li><li>Route can’t change schedules or the number of buses — the city decides that.</li></ul>"
+   },
+   "task": {
+    "ru": "Предложи решение. Рассуждай как на продуктовом собеседовании: какая цель, для кого, какую проблему решаешь, какие есть варианты, что выбираешь и как поймёшь, что сработало.",
+    "en": "Propose a solution. Reason like in a product interview: what’s the goal, who it’s for, which problem you solve, what the options are, what you pick and how you’ll know it worked."
+   },
+   "hint": {
+    "ru": "Не начинай с фич. Сначала цель и конкретный сегмент, потом боли — в условии уже есть главная жалоба.",
+    "en": "Don’t start with features. Goal and a specific segment first, then pain points — the brief already contains the top complaint."
+   },
+   "rubric": [
     {
-      "id": "orders-drop",
-      "comp": ["data", "exec"],
-      "theme": "metrics",
-      "minutes": 15,
-      "title": {"ru": "Заказы упали на 12%", "en": "Orders dropped 12%"},
-      "company": {"ru": "«Корзинка» — доставка продуктов за 30 минут в Алматы, Астане и Шымкенте.", "en": "Basket — 30-minute grocery delivery in Almaty, Astana and Shymkent (Kazakhstan)."},
-      "prompt": {
-        "ru": "<p>Понедельник, утро. Аналитик пишет в общий чат: «Заказы за прошлую неделю упали на 12% к позапрошлой». CEO просит к обеду понять, что случилось, и предложить план.</p><p><b>Заказы по платформам</b></p><div class='task-box'><table class='t'><thead><tr><th>Платформа</th><th>Позапрошлая неделя</th><th>Прошлая неделя</th><th>Изменение</th></tr></thead><tbody><tr><td>iOS</td><td>38 000</td><td>36 900</td><td>−3%</td></tr><tr><td>Android</td><td>40 000</td><td>31 400</td><td>−22%</td></tr><tr><td>Веб</td><td>6 000</td><td>5 600</td><td>−7%</td></tr><tr><td><b>Всего</b></td><td>84 000</td><td>73 900</td><td>−12%</td></tr></tbody></table></div><p><b>Заказы по городам</b></p><div class='task-box'><table class='t'><thead><tr><th>Город</th><th>Позапрошлая неделя</th><th>Прошлая неделя</th><th>Изменение</th></tr></thead><tbody><tr><td>Алматы</td><td>46 000</td><td>41 800</td><td>−9%</td></tr><tr><td>Астана</td><td>26 000</td><td>23 600</td><td>−9%</td></tr><tr><td>Шымкент</td><td>12 000</td><td>8 500</td><td>−29%</td></tr><tr><td><b>Всего</b></td><td>84 000</td><td>73 900</td><td>−12%</td></tr></tbody></table></div><p><b>Что происходило на неделе</b></p><ul><li>Во вторник вышла версия Android-приложения 5.2 с новым экраном оплаты.</li><li>В среду в Шымкенте запустился конкурент: −50% на первый заказ.</li><li>Маркетинг на 10% сократил бюджет на рекламу в Астане.</li><li>В субботу в Алматы весь день шёл дождь.</li></ul>",
-        "en": "<p>Monday morning. An analyst posts in the team chat: “Orders last week were down 12% week over week.” The CEO wants to know by lunch what happened and what you plan to do.</p><p><b>Orders by platform</b></p><div class='task-box'><table class='t'><thead><tr><th>Platform</th><th>Week before</th><th>Last week</th><th>Change</th></tr></thead><tbody><tr><td>iOS</td><td>38,000</td><td>36,900</td><td>−3%</td></tr><tr><td>Android</td><td>40,000</td><td>31,400</td><td>−22%</td></tr><tr><td>Web</td><td>6,000</td><td>5,600</td><td>−7%</td></tr><tr><td><b>Total</b></td><td>84,000</td><td>73,900</td><td>−12%</td></tr></tbody></table></div><p><b>Orders by city</b></p><div class='task-box'><table class='t'><thead><tr><th>City</th><th>Week before</th><th>Last week</th><th>Change</th></tr></thead><tbody><tr><td>Almaty</td><td>46,000</td><td>41,800</td><td>−9%</td></tr><tr><td>Astana</td><td>26,000</td><td>23,600</td><td>−9%</td></tr><tr><td>Shymkent</td><td>12,000</td><td>8,500</td><td>−29%</td></tr><tr><td><b>Total</b></td><td>84,000</td><td>73,900</td><td>−12%</td></tr></tbody></table></div><p><b>What happened during the week</b></p><ul><li>On Tuesday, Android app version 5.2 shipped with a redesigned payment screen.</li><li>On Wednesday, a competitor launched in Shymkent with 50% off the first order.</li><li>Marketing cut the ad budget in Astana by 10%.</li><li>On Saturday it rained all day in Almaty.</li></ul>"
-      },
-      "task": {"ru": "Разберись, что произошло и что делать в первую очередь. Отвечай так, как рассуждал бы вслух на собеседовании: с чего начнёшь, какие гипотезы, как их проверишь и что сделаешь.", "en": "Figure out what happened and what to do first. Answer the way you’d think out loud in an interview: where you start, your hypotheses, how you’d verify them and what you’d do."},
-      "hint": {"ru": "Сначала убедись, что падение настоящее, потом разложи его по сегментам — таблиц для этого хватает. Не все события недели одинаково важны.", "en": "First make sure the drop is real, then break it down by segment — the tables are enough for that. Not every event of the week matters equally."},
-      "rubric": [
-        {"id": "data", "name": {"ru": "Проверка данных", "en": "Sanity-check the data"}, "desc": "Before diagnosing, checks that the drop is real: tracking or analytics changes (the Android 5.2 release could have broken event tracking), what counts as an order (placed vs delivered), seasonality and the same week last year. 3 = explicitly checks tracking (ideally the Android release) and compares with backend or payment data or seasonality. 0 = takes the number at face value."},
-        {"id": "segment", "name": {"ru": "Сегментация", "en": "Segmentation"}, "desc": "Breaks the drop down using the given data: platform, city, app version, new vs returning users, funnel step. Notices two separate signals: Android is down about 22% across cities (Android accounts for 8,600 of the 10,100 lost orders, about 85%), and Shymkent is down more than Android alone explains. Asks for a city × platform cross-tab or estimates each contribution. 3 = identifies both signals and roughly quantifies them. 1 = segments generically without using the numbers."},
-        {"id": "hypotheses", "name": {"ru": "Гипотезы", "en": "Hypotheses"}, "desc": "Separates internal causes (the new Android payment screen) from external ones (the competitor promo in Shymkent), ties each to the data and ranks them by likely impact. Explains why the rain (it usually increases delivery orders) and the 10% Astana ad cut (gradual, mostly affects new users, cannot explain an equal −9% in Almaty) are unlikely main causes. 3 = ranked, data-based hypotheses and red herrings dismissed with reasoning."},
-        {"id": "verify", "name": {"ru": "Как проверить", "en": "How to verify"}, "desc": "Concrete checks per hypothesis: Android funnel by app version 5.1 vs 5.2 (cart → payment screen → successful payment), payment provider errors, crashes, rollout share; in Shymkent: new vs returning customers, order frequency of loyal customers, proxies for switching to the competitor. 3 = specific metrics and segments for each hypothesis."},
-        {"id": "action", "name": {"ru": "Действия", "en": "Actions"}, "desc": "Prioritized actions: immediately stop or roll back the 5.2 rollout or switch the old payment screen back via a feature flag or hotfix; tell the CEO the sizing; set a target (e.g. Android conversion back to the 5.1 level within 48 hours). For Shymkent: do not blindly match −50% everywhere, check unit economics, protect loyal customers with targeted offers, monitor their retention. Bonus: staged rollouts with an alert on payment conversion. 3 = prioritized actions with a success metric or timeline and a guardrail."}
-      ],
-      "red_flags": ["Jumps to a solution before checking the data", "Blames a single cause and ignores the second signal", "Proposes matching the competitor’s 50% discount in all cities right away", "Treats the rain or the Astana budget cut as the main cause without numbers", "Never considers that the release may have broken analytics tracking"],
-      "followup_hint": "Good follow-ups: whether to match the promo in Shymkent and how to decide with unit economics; or how to prove the release caused the drop if a rollback is impossible.",
-      "reference": {
-        "ru": "<p><b>1. Убеждаюсь, что падение настоящее.</b> Сверяю заказы из аналитики с бэкендом и оплатами: релиз Android 5.2 мог сломать отправку событий, и тогда «падение» — это трекинг. Смотрю сезонность: ту же неделю год назад, праздники.</p><p><b>2. Раскладываю.</b> Потеряли 10 100 заказов, из них Android — 8 600, это ~85%. iOS и веб почти на месте. Алматы и Астана упали одинаково, на 9% — примерно столько даёт просадка Android при его доле ~48%. Шымкент −29% — значит, там есть второй фактор сверху, около −2 тыс. заказов. Прошу таблицу «город × платформа», чтобы это подтвердить.</p><p><b>3. Гипотезы.</b> Главная — новый экран оплаты в 5.2: совпадает по времени и платформе. Вторая — конкурент с −50% в Шымкенте. Дождь обычно увеличивает доставку, а не снижает. Сокращение рекламы в Астане на 10% действует медленно и в основном на новых — и не объясняет такое же падение в Алматы.</p><p><b>4. Проверка.</b> Воронка Android по версиям 5.1 и 5.2: корзина → экран оплаты → успешная оплата; ошибки платёжного провайдера и крэши. В Шымкенте — новые и постоянные клиенты отдельно, частота заказов постоянных после среды.</p><p><b>5. Действия.</b> Сегодня: остановить раскатку 5.2 и вернуть старый экран оплаты фичефлагом или хотфиксом; сказать CEO, что ~85% падения — наш релиз. Цель — конверсия в оплату на Android вернётся к уровню 5.1 за 48 часов. По Шымкенту не копирую −50% везде: считаю юнит-экономику, удерживаю постоянных точечными предложениями и две недели слежу за их retention. На будущее — поэтапная раскатка релизов с алертом на конверсию в оплату.</p>",
-        "en": "<p><b>1. Make sure the drop is real.</b> Reconcile analytics orders with backend and payment data: the Android 5.2 release could have broken event tracking, in which case the “drop” is a tracking bug. Check seasonality: the same week last year, holidays.</p><p><b>2. Break it down.</b> We lost 10,100 orders; Android accounts for 8,600 of them, about 85%. iOS and web are nearly flat. Almaty and Astana both fell 9% — roughly what the Android drop produces given its ~48% share. Shymkent fell 29%, so there’s a second factor on top, about 2,000 orders. I’d ask for a city × platform table to confirm.</p><p><b>3. Hypotheses.</b> Main one: the new payment screen in 5.2 — it matches the timing and the platform. Second: the competitor’s 50% promo in Shymkent. Rain usually increases delivery orders rather than reducing them. A 10% ad cut in Astana works slowly, mostly on new users, and doesn’t explain the identical drop in Almaty.</p><p><b>4. Verify.</b> Android funnel for 5.1 vs 5.2: cart → payment screen → successful payment; payment provider errors and crashes. In Shymkent: new vs returning customers, order frequency of loyal customers since Wednesday.</p><p><b>5. Act.</b> Today: halt the 5.2 rollout and bring back the old payment screen via a feature flag or hotfix; tell the CEO that ~85% of the drop is our release. Target: Android payment conversion back to the 5.1 level within 48 hours. In Shymkent I wouldn’t match −50% everywhere: check unit economics, protect loyal customers with targeted offers, and watch their retention for two weeks. Going forward: staged rollouts with an alert on payment conversion.</p>"
-      }
+     "id": "goal",
+     "name": {
+      "ru": "Цель",
+      "en": "Goal"
+     },
+     "desc": "Clarifies the business goal behind “open more often” (weekly active commuters, retention, or fare-payment revenue), turns it into a measurable target and notes constraints (no control over buses or schedules, city data quality). 3 = explicit goal metric plus constraints. 0 = no goal, straight to features.",
+     "good": {
+      "ru": "Переводишь «открывать чаще» в измеримую цель и учитываешь, что на автобусы и расписание повлиять нельзя.",
+      "en": "You turn “open more often” into a measurable goal and account for not controlling buses or schedules."
+     }
     },
     {
-      "id": "commute-app",
-      "comp": ["user", "strategy"],
-      "theme": "product",
-      "minutes": 15,
-      "title": {"ru": "Приложение для тех, кто ездит на работу", "en": "An app for daily commuters"},
-      "company": {"ru": "«Маршрут» — приложение общественного транспорта Алматы: оплата проезда по QR, маршруты, время прибытия автобусов. 600 тысяч пользователей в месяц. Зарабатывает на комиссии с оплаты проезда и рекламе.", "en": "Route — a public transport app in Almaty: QR fare payment, journey planning, bus arrival times. 600,000 monthly users. Revenue comes from a fee on fare payments and ads."},
-      "prompt": {
-        "ru": "<p>CEO хочет, чтобы люди открывали приложение чаще и не уходили к конкурентам. Он просит: «Придумай, что сделать для тех, кто каждый день ездит на работу на автобусе».</p><p><b>Что известно</b></p><ul><li>70% поездок — в будни, с 7 до 10 и с 17 до 20.</li><li>Треть пользователей открывает приложение только чтобы оплатить проезд и сразу закрывает.</li><li>Самая частая жалоба в отзывах: «Автобус на карте есть, а на остановке его нет».</li><li>Повлиять на расписание и количество автобусов «Маршрут» не может — это решает город.</li></ul>",
-        "en": "<p>The CEO wants people to open the app more often and not switch to competitors. He asks you: “Come up with something for people who take the bus to work every day.”</p><p><b>What we know</b></p><ul><li>70% of trips happen on weekdays, 7–10 am and 5–8 pm.</li><li>A third of users open the app only to pay the fare and close it right away.</li><li>The most common complaint in reviews: “The bus is on the map, but not at the stop.”</li><li>Route can’t change schedules or the number of buses — the city decides that.</li></ul>"
-      },
-      "task": {"ru": "Предложи решение. Рассуждай как на продуктовом собеседовании: какая цель, для кого, какую проблему решаешь, какие есть варианты, что выбираешь и как поймёшь, что сработало.", "en": "Propose a solution. Reason like in a product interview: what’s the goal, who it’s for, which problem you solve, what the options are, what you pick and how you’ll know it worked."},
-      "hint": {"ru": "Не начинай с фич. Сначала цель и конкретный сегмент, потом боли — в условии уже есть главная жалоба.", "en": "Don’t start with features. Goal and a specific segment first, then pain points — the brief already contains the top complaint."},
-      "rubric": [
-        {"id": "goal", "name": {"ru": "Цель", "en": "Goal"}, "desc": "Clarifies the business goal behind “open more often” (weekly active commuters, retention, or fare-payment revenue), turns it into a measurable target and notes constraints (no control over buses or schedules, city data quality). 3 = explicit goal metric plus constraints. 0 = no goal, straight to features."},
-        {"id": "users", "name": {"ru": "Пользователи", "en": "Users"}, "desc": "Picks a specific commuter segment (e.g. people with a fixed home–work route at peak hours, people with transfers, early-shift workers, students) and justifies the choice with the given facts (peak hours, a third use the app only to pay). 3 = clear segment and why it matters for the goal. 1 = “all commuters”."},
-        {"id": "pains", "name": {"ru": "Проблемы", "en": "Pain points"}, "desc": "Lists real commuter pains (unreliable arrival times and “ghost buses”, waiting in the cold, crowding, transfers, slow payment), prioritizes them by frequency × severity, uses the top review complaint, and mentions how to validate (user interviews, GPS data accuracy analysis). 3 = prioritized pains grounded in the given facts."},
-        {"id": "solutions", "name": {"ru": "Решения", "en": "Solutions"}, "desc": "Generates 3+ distinct options (e.g. honest ETA that hides buses with stale GPS, a saved daily route with a “leave in 4 minutes” notification, a crowding indicator, a transfer planner, QR payment from a lock-screen widget), compares impact vs effort, picks one and describes a concrete MVP. 3 = options compared, a reasoned choice, a scoped MVP."},
-        {"id": "metrics", "name": {"ru": "Метрики", "en": "Metrics"}, "desc": "Defines a primary success metric tied to the goal (e.g. share of commuters opening the app 4+ weekdays a week, D30 retention of commuters, opens beyond payment), guardrails (payment conversion, notification opt-outs, complaints about wrong ETAs) and a launch or experiment plan. 3 = primary metric + guardrail + how to test."}
-      ],
-      "red_flags": ["Jumps to features without choosing a user segment", "A feature list with no prioritization or trade-offs", "No success metric", "Solutions that need the city to change buses or schedules, without acknowledging the constraint", "Ignores the top complaint about buses that aren’t really there"],
-      "followup_hint": "Good follow-ups: what if the city’s GPS data is too unreliable for honest ETAs; or how they’d prioritize this against the ads team’s request for more ad slots.",
-      "reference": {
-        "ru": "<p><b>Цель.</b> «Открывать чаще» перевожу в метрику: доля пользователей, которые открывают приложение 4+ будних дня в неделю, и их retention через 30 дней. Ограничение — на автобусы и расписание мы не влияем, работаем с информацией и удобством.</p><p><b>Сегмент.</b> Люди с постоянным маршрутом «дом — работа» в часы пик: это 70% поездок, и они ездят каждый день — у них есть повод открывать приложение ежедневно.</p><p><b>Боли.</b> Главная — неопределённость: «на карте автобус есть, а на остановке нет». Человек выходит слишком рано и мёрзнет или опаздывает. Дальше — давка, пересадки, медленная оплата. Неопределённость частая и болезненная — с неё и начинаю.</p><p><b>Варианты.</b> 1) Честное время прибытия: скрывать автобусы с устаревшим GPS, показывать уверенность прогноза. 2) «Моя поездка»: сохранённый маршрут и уведомление «выходи через 4 минуты». 3) Индикатор заполненности. 4) Оплата QR с виджета на экране блокировки. Выбираю 1 + 2 вместе: это бьёт в главную жалобу и создаёт ежедневный повод открыть приложение не ради оплаты. Заполненность — дорого и нужны новые данные; виджет — быстрый выигрыш, но не про частоту.</p><p><b>MVP.</b> Пользователь сохраняет 1–2 маршрута и время выхода; ETA считаем только по автобусам со свежим GPS; пуш в выбранное время. Запуск на одном районе или 10% новых пользователей.</p><p><b>Метрики.</b> Главная — доля сохранивших маршрут, кто открывает приложение 4+ будних дня. Guardrails — отписки от пушей, конверсия в оплату, жалобы на неверное время. Если GPS у части автобусов плохой — честно показываем «нет данных», а не выдуманное время.</p>",
-        "en": "<p><b>Goal.</b> I’d turn “open more often” into a metric: the share of users who open the app 4+ weekdays a week, and their 30-day retention. Constraint: we can’t change buses or schedules, so we work with information and convenience.</p><p><b>Segment.</b> People with a fixed home–work route at peak hours: that’s 70% of trips, and they ride every day — they have a reason to open the app daily.</p><p><b>Pain points.</b> The top one is uncertainty: “the bus is on the map but not at the stop.” People leave too early and freeze, or miss the bus. Then crowding, transfers, slow payment. Uncertainty is both frequent and painful, so I start there.</p><p><b>Options.</b> 1) Honest arrival times: hide buses with stale GPS and show prediction confidence. 2) “My commute”: a saved route plus a “leave in 4 minutes” notification. 3) A crowding indicator. 4) QR payment from a lock-screen widget. I’d pick 1 + 2 together: they hit the top complaint and create a daily reason to open the app beyond paying. Crowding is expensive and needs new data; the widget is a quick win but doesn’t drive frequency.</p><p><b>MVP.</b> Users save 1–2 routes and a departure time; ETAs only from buses with fresh GPS; a push at the chosen time. Launch in one district or for 10% of new users.</p><p><b>Metrics.</b> Primary: share of route-savers who open the app 4+ weekdays a week. Guardrails: push opt-outs, payment conversion, complaints about wrong times. Where a bus’s GPS is bad, we honestly show “no data” instead of a made-up time.</p>"
-      }
+     "id": "users",
+     "name": {
+      "ru": "Пользователи",
+      "en": "Users"
+     },
+     "desc": "Picks a specific commuter segment (e.g. people with a fixed home–work route at peak hours, people with transfers, early-shift workers, students) and justifies the choice with the given facts (peak hours, a third use the app only to pay). 3 = clear segment and why it matters for the goal. 1 = “all commuters”.",
+     "good": {
+      "ru": "Выбираешь конкретный сегмент — например, ежедневные поездки «дом — работа» в час пик — и объясняешь почему.",
+      "en": "You pick a specific segment — e.g. daily home–work trips at peak hours — and explain why."
+     }
     },
     {
-      "id": "food-delivery-almaty",
-      "comp": ["biz", "data"],
-      "theme": "estimation",
-      "minutes": 10,
-      "title": {"ru": "Рынок доставки еды в Алматы", "en": "Food delivery market in Almaty"},
-      "company": {"ru": "«Корзинка» — доставка продуктов. Думает запустить доставку готовой еды из ресторанов.", "en": "Basket — grocery delivery. It’s considering launching restaurant food delivery."},
-      "prompt": {
-        "ru": "<p>Инвестор на встрече спрашивает: «Сколько жители Алматы тратят на доставку готовой еды за год?» Интернета под рукой нет — нужно оценить вслух.</p><p><b>Что известно:</b> в Алматы около 2,3 млн жителей.</p>",
-        "en": "<p>At a meeting, an investor asks: “How much do people in Almaty spend on restaurant food delivery per year?” You can’t look it up — you have to estimate out loud.</p><p><b>What we know:</b> Almaty has about 2.3 million people.</p>"
-      },
-      "task": {"ru": "Сделай оценку, проговаривая допущения. Важна логика, а не точное число.", "en": "Make the estimate and say your assumptions out loud. The logic matters more than the exact number."},
-      "hint": {"ru": "Определи, что именно считаешь, собери формулу из множителей и проверь результат вторым способом.", "en": "Define exactly what you’re counting, build a formula from factors, and check the result a second way."},
-      "rubric": [
-        {"id": "scope", "name": {"ru": "Что считаем", "en": "Define the market"}, "desc": "Clarifies scope: restaurant food via delivery apps (and restaurants’ own delivery?), excludes groceries, period = one year, currency; distinguishes what customers pay (GMV) from platform revenue (commission). 3 = explicit definition including GMV vs platform revenue. 0 = no definition."},
-        {"id": "structure", "name": {"ru": "Структура", "en": "Structure"}, "desc": "A clear formula, e.g. population × share who order × orders per month × average check × 12, ideally segmented (age or income groups, office lunches vs evening and weekend orders). 3 = structured and segmented. 1 = numbers multiplied without a visible structure."},
-        {"id": "assumptions", "name": {"ru": "Допущения", "en": "Assumptions"}, "desc": "Each number is stated and justified (e.g. adults 18–60 ≈ 60% of the population, 30–40% of them order at least monthly, 2–4 orders a month, average check 5,000–8,000 ₸ or $10–16). A result between roughly 50 and 250 billion ₸ a year ($100M–$500M) is reasonable; being off by 10× signals broken assumptions. 3 = reasonable, justified, ranges where uncertain."},
-        {"id": "math", "name": {"ru": "Расчёт", "en": "Math"}, "desc": "Arithmetic is correct and easy to follow, units are consistent, rounding is sensible. 3 = correct and readable. 0 = an order-of-magnitude error."},
-        {"id": "sanity", "name": {"ru": "Проверка", "en": "Sanity check"}, "desc": "Cross-checks with a second method (supply side: restaurants with delivery × orders a day × 365 × check; or couriers × deliveries a day; or share of household food spending), gives a range and names the most sensitive assumption. 3 = second method + range + sensitivity."}
-      ],
-      "red_flags": ["A single number with no structure", "Assumptions not stated", "An order-of-magnitude arithmetic error", "No sanity check at all", "Confuses market size (GMV) with platform revenue"],
-      "followup_hint": "Good follow-ups: which assumption moves the result most and how to check it cheaply; or how big the platform’s revenue (commission) would be compared with GMV.",
-      "reference": {
-        "ru": "<p><b>Что считаем.</b> Деньги, которые жители платят за доставку готовой еды из ресторанов (через агрегаторы и собственную доставку ресторанов) за год — то есть оборот (GMV), а не выручку платформ. Продукты не считаю.</p><p><b>Формула.</b> Взрослые 18–60 × доля заказывающих × заказов в месяц × средний чек × 12.</p><p><b>Допущения.</b> Взрослых 18–60 — около 60% от 2,3 млн ≈ 1,4 млн. Хотя бы раз в месяц заказывают ~35% — в основном молодые и офисные, ≈ 500 тыс. человек. В среднем 3 заказа в месяц: кто-то обедает в офисе каждый день, кто-то заказывает раз в выходные. Средний чек ~6 000 ₸ с доставкой.</p><p><b>Расчёт.</b> 500 тыс. × 3 × 6 000 ₸ = 9 млрд ₸ в месяц ≈ 108 млрд ₸ в год ≈ $210 млн по курсу ~510 ₸.</p><p><b>Проверка с другой стороны.</b> Ресторанов и кафе с доставкой в Алматы — порядка 3 000, в среднем по 25 заказов в день: 3 000 × 25 × 365 × 6 000 ₸ ≈ 164 млрд ₸. Две оценки сходятся в пределах полутора раз — итог: 100–170 млрд ₸ в год ($200–330 млн).</p><p><b>Чувствительность.</b> Сильнее всего результат зависит от доли заказывающих и частоты. Дешевле всего проверить опросом на 300–500 человек или по открытым отчётам агрегаторов. Выручка платформ при комиссии 25–30% — около 25–45 млрд ₸.</p>",
-        "en": "<p><b>What I’m counting.</b> Money residents pay for restaurant food delivery (via aggregators and restaurants’ own delivery) per year — that’s GMV, not platform revenue. Groceries are excluded.</p><p><b>Formula.</b> Adults 18–60 × share who order × orders per month × average check × 12.</p><p><b>Assumptions.</b> Adults 18–60 are about 60% of 2.3M ≈ 1.4M. About 35% order at least monthly — mostly younger people and office workers — ≈ 500k people. 3 orders a month on average: some order lunch at the office every day, others once a weekend. Average check ~6,000 ₸ including delivery.</p><p><b>Math.</b> 500k × 3 × 6,000 ₸ = 9 billion ₸ a month ≈ 108 billion ₸ a year ≈ $210M at ~510 ₸ per dollar.</p><p><b>Cross-check from the supply side.</b> Roughly 3,000 restaurants and cafés in Almaty deliver, at ~25 orders a day each: 3,000 × 25 × 365 × 6,000 ₸ ≈ 164 billion ₸. The two estimates agree within 1.5×, so my answer is 100–170 billion ₸ a year ($200–330M).</p><p><b>Sensitivity.</b> The share of people who order and their frequency move the result most. The cheapest check is a survey of 300–500 people or aggregators’ public reports. Platform revenue at a 25–30% commission would be about 25–45 billion ₸.</p>"
-      }
+     "id": "pains",
+     "name": {
+      "ru": "Проблемы",
+      "en": "Pain points"
+     },
+     "desc": "Lists real commuter pains (unreliable arrival times and “ghost buses”, waiting in the cold, crowding, transfers, slow payment), prioritizes them by frequency × severity, uses the top review complaint, and mentions how to validate (user interviews, GPS data accuracy analysis). 3 = prioritized pains grounded in the given facts.",
+     "good": {
+      "ru": "Ранжируешь боли по частоте и силе и опираешься на главную жалобу: «автобус на карте есть, а на остановке нет».",
+      "en": "You rank pains by frequency and severity and build on the top complaint: the bus on the map that isn’t at the stop."
+     }
     },
     {
-      "id": "annual-plan",
-      "comp": ["biz", "lead"],
-      "theme": "economics",
-      "minutes": 15,
-      "title": {"ru": "Годовая подписка", "en": "The annual plan"},
-      "company": {"ru": "«Ритм» — трекер привычек по подписке за $9 в месяц. Та самая компания из игры.", "en": "Rhythm — a habit tracker with a $9 monthly subscription. Yes, the company from the game."},
-      "prompt": {
-        "ru": "<p>Финансовый директор предлагает запустить годовой план за $60 вместо $9 в месяц: «Деньги сразу, а кэша у нас всего на 8 месяцев». CEO просит тебя оценить идею.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Платящих подписчиков</td><td>20 000</td></tr><tr><td>Цена месячного плана</td><td>$9</td></tr><tr><td>Отток платящих в месяц</td><td>15%</td></tr><tr><td>Комиссия App Store и Google Play</td><td>15%</td></tr><tr><td>Запас денег</td><td>8 месяцев</td></tr></tbody></table></div>",
-        "en": "<p>The CFO proposes launching an annual plan at $60 instead of $9 a month: “Cash up front — and we only have 8 months of runway.” The CEO asks you to evaluate the idea.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Paying subscribers</td><td>20,000</td></tr><tr><td>Monthly plan price</td><td>$9</td></tr><tr><td>Monthly churn of paying users</td><td>15%</td></tr><tr><td>App Store and Google Play fee</td><td>15%</td></tr><tr><td>Runway</td><td>8 months</td></tr></tbody></table></div>"
-      },
-      "task": {"ru": "Стоит ли запускать годовой план за $60? Посчитай, что выигрываем и чем рискуем, и предложи, как запускать.", "en": "Should we launch the $60 annual plan? Work out what we gain and what we risk, and propose how to launch it."},
-      "hint": {"ru": "Посчитай, сколько в среднем приносит месячный подписчик, и подумай, кто именно купит годовой план.", "en": "Work out what an average monthly subscriber brings in, and think about who exactly will buy the annual plan."},
-      "rubric": [
-        {"id": "ltv", "name": {"ru": "Расчёт LTV", "en": "LTV math"}, "desc": "Computes the value of a monthly subscriber: average lifetime ≈ 1 / 0.15 ≈ 6.7 months → ≈ $60 gross, ≈ $51 net after the 15% store fee. The annual plan gives $60 gross / $51 net up front plus possible renewal. Notes that $60 ≈ the average monthly LTV. 3 = correct math and this insight. 0 = no numbers."},
-        {"id": "cannibal", "name": {"ru": "Каннибализация", "en": "Cannibalization"}, "desc": "Recognizes self-selection: loyal users who would stay 12+ months (on the monthly plan they’d pay $108 gross, ≈ $92 net) lose us money on the annual plan; users who would churn in 2–3 months but buy a year gain us money; the mix decides. Ideally: only 0.85^12 ≈ 14% of monthly subscribers survive 12 months. 3 = explains self-selection with numbers."},
-        {"id": "cash", "name": {"ru": "Деньги и риски", "en": "Cash & risks"}, "desc": "Weighs the runway benefit (cash up front matters with 8 months of runway; e.g. if 4,000 users buy a year, that’s ≈ $204k net now) against long-term revenue loss; mentions refunds, monthly revenue recognition, unknown renewal rate, price anchoring. 3 = runway benefit vs long-term cost with an estimate."},
-        {"id": "test", "name": {"ru": "Как проверить", "en": "Experiment"}, "desc": "Proposes an A/B test on the paywall for new users (monthly only vs monthly + annual), primary metric = revenue per paywall visitor over a horizon (or conversion to paid plus projected revenue), plus share choosing annual and refunds; considers price variants ($60 vs $69–79) and handles existing subscribers separately (targeted offers, not a blanket switch). 3 = concrete test with a primary metric and guardrails."},
-        {"id": "decision", "name": {"ru": "Решение", "en": "Recommendation"}, "desc": "Gives a clear recommendation with conditions (e.g. launch as a test for new users, smaller discount, existing subscribers only via targeted offers) and says what result would change the decision. 3 = clear, conditional, tied to the numbers. 0 = no decision."}
-      ],
-      "red_flags": ["Decides without any numbers", "Claims annual plans are always better", "Ignores cannibalization of loyal subscribers", "Ignores the app store fee", "No way to test the decision"],
-      "followup_hint": "Good follow-ups: at what price the annual plan stops losing money on loyal users; or what they’d do if 60% of current subscribers switch to annual in the first week.",
-      "reference": {
-        "ru": "<p><b>1. Сколько приносит месячный подписчик.</b> При оттоке 15% в месяц средняя «жизнь» ≈ 1 / 0,15 ≈ 6,7 месяца → ≈ $60 выручки, после комиссии магазинов ≈ $51. Годовой план — те же $60 ($51 нетто), только сразу, плюс шанс продления. Для среднего пользователя почти одно и то же.</p><p><b>2. Но годовой покупают не средние.</b> Его выбирают те, кто уверен, что останется. До 12 месяцев доживает 0,85¹² ≈ 14% месячных подписчиков, и каждый из них на месячном плане принёс бы $108 (≈ $92 нетто), а на годовом — $60. Если перейдут в основном лояльные — теряем выручку. Выигрываем на тех, кто ушёл бы через 2–3 месяца, но купил год, и на новых, которых годовая цена убедит заплатить.</p><p><b>3. Деньги сейчас.</b> Аргумент финдиректора реальный: если 4 000 человек купят год — это ≈ $204 тыс. нетто сразу, а при 8 месяцах запаса это важно. Риски: возвраты, выручку всё равно признаём помесячно, доля продлений неизвестна.</p><p><b>4. Как проверить.</b> A/B на пейволле для новых: контроль — только месяц, тест — месяц + год за $69. Главная метрика — выручка на посетителя пейволла с прогнозом на 12 месяцев; дополнительно — конверсия в оплату, доля годовых, возвраты. Текущим подписчикам годовой не предлагаю всем подряд — только тем, у кого высокий риск оттока, на 2–3-м месяце.</p><p><b>5. Решение.</b> Запускать, но как тест на новых и с меньшей скидкой: $69–79 вместо $60. Раскатываем на всех, если прирост конверсии перекрывает потери на лояльных. Если цель — только продлить запас денег, честно считаем, сколько долгосрочной выручки мы за это отдаём.</p>",
-        "en": "<p><b>1. What a monthly subscriber brings.</b> With 15% monthly churn, the average lifetime ≈ 1 / 0.15 ≈ 6.7 months → ≈ $60 revenue, ≈ $51 after store fees. The annual plan is the same $60 ($51 net), just up front, plus a chance of renewal. For the average user it’s nearly identical.</p><p><b>2. But average users don’t buy annual.</b> People who are sure they’ll stay choose it. Only 0.85¹² ≈ 14% of monthly subscribers last 12 months, and each of them would pay $108 (≈ $92 net) on the monthly plan versus $60 on annual. If mostly loyal users switch, we lose revenue. We win on people who’d have churned in 2–3 months but bought a year, and on new users the annual price convinces to pay.</p><p><b>3. Cash now.</b> The CFO’s point is real: if 4,000 people buy a year, that’s ≈ $204k net immediately, which matters with 8 months of runway. Risks: refunds, revenue is still recognized monthly, the renewal rate is unknown.</p><p><b>4. How to test.</b> A/B test the paywall for new users: control = monthly only, test = monthly + annual at $69. Primary metric: revenue per paywall visitor projected over 12 months; also conversion to paid, share choosing annual, refunds. I wouldn’t offer annual to all current subscribers — only to those at high churn risk, around month 2–3.</p><p><b>5. Decision.</b> Launch, but as a test for new users and with a smaller discount: $69–79 instead of $60. Roll out if the conversion gain outweighs the loss on loyal users. If the only goal is extending runway, be honest about how much long-term revenue we’re trading for it.</p>"
-      }
+     "id": "solutions",
+     "name": {
+      "ru": "Решения",
+      "en": "Solutions"
+     },
+     "desc": "Generates 3+ distinct options (e.g. honest ETA that hides buses with stale GPS, a saved daily route with a “leave in 4 minutes” notification, a crowding indicator, a transfer planner, QR payment from a lock-screen widget), compares impact vs effort, picks one and describes a concrete MVP. 3 = options compared, a reasoned choice, a scoped MVP.",
+     "good": {
+      "ru": "Сравниваешь 3+ разных решения по эффекту и затратам, выбираешь одно и описываешь конкретный MVP.",
+      "en": "You compare 3+ distinct solutions by impact and effort, pick one and describe a concrete MVP."
+     }
+    },
+    {
+     "id": "metrics",
+     "name": {
+      "ru": "Метрики",
+      "en": "Metrics"
+     },
+     "desc": "Defines a primary success metric tied to the goal (e.g. share of commuters opening the app 4+ weekdays a week, D30 retention of commuters, opens beyond payment), guardrails (payment conversion, notification opt-outs, complaints about wrong ETAs) and a launch or experiment plan. 3 = primary metric + guardrail + how to test.",
+     "good": {
+      "ru": "Называешь главную метрику, guardrails и как будешь запускать и проверять решение.",
+      "en": "You name a primary metric, guardrails, and how you’d launch and test the solution."
+     }
     }
-  ]
+   ],
+   "red_flags": [
+    "Jumps to features without choosing a user segment",
+    "A feature list with no prioritization or trade-offs",
+    "No success metric",
+    "Solutions that need the city to change buses or schedules, without acknowledging the constraint",
+    "Ignores the top complaint about buses that aren’t really there"
+   ],
+   "followup_hint": "Good follow-ups: what if the city’s GPS data is too unreliable for honest ETAs; or how they’d prioritize this against the ads team’s request for more ad slots.",
+   "reference": {
+    "ru": "<p><b>Цель.</b> «Открывать чаще» перевожу в метрику: доля пользователей, которые открывают приложение 4+ будних дня в неделю, и их retention через 30 дней. Ограничение — на автобусы и расписание мы не влияем, работаем с информацией и удобством.</p><p><b>Сегмент.</b> Люди с постоянным маршрутом «дом — работа» в часы пик: это 70% поездок, и они ездят каждый день — у них есть повод открывать приложение ежедневно.</p><p><b>Боли.</b> Главная — неопределённость: «на карте автобус есть, а на остановке нет». Человек выходит слишком рано и мёрзнет или опаздывает. Дальше — давка, пересадки, медленная оплата. Неопределённость частая и болезненная — с неё и начинаю.</p><p><b>Варианты.</b> 1) Честное время прибытия: скрывать автобусы с устаревшим GPS, показывать уверенность прогноза. 2) «Моя поездка»: сохранённый маршрут и уведомление «выходи через 4 минуты». 3) Индикатор заполненности. 4) Оплата QR с виджета на экране блокировки. Выбираю 1 + 2 вместе: это бьёт в главную жалобу и создаёт ежедневный повод открыть приложение не ради оплаты. Заполненность — дорого и нужны новые данные; виджет — быстрый выигрыш, но не про частоту.</p><p><b>MVP.</b> Пользователь сохраняет 1–2 маршрута и время выхода; ETA считаем только по автобусам со свежим GPS; пуш в выбранное время. Запуск на одном районе или 10% новых пользователей.</p><p><b>Метрики.</b> Главная — доля сохранивших маршрут, кто открывает приложение 4+ будних дня. Guardrails — отписки от пушей, конверсия в оплату, жалобы на неверное время. Если GPS у части автобусов плохой — честно показываем «нет данных», а не выдуманное время.</p>",
+    "en": "<p><b>Goal.</b> I’d turn “open more often” into a metric: the share of users who open the app 4+ weekdays a week, and their 30-day retention. Constraint: we can’t change buses or schedules, so we work with information and convenience.</p><p><b>Segment.</b> People with a fixed home–work route at peak hours: that’s 70% of trips, and they ride every day — they have a reason to open the app daily.</p><p><b>Pain points.</b> The top one is uncertainty: “the bus is on the map but not at the stop.” People leave too early and freeze, or miss the bus. Then crowding, transfers, slow payment. Uncertainty is both frequent and painful, so I start there.</p><p><b>Options.</b> 1) Honest arrival times: hide buses with stale GPS and show prediction confidence. 2) “My commute”: a saved route plus a “leave in 4 minutes” notification. 3) A crowding indicator. 4) QR payment from a lock-screen widget. I’d pick 1 + 2 together: they hit the top complaint and create a daily reason to open the app beyond paying. Crowding is expensive and needs new data; the widget is a quick win but doesn’t drive frequency.</p><p><b>MVP.</b> Users save 1–2 routes and a departure time; ETAs only from buses with fresh GPS; a push at the chosen time. Launch in one district or for 10% of new users.</p><p><b>Metrics.</b> Primary: share of route-savers who open the app 4+ weekdays a week. Guardrails: push opt-outs, payment conversion, complaints about wrong times. Where a bus’s GPS is bad, we honestly show “no data” instead of a made-up time.</p>"
+   }
+  },
+  {
+   "id": "orders-drop",
+   "comp": [
+    "data",
+    "exec"
+   ],
+   "theme": "metrics",
+   "minutes": 15,
+   "title": {
+    "ru": "Заказы упали на 12%",
+    "en": "Orders dropped 12%"
+   },
+   "company": {
+    "ru": "«Корзинка» — доставка продуктов за 30 минут в Берлине, Мюнхене и Гамбурге.",
+    "en": "Basket — 30-minute grocery delivery in Berlin, Munich and Hamburg."
+   },
+   "prompt": {
+    "ru": "<p>Понедельник, утро. Аналитик пишет в общий чат: «Заказы за прошлую неделю упали на 12% к позапрошлой». CEO просит к обеду понять, что случилось, и предложить план.</p><p><b>Заказы по платформам</b></p><div class='task-box'><table class='t'><thead><tr><th>Платформа</th><th>Позапрошлая неделя</th><th>Прошлая неделя</th><th>Изменение</th></tr></thead><tbody><tr><td>iOS</td><td>38 000</td><td>36 900</td><td>−3%</td></tr><tr><td>Android</td><td>40 000</td><td>31 400</td><td>−22%</td></tr><tr><td>Веб</td><td>6 000</td><td>5 600</td><td>−7%</td></tr><tr><td><b>Всего</b></td><td>84 000</td><td>73 900</td><td>−12%</td></tr></tbody></table></div><p><b>Заказы по городам</b></p><div class='task-box'><table class='t'><thead><tr><th>Город</th><th>Позапрошлая неделя</th><th>Прошлая неделя</th><th>Изменение</th></tr></thead><tbody><tr><td>Берлин</td><td>46 000</td><td>41 800</td><td>−9%</td></tr><tr><td>Мюнхен</td><td>26 000</td><td>23 600</td><td>−9%</td></tr><tr><td>Гамбург</td><td>12 000</td><td>8 500</td><td>−29%</td></tr><tr><td><b>Всего</b></td><td>84 000</td><td>73 900</td><td>−12%</td></tr></tbody></table></div><p><b>Что происходило на неделе</b></p><ul><li>Во вторник вышла версия Android-приложения 5.2 с новым экраном оплаты.</li><li>В среду в Гамбурге запустился конкурент: −50% на первый заказ.</li><li>Маркетинг на 10% сократил бюджет на рекламу в Мюнхене.</li><li>В субботу в Берлине весь день шёл дождь.</li></ul>",
+    "en": "<p>Monday morning. An analyst posts in the team chat: “Orders last week were down 12% week over week.” The CEO wants to know by lunch what happened and what you plan to do.</p><p><b>Orders by platform</b></p><div class='task-box'><table class='t'><thead><tr><th>Platform</th><th>Week before</th><th>Last week</th><th>Change</th></tr></thead><tbody><tr><td>iOS</td><td>38,000</td><td>36,900</td><td>−3%</td></tr><tr><td>Android</td><td>40,000</td><td>31,400</td><td>−22%</td></tr><tr><td>Web</td><td>6,000</td><td>5,600</td><td>−7%</td></tr><tr><td><b>Total</b></td><td>84,000</td><td>73,900</td><td>−12%</td></tr></tbody></table></div><p><b>Orders by city</b></p><div class='task-box'><table class='t'><thead><tr><th>City</th><th>Week before</th><th>Last week</th><th>Change</th></tr></thead><tbody><tr><td>Berlin</td><td>46,000</td><td>41,800</td><td>−9%</td></tr><tr><td>Munich</td><td>26,000</td><td>23,600</td><td>−9%</td></tr><tr><td>Hamburg</td><td>12,000</td><td>8,500</td><td>−29%</td></tr><tr><td><b>Total</b></td><td>84,000</td><td>73,900</td><td>−12%</td></tr></tbody></table></div><p><b>What happened during the week</b></p><ul><li>On Tuesday, Android app version 5.2 shipped with a redesigned payment screen.</li><li>On Wednesday, a competitor launched in Hamburg with 50% off the first order.</li><li>Marketing cut the ad budget in Munich by 10%.</li><li>On Saturday it rained all day in Berlin.</li></ul>"
+   },
+   "task": {
+    "ru": "Разберись, что произошло и что делать в первую очередь. Отвечай так, как рассуждал бы вслух на собеседовании: с чего начнёшь, какие гипотезы, как их проверишь и что сделаешь.",
+    "en": "Figure out what happened and what to do first. Answer the way you’d think out loud in an interview: where you start, your hypotheses, how you’d verify them and what you’d do."
+   },
+   "hint": {
+    "ru": "Сначала убедись, что падение настоящее, потом разложи его по сегментам — таблиц для этого хватает. Не все события недели одинаково важны.",
+    "en": "First make sure the drop is real, then break it down by segment — the tables are enough for that. Not every event of the week matters equally."
+   },
+   "rubric": [
+    {
+     "id": "data",
+     "name": {
+      "ru": "Проверка данных",
+      "en": "Sanity-check the data"
+     },
+     "desc": "Before diagnosing, checks that the drop is real: tracking or analytics changes (the Android 5.2 release could have broken event tracking), what counts as an order (placed vs delivered), seasonality and the same week last year. 3 = explicitly checks tracking (ideally the Android release) and compares with backend or payment data or seasonality. 0 = takes the number at face value.",
+     "good": {
+      "ru": "Прежде чем искать причину, проверяешь, что падение настоящее: трекинг после релиза Android, что считается заказом, сезонность.",
+      "en": "Before hunting for causes, you check the drop is real: tracking after the Android release, what counts as an order, seasonality."
+     }
+    },
+    {
+     "id": "segment",
+     "name": {
+      "ru": "Сегментация",
+      "en": "Segmentation"
+     },
+     "desc": "Breaks the drop down using the given data: platform, city, app version, new vs returning users, funnel step. Notices two separate signals: Android is down about 22% across cities (Android accounts for 8,600 of the 10,100 lost orders, about 85%), and Hamburg is down more than Android alone explains. Asks for a city × platform cross-tab or estimates each contribution. 3 = identifies both signals and roughly quantifies them. 1 = segments generically without using the numbers.",
+     "good": {
+      "ru": "Раскладываешь падение по таблицам и видишь два сигнала: Android даёт ~85% потерь, а Гамбург падает сильнее, чем объясняет Android.",
+      "en": "You break the drop down with the tables and see two signals: Android accounts for ~85% of the loss, and Hamburg fell more than Android explains."
+     }
+    },
+    {
+     "id": "hypotheses",
+     "name": {
+      "ru": "Гипотезы",
+      "en": "Hypotheses"
+     },
+     "desc": "Separates internal causes (the new Android payment screen) from external ones (the competitor promo in Hamburg), ties each to the data and ranks them by likely impact. Explains why the rain (it usually increases delivery orders) and the 10% Munich ad cut (gradual, mostly affects new users, cannot explain an equal −9% in Berlin) are unlikely main causes. 3 = ranked, data-based hypotheses and red herrings dismissed with reasoning.",
+     "good": {
+      "ru": "Ранжируешь причины по вкладу и объясняешь, почему дождь и сокращение рекламы в Мюнхене — не главное.",
+      "en": "You rank causes by impact and explain why the rain and the Munich ad cut aren’t the main story."
+     }
+    },
+    {
+     "id": "verify",
+     "name": {
+      "ru": "Как проверить",
+      "en": "How to verify"
+     },
+     "desc": "Concrete checks per hypothesis: Android funnel by app version 5.1 vs 5.2 (cart → payment screen → successful payment), payment provider errors, crashes, rollout share; in Hamburg: new vs returning customers, order frequency of loyal customers, proxies for switching to the competitor. 3 = specific metrics and segments for each hypothesis.",
+     "good": {
+      "ru": "Для каждой гипотезы называешь конкретную проверку: воронка Android по версиям, ошибки оплаты, новые и постоянные клиенты в Гамбурге.",
+      "en": "For each hypothesis you name a concrete check: Android funnel by version, payment errors, new vs returning customers in Hamburg."
+     }
+    },
+    {
+     "id": "action",
+     "name": {
+      "ru": "Действия",
+      "en": "Actions"
+     },
+     "desc": "Prioritized actions: immediately stop or roll back the 5.2 rollout or switch the old payment screen back via a feature flag or hotfix; tell the CEO the sizing; set a target (e.g. Android conversion back to the 5.1 level within 48 hours). For Hamburg: do not blindly match −50% everywhere, check unit economics, protect loyal customers with targeted offers, monitor their retention. Bonus: staged rollouts with an alert on payment conversion. 3 = prioritized actions with a success metric or timeline and a guardrail.",
+     "good": {
+      "ru": "Предлагаешь действия по приоритету с целью и сроком: откат или хотфикс экрана оплаты сегодня, а в Гамбурге — без слепого копирования скидки.",
+      "en": "You propose prioritized actions with a goal and timeline: roll back or hotfix the payment screen today, and no blind matching of the discount in Hamburg."
+     }
+    }
+   ],
+   "red_flags": [
+    "Jumps to a solution before checking the data",
+    "Blames a single cause and ignores the second signal",
+    "Proposes matching the competitor’s 50% discount in all cities right away",
+    "Treats the rain or the Munich budget cut as the main cause without numbers",
+    "Never considers that the release may have broken analytics tracking"
+   ],
+   "followup_hint": "Good follow-ups: whether to match the promo in Hamburg and how to decide with unit economics; or how to prove the release caused the drop if a rollback is impossible.",
+   "reference": {
+    "ru": "<p><b>1. Убеждаюсь, что падение настоящее.</b> Сверяю заказы из аналитики с бэкендом и оплатами: релиз Android 5.2 мог сломать отправку событий, и тогда «падение» — это трекинг. Смотрю сезонность: ту же неделю год назад, праздники.</p><p><b>2. Раскладываю.</b> Потеряли 10 100 заказов, из них Android — 8 600, это ~85%. iOS и веб почти на месте. Берлин и Мюнхен упали одинаково, на 9% — примерно столько даёт просадка Android при его доле ~48%. Гамбург −29% — значит, там есть второй фактор сверху, около −2 тыс. заказов. Прошу таблицу «город × платформа», чтобы это подтвердить.</p><p><b>3. Гипотезы.</b> Главная — новый экран оплаты в 5.2: совпадает по времени и платформе. Вторая — конкурент с −50% в Гамбурге. Дождь обычно увеличивает доставку, а не снижает. Сокращение рекламы в Мюнхене на 10% действует медленно и в основном на новых — и не объясняет такое же падение в Берлине.</p><p><b>4. Проверка.</b> Воронка Android по версиям 5.1 и 5.2: корзина → экран оплаты → успешная оплата; ошибки платёжного провайдера и крэши. В Гамбурге — новые и постоянные клиенты отдельно, частота заказов постоянных после среды.</p><p><b>5. Действия.</b> Сегодня: остановить раскатку 5.2 и вернуть старый экран оплаты фичефлагом или хотфиксом; сказать CEO, что ~85% падения — наш релиз. Цель — конверсия в оплату на Android вернётся к уровню 5.1 за 48 часов. По Гамбургу не копирую −50% везде: считаю юнит-экономику, удерживаю постоянных точечными предложениями и две недели слежу за их retention. На будущее — поэтапная раскатка релизов с алертом на конверсию в оплату.</p>",
+    "en": "<p><b>1. Make sure the drop is real.</b> Reconcile analytics orders with backend and payment data: the Android 5.2 release could have broken event tracking, in which case the “drop” is a tracking bug. Check seasonality: the same week last year, holidays.</p><p><b>2. Break it down.</b> We lost 10,100 orders; Android accounts for 8,600 of them, about 85%. iOS and web are nearly flat. Berlin and Munich both fell 9% — roughly what the Android drop produces given its ~48% share. Hamburg fell 29%, so there’s a second factor on top, about 2,000 orders. I’d ask for a city × platform table to confirm.</p><p><b>3. Hypotheses.</b> Main one: the new payment screen in 5.2 — it matches the timing and the platform. Second: the competitor’s 50% promo in Hamburg. Rain usually increases delivery orders rather than reducing them. A 10% ad cut in Munich works slowly, mostly on new users, and doesn’t explain the identical drop in Berlin.</p><p><b>4. Verify.</b> Android funnel for 5.1 vs 5.2: cart → payment screen → successful payment; payment provider errors and crashes. In Hamburg: new vs returning customers, order frequency of loyal customers since Wednesday.</p><p><b>5. Act.</b> Today: halt the 5.2 rollout and bring back the old payment screen via a feature flag or hotfix; tell the CEO that ~85% of the drop is our release. Target: Android payment conversion back to the 5.1 level within 48 hours. In Hamburg I wouldn’t match −50% everywhere: check unit economics, protect loyal customers with targeted offers, and watch their retention for two weeks. Going forward: staged rollouts with an alert on payment conversion.</p>"
+   }
+  },
+  {
+   "id": "food-delivery",
+   "comp": [
+    "biz",
+    "data"
+   ],
+   "theme": "estimation",
+   "minutes": 10,
+   "title": {
+    "ru": "Рынок доставки еды в Чикаго",
+    "en": "Food delivery market in Chicago"
+   },
+   "company": {
+    "ru": "«Вилка» — стартап, который думает запустить в Чикаго доставку готовой еды из ресторанов.",
+    "en": "Fork — a startup thinking about launching restaurant food delivery in Chicago."
+   },
+   "prompt": {
+    "ru": "<p>Инвестор на встрече спрашивает: «Сколько жители Чикаго тратят на доставку готовой еды за год?» Интернета под рукой нет — нужно оценить вслух.</p><p><b>Что известно:</b> в Чикаго около 2,7 млн жителей (без пригородов).</p>",
+    "en": "<p>At a meeting, an investor asks: “How much do people in Chicago spend on restaurant food delivery per year?” You can’t look it up — you have to estimate out loud.</p><p><b>What we know:</b> Chicago has about 2.7 million people (city only, no suburbs).</p>"
+   },
+   "task": {
+    "ru": "Сделай оценку, проговаривая допущения. Важна логика, а не точное число.",
+    "en": "Make the estimate and say your assumptions out loud. The logic matters more than the exact number."
+   },
+   "hint": {
+    "ru": "Определи, что именно считаешь, собери формулу из множителей и проверь результат вторым способом.",
+    "en": "Define exactly what you’re counting, build a formula from factors, and check the result a second way."
+   },
+   "rubric": [
+    {
+     "id": "scope",
+     "name": {
+      "ru": "Что считаем",
+      "en": "Define the market"
+     },
+     "desc": "Clarifies scope: restaurant food via delivery apps (and restaurants’ own delivery?), excludes groceries, period = one year, currency; distinguishes what customers pay (GMV) from platform revenue (commission). 3 = explicit definition including GMV vs platform revenue. 0 = no definition.",
+     "good": {
+      "ru": "Определяешь, что считаешь: доставка готовой еды за год, оборот (GMV), а не выручка платформ.",
+      "en": "You define what you’re counting: restaurant delivery per year, as GMV rather than platform revenue."
+     }
+    },
+    {
+     "id": "structure",
+     "name": {
+      "ru": "Структура",
+      "en": "Structure"
+     },
+     "desc": "A clear formula, e.g. population × share who order × orders per month × average check × 12, ideally segmented (age or income groups, office lunches vs evening and weekend orders). 3 = structured and segmented. 1 = numbers multiplied without a visible structure.",
+     "good": {
+      "ru": "Строишь понятную формулу из множителей, а лучше — с сегментами.",
+      "en": "You build a clear formula from factors, ideally with segments."
+     }
+    },
+    {
+     "id": "assumptions",
+     "name": {
+      "ru": "Допущения",
+      "en": "Assumptions"
+     },
+     "desc": "Each number is stated and justified (e.g. adults 18–60 ≈ 60% of the population, 35–45% of them order at least monthly, 2–4 orders a month, average order $30–40 with fees and tip). A result between roughly $300M and $2B a year is reasonable; being off by 10× signals broken assumptions. 3 = reasonable, justified, ranges where uncertain.",
+     "good": {
+      "ru": "Каждое допущение называешь и обосновываешь, а итог попадает в разумные пределы — примерно $0,3–2 млрд в год.",
+      "en": "You state and justify every assumption, and the result lands in a sensible range — roughly $0.3–2B a year."
+     }
+    },
+    {
+     "id": "math",
+     "name": {
+      "ru": "Расчёт",
+      "en": "Math"
+     },
+     "desc": "Arithmetic is correct and easy to follow, units are consistent, rounding is sensible. 3 = correct and readable. 0 = an order-of-magnitude error.",
+     "good": {
+      "ru": "Считаешь без ошибок, единицы сходятся, округляешь разумно.",
+      "en": "Your math is right, units are consistent, rounding is sensible."
+     }
+    },
+    {
+     "id": "sanity",
+     "name": {
+      "ru": "Проверка",
+      "en": "Sanity check"
+     },
+     "desc": "Cross-checks with a second method (supply side: restaurants with delivery × orders a day × 365 × check; or couriers × deliveries a day; or share of household food spending), gives a range and names the most sensitive assumption. 3 = second method + range + sensitivity.",
+     "good": {
+      "ru": "Проверяешь результат вторым способом, даёшь диапазон и называешь самое чувствительное допущение.",
+      "en": "You check the result a second way, give a range and name the most sensitive assumption."
+     }
+    }
+   ],
+   "red_flags": [
+    "A single number with no structure",
+    "Assumptions not stated",
+    "An order-of-magnitude arithmetic error",
+    "No sanity check at all",
+    "Confuses market size (GMV) with platform revenue"
+   ],
+   "followup_hint": "Good follow-ups: which assumption moves the result most and how to check it cheaply; or how big the platform’s revenue (commission) would be compared with GMV.",
+   "reference": {
+    "ru": "<p><b>Что считаем.</b> Деньги, которые жители платят за доставку готовой еды из ресторанов (через агрегаторы и собственную доставку ресторанов) за год — то есть оборот (GMV), а не выручку платформ. Продукты не считаю.</p><p><b>Формула.</b> Взрослые 18–60 × доля заказывающих × заказов в месяц × средний чек × 12.</p><p><b>Допущения.</b> Взрослых 18–60 — около 60% от 2,7 млн ≈ 1,6 млн. Хотя бы раз в месяц заказывают ~40% — в основном молодые и офисные, ≈ 650 тыс. человек. В среднем 3 заказа в месяц: кто-то берёт обед в офис каждый день, кто-то заказывает раз в выходные. Средний чек ~$35 с сервисным сбором и чаевыми.</p><p><b>Расчёт.</b> 650 тыс. × 3 × $35 ≈ $68 млн в месяц ≈ $820 млн в год.</p><p><b>Проверка с другой стороны.</b> Ресторанов и кафе с доставкой в Чикаго — порядка 5 000, в среднем по 15 заказов в день: 5 000 × 15 × 365 × $35 ≈ $960 млн. Две оценки близки — итог: $0,8–1 млрд в год.</p><p><b>Чувствительность.</b> Сильнее всего результат зависит от доли заказывающих и частоты. Дешевле всего проверить опросом на 300–500 человек или по открытым отчётам агрегаторов. Выручка платформ при комиссии 25–30% — около $200–300 млн.</p>",
+    "en": "<p><b>What I’m counting.</b> Money residents pay for restaurant food delivery (via aggregators and restaurants’ own delivery) per year — that’s GMV, not platform revenue. Groceries are excluded.</p><p><b>Formula.</b> Adults 18–60 × share who order × orders per month × average order × 12.</p><p><b>Assumptions.</b> Adults 18–60 are about 60% of 2.7M ≈ 1.6M. About 40% order at least monthly — mostly younger people and office workers — ≈ 650k people. 3 orders a month on average: some get lunch delivered to the office every day, others order once a weekend. Average order ~$35 with fees and tip.</p><p><b>Math.</b> 650k × 3 × $35 ≈ $68M a month ≈ $820M a year.</p><p><b>Cross-check from the supply side.</b> Roughly 5,000 restaurants and cafés in Chicago deliver, at ~15 orders a day each: 5,000 × 15 × 365 × $35 ≈ $960M. The two estimates are close, so my answer is $0.8–1B a year.</p><p><b>Sensitivity.</b> The share of people who order and their frequency move the result most. The cheapest check is a survey of 300–500 people or aggregators’ public reports. Platform revenue at a 25–30% commission would be about $200–300M.</p>"
+   }
+  },
+  {
+   "id": "expansion",
+   "theme": "strategy",
+   "comp": [
+    "strategy",
+    "biz"
+   ],
+   "minutes": 15,
+   "title": {
+    "ru": "Выходить ли в Варшаву?",
+    "en": "Should we launch in Warsaw?"
+   },
+   "company": {
+    "ru": "«Корзинка» — доставка продуктов за 30 минут в Берлине, Мюнхене и Гамбурге. Берлин недавно вышел в ноль, два других города пока убыточны.",
+    "en": "Basket — 30-minute grocery delivery in Berlin, Munich and Hamburg. Berlin has just broken even; the other two cities still lose money."
+   },
+   "prompt": {
+    "ru": "<p>Инвестор на совете директоров: «Варшава — быстрорастущий город почти на 2 миллиона человек, и сильных игроков в быстрой доставке там нет. Запускайтесь до конца года — это будет главная история для следующего раунда». CEO просит тебя подготовить рекомендацию.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Берлин</th><th>Варшава</th></tr></thead><tbody><tr><td>Население</td><td>3,7 млн</td><td>1,9 млн</td></tr><tr><td>Средний чек продуктового заказа</td><td>€40</td><td>~€25</td></tr><tr><td>Доля продуктов, которые покупают онлайн</td><td>5%</td><td>3%</td></tr><tr><td>Стоимость доставки одного заказа</td><td>€4,5</td><td>~€3,5</td></tr><tr><td>Запуск одного даркстора</td><td>€150 тыс.</td><td>~€110 тыс.</td></tr></tbody></table></div><p><b>Что ещё известно</b></p><ul><li>Денег — €2 млн до следующего раунда, это примерно 14 месяцев.</li><li>Крупный маркетплейс объявил запуск быстрой доставки в Варшаве весной.</li><li>Отдельной команды на экспансию нет: те же разработчики делают продукт для трёх городов.</li></ul>",
+    "en": "<p>At the board meeting, an investor says: “Warsaw is a fast-growing city of almost 2 million, and there are no strong players in quick delivery. Launch by the end of the year — it’ll be the headline for the next round.” The CEO asks you for a recommendation.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Berlin</th><th>Warsaw</th></tr></thead><tbody><tr><td>Population</td><td>3.7M</td><td>1.9M</td></tr><tr><td>Average grocery order</td><td>€40</td><td>~€25</td></tr><tr><td>Share of groceries bought online</td><td>5%</td><td>3%</td></tr><tr><td>Delivery cost per order</td><td>€4.5</td><td>~€3.5</td></tr><tr><td>Opening one dark store</td><td>€150k</td><td>~€110k</td></tr></tbody></table></div><p><b>What else we know</b></p><ul><li>There’s €2M until the next round, about 14 months of runway.</li><li>A large marketplace has announced quick delivery in Warsaw this spring.</li><li>There’s no separate expansion team: the same engineers build the product for all three cities.</li></ul>"
+   },
+   "task": {
+    "ru": "Стоит ли запускать Варшаву в этом году? Как ты придёшь к решению и как будешь запускать, если ответ «да»?",
+    "en": "Should Basket launch in Warsaw this year? How would you reach the decision, and how would you launch if the answer is yes?"
+   },
+   "hint": {
+    "ru": "Растущий город — ещё не рынок. Посмотри, что таблица говорит об экономике одного заказа, и подумай, на что ещё можно потратить те же деньги и ту же команду.",
+    "en": "A growing city isn’t yet a market. Look at what the table says about the economics of one order, and think about what else the same money and team could do."
+   },
+   "rubric": [
+    {
+     "id": "goal",
+     "name": {
+      "ru": "Цель и альтернативы",
+      "en": "Goal & alternatives"
+     },
+     "desc": "Clarifies why expand now (a growth story for the next round vs reaching profitability) and compares Warsaw with alternatives: getting Munich and Hamburg to break even, deepening Berlin, other German cities. Names the opportunity cost of the money (≈ €2M, 14 months of runway) and of the same engineering team. 3 = explicit goal plus at least two alternatives compared. 0 = jumps straight to yes or no.",
+     "good": {
+      "ru": "Уточняешь, зачем расти именно сейчас, и сравниваешь Варшаву с альтернативами: довести до нуля Мюнхен и Гамбург, другие города Германии.",
+      "en": "You clarify why expand now and compare Warsaw with alternatives: getting Munich and Hamburg to break even, other German cities."
+     }
+    },
+    {
+     "id": "economics",
+     "name": {
+      "ru": "Экономика рынка",
+      "en": "Market economics"
+     },
+     "desc": "Uses the data: with a €25 average order and 3% online share, Warsaw’s online grocery market is roughly a fifth of Berlin’s (1.9M × €25 × 3% vs 3.7M × €40 × 5% ≈ 0.19); delivery eats ~14% of a €25 order vs ~11% of €40, so each order is thinner and a dark store pays back more slowly. 3 = quantifies that the market is much smaller than the investor’s pitch suggests and what it means for payback. 1 = repeats the data without conclusions.",
+     "good": {
+      "ru": "Используешь цифры: из-за чека €25 и доли онлайна 3% онлайн-рынок продуктов в Варшаве — примерно пятая часть берлинского, а доставка съедает бо́льшую долю чека.",
+      "en": "You use the numbers: with a €25 order and 3% online share, Warsaw’s online grocery market is roughly a fifth of Berlin’s, and delivery eats a bigger share of each order."
+     }
+    },
+    {
+     "id": "risks",
+     "name": {
+      "ru": "Риски",
+      "en": "Risks"
+     },
+     "desc": "Names and prioritizes key risks: a large, well-funded competitor launching in spring; cash (14 months of runway with two unprofitable cities); one engineering team stretched across four cities; a different currency (złoty), suppliers, payments and regulation. 3 = prioritized risks tied to the decision. 0 = no risks.",
+     "good": {
+      "ru": "Называешь главные риски: сильный конкурент весной, деньги на 14 месяцев, одна команда на четыре города, другая валюта, поставщики и платежи.",
+      "en": "You name the main risks: a strong competitor in spring, 14 months of cash, one team across four cities, a different currency, suppliers and payments."
+     }
+    },
+    {
+     "id": "plan",
+     "name": {
+      "ru": "План проверки",
+      "en": "Validation plan"
+     },
+     "desc": "Proposes a cheap, staged way to learn before committing: demand research, a one-dark-store pilot in the densest district or a partnership with a local retailer, with explicit metrics (orders per day per dark store, contribution margin per order, 30-day repeat rate), a timeline and kill criteria. 3 = staged plan with metrics and kill criteria. 1 = “run a pilot” with no specifics.",
+     "good": {
+      "ru": "Предлагаешь дешёвую поэтапную проверку: пилот на одном дарксторе или партнёрство с местной сетью, с метриками (заказы в день, маржа заказа, повторные покупки) и критериями остановки.",
+      "en": "You propose a cheap staged test: a one-dark-store pilot or a local partnership, with metrics (orders per day, margin per order, repeat rate) and stop criteria."
+     }
+    },
+    {
+     "id": "decision",
+     "name": {
+      "ru": "Решение",
+      "en": "Recommendation"
+     },
+     "desc": "Gives a clear recommendation with conditions (e.g. no full launch this year: get Munich and Hamburg to break even and run a small pilot in Warsaw), says what evidence would change it, and how to answer the investor’s need for a growth story (a credible expansion plan backed by unit economics). 3 = clear, conditional and addresses the investor. 0 = no decision.",
+     "good": {
+      "ru": "Даёшь ясную рекомендацию с условиями, говоришь, что её изменит, и как ответить инвестору, которому нужна история роста.",
+      "en": "You give a clear recommendation with conditions, say what would change it, and how to answer an investor who wants a growth story."
+     }
+    }
+   ],
+   "red_flags": [
+    "Decides based on city size and growth alone",
+    "Ignores the lower average order and online share",
+    "Ignores the opportunity cost of the money and the team",
+    "Proposes a full-scale launch without a pilot",
+    "No criteria for stopping"
+   ],
+   "followup_hint": "Good follow-ups: what result after three months of a pilot would make them stop; or how to answer an investor who insists on launching fast to beat the competitor.",
+   "reference": {
+    "ru": "<p><b>1. Зачем.</b> Сначала уточняю цель: инвестору нужна история роста к раунду, компании — дойти до прибыли. Денег на 14 месяцев, Мюнхен и Гамбург убыточны. Значит, Варшава конкурирует не с «ничем», а с тем, чтобы довести до нуля два уже запущенных города.</p><p><b>2. Экономика.</b> Город растёт, но онлайн-рынок продуктов там пока небольшой: 1,9 млн × €25 × 3% против 3,7 млн × €40 × 5% — примерно пятая часть берлинского. Доставка за €3,5 съедает 14% чека против 11% в Берлине, то есть каждый заказ тоньше, и даркстор окупается заметно дольше.</p><p><b>3. Риски.</b> Весной заходит крупный маркетплейс с деньгами; у нас одна команда на всё; другая валюта, поставщики и платежи.</p><p><b>4. Как проверить дёшево.</b> 2–3 месяца исследования и пилот: один даркстор в самом плотном районе или партнёрство с местной сетью. Метрики: заказы в день на даркстор, маржа заказа после доставки, доля повторных покупок за 30 дней. Критерий остановки: если через три месяца даркстор не выходит хотя бы на половину берлинской загрузки при положительной марже заказа.</p><p><b>5. Решение.</b> Полный запуск в этом году не рекомендую. Рекомендую довести Мюнхен и Гамбург до нуля и параллельно провести недорогой пилот в Варшаве. Инвестору это даёт историю роста, подкреплённую юнит-экономикой, а не только размером и ростом города. Передумаю, если пилот покажет загрузку и маржу на уровне Берлина или найдётся партнёр, который возьмёт на себя расходы на запуск.</p>",
+    "en": "<p><b>1. Why.</b> First I’d clarify the goal: the investor wants a growth story for the round, the company needs to reach profitability. There are 14 months of cash and Munich and Hamburg lose money. So Warsaw isn’t competing with “nothing” — it’s competing with getting two launched cities to break even.</p><p><b>2. Economics.</b> The city is growing, but its online grocery market is still small: 1.9M × €25 × 3% vs 3.7M × €40 × 5% is about a fifth of Berlin’s. A €3.5 delivery eats 14% of the order vs 11% in Berlin, so each order is thinner and a dark store pays back much more slowly.</p><p><b>3. Risks.</b> A well-funded marketplace arrives in spring; we have one team for everything; a different currency, suppliers and payments.</p><p><b>4. How to learn cheaply.</b> 2–3 months of research plus a pilot: one dark store in the densest district, or a partnership with a local chain. Metrics: orders per day per dark store, margin per order after delivery, 30-day repeat rate. Kill criterion: if after three months the dark store doesn’t reach at least half of Berlin’s volume with a positive margin per order.</p><p><b>5. Decision.</b> I wouldn’t do a full launch this year. I’d get Munich and Hamburg to break even and run an inexpensive pilot in Warsaw in parallel. That gives the investor a growth story backed by unit economics rather than city size and growth. I’d change my mind if the pilot shows Berlin-level volume and margin, or if a partner takes on the launch costs.</p>"
+   }
+  },
+  {
+   "id": "quarter-plan",
+   "theme": "priority",
+   "comp": [
+    "exec",
+    "stake"
+   ],
+   "minutes": 15,
+   "title": {
+    "ru": "Что взять в квартал",
+    "en": "What goes into the quarter"
+   },
+   "company": {
+    "ru": "«Ритм» — трекер привычек по подписке. Цель квартала — поднять retention новых пользователей на 30-й день (D30) на 2 п.п.",
+    "en": "Rhythm — a habit tracker with a subscription. The quarter’s goal: lift day-30 retention (D30) of new users by 2 pp."
+   },
+   "prompt": {
+    "ru": "<p>На квартал у команды 12 недель разработки. Инициатив пять, и у каждой есть сторонник.</p><div class='task-box'><table class='t'><thead><tr><th>Инициатива</th><th>Кто просит</th><th>Охват</th><th>Ожидаемый эффект</th><th>Уверенность</th><th>Работа</th></tr></thead><tbody><tr><td>Новый онбординг</td><td>Дима, аналитик</td><td>30 000 новых</td><td>+3 п.п. к D30 новых</td><td>70%</td><td>6 нед.</td></tr><tr><td>Виджет на главный экран</td><td>Кира, дизайнер</td><td>15 000</td><td>+1 п.п. к D30</td><td>50%</td><td>3 нед.</td></tr><tr><td>Интеграция с Apple Health</td><td>Лена, маркетинг: «отличный PR-повод»</td><td>6 000</td><td>+0,5 п.п. к D30</td><td>40%</td><td>8 нед.</td></tr><tr><td>Починить синхронизацию между устройствами</td><td>Оля, поддержка: баг у 12% платящих</td><td>2 400 платящих</td><td>−5 п.п. к их оттоку</td><td>80%</td><td>3 нед.</td></tr><tr><td>Семейная подписка</td><td>Андрей, CEO</td><td>~1 000 новых платящих</td><td>+$4 тыс. MRR</td><td>40%</td><td>5 нед.</td></tr></tbody></table></div>",
+    "en": "<p>The team has 12 weeks of engineering for the quarter. There are five initiatives, and each has a champion.</p><div class='task-box'><table class='t'><thead><tr><th>Initiative</th><th>Who asks</th><th>Reach</th><th>Expected effect</th><th>Confidence</th><th>Effort</th></tr></thead><tbody><tr><td>New onboarding</td><td>Dan, analyst</td><td>30,000 new users</td><td>+3 pp to new-user D30</td><td>70%</td><td>6 wks</td></tr><tr><td>Home screen widget</td><td>Kira, designer</td><td>15,000</td><td>+1 pp to D30</td><td>50%</td><td>3 wks</td></tr><tr><td>Apple Health integration</td><td>Lena, marketing: “a great PR hook”</td><td>6,000</td><td>+0.5 pp to D30</td><td>40%</td><td>8 wks</td></tr><tr><td>Fix sync between devices</td><td>Olga, support: a bug for 12% of payers</td><td>2,400 payers</td><td>−5 pp to their churn</td><td>80%</td><td>3 wks</td></tr><tr><td>Family plan</td><td>Andrew, CEO</td><td>~1,000 new payers</td><td>+$4k MRR</td><td>40%</td><td>5 wks</td></tr></tbody></table></div>"
+   },
+   "task": {
+    "ru": "Что берёшь в квартал и в каком порядке? Как объяснишь решение тем, чьи инициативы не вошли?",
+    "en": "What goes into the quarter, and in what order? How do you explain the decision to those whose initiatives didn’t make it?"
+   },
+   "hint": {
+    "ru": "Начни с цели квартала: не все инициативы её двигают. Посчитай ожидаемый эффект с учётом уверенности и проверь, что план влезает в 12 недель с запасом.",
+    "en": "Start from the quarter’s goal: not every initiative moves it. Work out expected impact adjusted for confidence, and check the plan fits into 12 weeks with a buffer."
+   },
+   "rubric": [
+    {
+     "id": "goal",
+     "name": {
+      "ru": "Связь с целью",
+      "en": "Tie to the goal"
+     },
+     "desc": "Ties the choice to the quarter goal (new-user D30 +2 pp) and separates initiatives that move it (onboarding, widget, a little Apple Health) from those that serve other goals (the sync bug → paying-user churn, the family plan → revenue, Apple Health → PR). 3 = explicit link to the goal for each pick. 0 = picks by who is loudest or most senior.",
+     "good": {
+      "ru": "Связываешь выбор с целью квартала и разделяешь инициативы, которые двигают D30 новых, и те, что работают на другие цели.",
+      "en": "You tie the picks to the quarter goal and separate initiatives that move new-user D30 from those that serve other goals."
+     }
+    },
+    {
+     "id": "scoring",
+     "name": {
+      "ru": "Оценка",
+      "en": "Scoring"
+     },
+     "desc": "Uses a quantitative method (RICE, impact × confidence / effort or expected value): onboarding +3 × 0.7 ≈ +2.1 pp for 6 weeks — enough for the goal alone; widget +1 × 0.5 = +0.5 pp for 3 weeks; Apple Health +0.5 × 0.4 = +0.2 pp for 8 weeks. Arithmetic is correct; notes that effects in different units (churn, MRR) can’t be compared directly. 3 = correct expected values and the insight that onboarding alone covers the goal. 1 = names RICE without numbers.",
+     "good": {
+      "ru": "Считаешь ожидаемый эффект с поправкой на уверенность: онбординг даёт ≈ +2,1 п.п. — одного его хватает на цель квартала.",
+      "en": "You compute expected impact adjusted for confidence: onboarding gives ≈ +2.1 pp, enough for the quarter’s goal on its own."
+     }
+    },
+    {
+     "id": "capacity",
+     "name": {
+      "ru": "Ёмкость",
+      "en": "Capacity"
+     },
+     "desc": "Fits the plan into 12 weeks with a buffer (10–20%) for bugs and unknowns and sets a sequence (e.g. the sync bug first: 3 weeks, high confidence, paying users churning; then onboarding: 6 weeks; the widget only if there’s room, as a stretch goal). 3 = a plan that fits with a buffer and an order. 0 = more than 12 weeks or no buffer.",
+     "good": {
+      "ru": "Укладываешь план в 12 недель с запасом на баги и неизвестное и расставляешь порядок: например, сначала баг синхронизации, потом онбординг.",
+      "en": "You fit the plan into 12 weeks with a buffer and set an order: e.g. the sync bug first, then onboarding."
+     }
+    },
+    {
+     "id": "tradeoffs",
+     "name": {
+      "ru": "Компромиссы",
+      "en": "Trade-offs"
+     },
+     "desc": "Explains what’s left out and why: Apple Health is low confidence for 8 weeks; the family plan is a revenue bet at 40% confidence that can be tested cheaply first (a fake door or waitlist on the paywall); the widget waits or becomes a stretch goal. Keeps the sync bug even though it doesn’t move new-user D30, because losing paying users is expensive. 3 = explicit trade-offs with reasons and cheap alternatives. 1 = just a list.",
+     "good": {
+      "ru": "Объясняешь, что не вошло и почему, и предлагаешь дешёвые шаги вместо отказа — например, проверить спрос на семейную подписку кнопкой с листом ожидания.",
+      "en": "You explain what didn’t make it and why, and offer cheap next steps instead of a flat no — e.g. test demand for the family plan with a waitlist button."
+     }
+    },
+    {
+     "id": "comms",
+     "name": {
+      "ru": "Коммуникация",
+      "en": "Communication"
+     },
+     "desc": "Plans how to say no: shared criteria (the goal and the scoring) agreed up front, one-on-ones with Lena and Andrew (the CEO) before the planning meeting, what each gets instead (a test, a PR hook elsewhere, a date to revisit), transparency in the roadmap. 3 = concrete conversations per stakeholder. 0 = no plan for communication.",
+     "good": {
+      "ru": "Продумываешь разговоры: общие критерии, встречи с Леной и Андреем до планирования, что каждый получит вместо отказа и когда вернёмся к идее.",
+      "en": "You plan the conversations: shared criteria, talking to Lena and Andrew before planning, what each gets instead of a no, and when you’ll revisit."
+     }
+    }
+   ],
+   "red_flags": [
+    "Picks by who asks loudest or who is most senior",
+    "The plan doesn’t fit into 12 weeks",
+    "No buffer for bugs and unknowns",
+    "Ignores confidence when comparing effects",
+    "Turns down the CEO with no explanation or alternative"
+   ],
+   "followup_hint": "Good follow-ups: what to do if the CEO insists on the family plan this quarter; or what if onboarding turns out to need 9 weeks instead of 6.",
+   "reference": {
+    "ru": "<p><b>1. Цель.</b> Квартал про D30 новых пользователей +2 п.п. Её двигают онбординг и виджет. Баг синхронизации — про отток платящих, семейная подписка — про выручку, Apple Health — скорее про PR.</p><p><b>2. Расчёт с учётом уверенности.</b> Онбординг: +3 × 0,7 ≈ +2,1 п.п. за 6 недель — одного его хватает на цель. Виджет: +1 × 0,5 = +0,5 п.п. за 3 недели. Apple Health: +0,5 × 0,4 = +0,2 п.п. за 8 недель — самая дорогая и самая неуверенная ставка.</p><p><b>3. План на 12 недель.</b> Сначала баг синхронизации (3 недели): он не про цель квартала, но страдают 12% платящих, уверенность высокая, а каждый ушедший платящий стоит дорого. Потом онбординг (6 недель). Из оставшихся трёх недель 1–2 держу запасом на баги и сдвиги, а виджет беру как stretch goal, если онбординг выйдет раньше.</p><p><b>4. Что не вошло.</b> Apple Health — мало охвата, низкая уверенность, 8 недель. Семейную подписку предлагаю проверить дёшево: кнопка «Семейный план» на пейволле с листом ожидания — пара дней работы, и в следующем квартале решаем на данных.</p><p><b>5. Разговоры.</b> До планирования показываю всем критерии: цель квартала и расчёт. С Андреем говорю отдельно: семейная подписка не отвергнута — у неё будет тест и дата решения. Лене предлагаю PR-повод на запуске нового онбординга, Кире — виджет как следующий кандидат.</p>",
+    "en": "<p><b>1. Goal.</b> The quarter is about new-user D30 +2 pp. Onboarding and the widget move it. The sync bug is about paying-user churn, the family plan about revenue, Apple Health mostly about PR.</p><p><b>2. Math adjusted for confidence.</b> Onboarding: +3 × 0.7 ≈ +2.1 pp in 6 weeks — enough for the goal on its own. Widget: +1 × 0.5 = +0.5 pp in 3 weeks. Apple Health: +0.5 × 0.4 = +0.2 pp in 8 weeks — the most expensive and least certain bet.</p><p><b>3. A 12-week plan.</b> First the sync bug (3 weeks): it isn’t the quarter’s goal, but 12% of payers suffer, confidence is high, and every paying user we lose is expensive. Then onboarding (6 weeks). Of the remaining three weeks, I keep 1–2 as a buffer for bugs and slips and treat the widget as a stretch goal if onboarding ships early.</p><p><b>4. What’s out.</b> Apple Health: low reach, low confidence, 8 weeks. For the family plan I’d run a cheap test: a “Family plan” button on the paywall with a waitlist — a couple of days of work — and decide next quarter on data.</p><p><b>5. Conversations.</b> Before planning I share the criteria with everyone: the quarter’s goal and the math. I talk to Andrew one-on-one: the family plan isn’t rejected — it gets a test and a decision date. I offer Lena a PR hook around the new onboarding launch, and Kira the widget as the next candidate.</p>"
+   }
+  },
+  {
+   "id": "paywall-test",
+   "theme": "experiment",
+   "comp": [
+    "data",
+    "stake"
+   ],
+   "minutes": 15,
+   "title": {
+    "ru": "Тест нового пейвола",
+    "en": "Testing a new paywall"
+   },
+   "company": {
+    "ru": "«Ритм» — трекер привычек по подписке.",
+    "en": "Rhythm — a habit tracker with a subscription."
+   },
+   "prompt": {
+    "ru": "<p>Кира перерисовала пейвол: короче текст, отзывы пользователей, кнопка пробного периода крупнее. Вы запускаете A/B-тест.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Посетителей пейвола в день</td><td>4 000</td></tr><tr><td>Конверсия в оплату сейчас</td><td>5%</td></tr><tr><td>Минимальный эффект, ради которого стоит менять пейвол</td><td>+1 п.п. (до 6%)</td></tr></tbody></table></div><p>Через два дня после запуска Андрей пишет в общий чат: «В дашборде +25% к конверсии и p = 0,04! Раскатываем на всех?»</p>",
+    "en": "<p>Kira redesigned the paywall: shorter copy, user reviews, a bigger free-trial button. You’re running an A/B test.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Paywall visitors a day</td><td>4,000</td></tr><tr><td>Paid conversion today</td><td>5%</td></tr><tr><td>Smallest effect worth changing the paywall for</td><td>+1 pp (to 6%)</td></tr></tbody></table></div><p>Two days after launch, Andrew posts in the team chat: “The dashboard shows +25% conversion and p = 0.04! Shall we roll it out to everyone?”</p>"
+   },
+   "task": {
+    "ru": "Спроектируй тест: метрика, размер выборки, длительность, guardrails, правило решения. И ответь Андрею.",
+    "en": "Design the test: metric, sample size, duration, guardrails, decision rule. And reply to Andrew."
+   },
+   "hint": {
+    "ru": "Есть простое правило Лера: при α = 0,05 и мощности 80% нужно примерно 16 · p(1 − p) / δ² пользователей на группу. А потом подумай, почему два дня — мало, даже если p < 0,05.",
+    "en": "There’s a simple rule of thumb, Lehr’s rule: at α = 0.05 and 80% power you need about 16 · p(1 − p) / δ² users per group. Then think about why two days is too short, even with p < 0.05."
+   },
+   "rubric": [
+    {
+     "id": "metric",
+     "name": {
+      "ru": "Гипотеза и метрика",
+      "en": "Hypothesis & metric"
+     },
+     "desc": "States the hypothesis and one primary metric chosen before the test (paid conversion of paywall visitors, or revenue per visitor if the trial or price changes) with the minimum detectable effect (+1 pp). 3 = hypothesis + primary metric + MDE. 0 = no metric or several “primary” metrics.",
+     "good": {
+      "ru": "Формулируешь гипотезу и одну главную метрику до теста — конверсию посетителя пейвола в оплату — и минимальный эффект +1 п.п.",
+      "en": "You state the hypothesis and one primary metric before the test — paywall visitor to paid conversion — and the +1 pp minimum effect."
+     }
+    },
+    {
+     "id": "sample",
+     "name": {
+      "ru": "Выборка и длительность",
+      "en": "Sample & duration"
+     },
+     "desc": "Estimates the sample size: by Lehr’s rule n ≈ 16 × 0.05 × 0.95 / 0.01² ≈ 7,600 per group (≈ 15,200 in total; a calculator-based equivalent is fine), which is ≈ 4 days of traffic at 4,000 a day, then rounds up to at least one full week (better two) to cover weekday and weekend behavior. 3 = right order of magnitude + full-week rounding. 1 = “run it for two weeks” without a calculation.",
+     "good": {
+      "ru": "Считаешь выборку: по правилу Лера ≈ 7 600 человек на группу, это около 4 дней трафика, — и округляешь до полной недели, чтобы поймать будни и выходные.",
+      "en": "You compute the sample: by Lehr’s rule ≈ 7,600 per group, about 4 days of traffic — and round up to a full week to cover weekdays and weekends."
+     }
+    },
+    {
+     "id": "guardrails",
+     "name": {
+      "ru": "Guardrails",
+      "en": "Guardrails"
+     },
+     "desc": "Names guardrail metrics and why: refunds and trial cancellations, D7/D30 retention of new payers, ARPPU, store ratings — a bigger trial button can lift conversion while bringing in less committed payers. 3 = two or more relevant guardrails with the reason. 0 = none.",
+     "good": {
+      "ru": "Называешь guardrails: возвраты и отмены пробного периода, retention новых платящих, ARPPU — крупная кнопка пробного может привести менее мотивированных.",
+      "en": "You name guardrails: refunds and trial cancellations, new payers’ retention, ARPPU — a bigger trial button can bring in less committed payers."
+     }
+    },
+    {
+     "id": "peeking",
+     "name": {
+      "ru": "Ответ Андрею",
+      "en": "Replying to Andrew"
+     },
+     "desc": "Explains why not to roll out after two days: checking results repeatedly and stopping at the first p < 0.05 inflates false positives; two days ≈ 4,000 users per group, about half the needed sample; no full week yet and a possible novelty effect; +25% relative is +1.25 pp — plausible but noisy at this size. Replies constructively and names when the decision will be made. 3 = peeking + sample + a constructive reply with a date. 0 = agrees to roll out.",
+     "good": {
+      "ru": "Объясняешь Андрею, почему рано: подглядывание завышает ложные находки, набрана половина выборки, нет полной недели, — и называешь дату решения.",
+      "en": "You explain to Andrew why it’s too early: peeking inflates false positives, only half the sample is in, there’s no full week yet — and you name the decision date."
+     }
+    },
+    {
+     "id": "decision",
+     "name": {
+      "ru": "Правило решения",
+      "en": "Decision rule"
+     },
+     "desc": "Sets the decision rule up front: which result means roll out, iterate or drop (e.g. the primary metric significant at α = 0.05 and guardrails no worse than a set threshold); checks key segments (platform, new vs returning) only as a sanity check, not to fish for wins; mentions monitoring after rollout. 3 = an explicit pre-registered rule with guardrail thresholds. 1 = “we’ll look at the results”.",
+     "good": {
+      "ru": "Заранее фиксируешь правило: при каком результате раскатываем, дорабатываем или отказываемся и какие guardrails не должны ухудшиться.",
+      "en": "You set the rule up front: which result means roll out, iterate or drop, and which guardrails must not get worse."
+     }
+    }
+   ],
+   "red_flags": [
+    "Rolls out after two days because p < 0.05",
+    "No sample size estimate",
+    "Picks the metric after seeing the results",
+    "No guardrail metrics",
+    "Runs the test for less than a full week"
+   ],
+   "followup_hint": "Good follow-ups: what if after a full week the result is +0.6 pp with p = 0.2; or what if conversion grows but refunds double.",
+   "reference": {
+    "ru": "<p><b>1. Гипотеза и метрика.</b> Короткий текст, отзывы и заметная кнопка пробного периода поднимут конверсию посетителя пейвола в оплату. Главная метрика — эта конверсия; минимальный эффект, ради которого стоит менять пейвол, — +1 п.п., с 5% до 6%.</p><p><b>2. Выборка и срок.</b> По правилу Лера: 16 × 0,05 × 0,95 / 0,01² ≈ 7 600 человек на группу, около 15 200 всего. При 4 000 посетителей в день это ~4 дня, но я запускаю тест на полную неделю, а лучше на две: в будни и выходные люди ведут себя по-разному.</p><p><b>3. Guardrails.</b> Возвраты и отмены пробного периода, retention новых платящих на 7-й и 30-й день, ARPPU. Крупная кнопка пробного может привести тех, кто потом отменит подписку, — тогда рост конверсии обманчив.</p><p><b>4. Ответ Андрею.</b> «Андрей, выглядит обнадёживающе, но раскатывать рано. За два дня набралось около 4 000 человек на группу — это половина нужной выборки, и не было ни одного выходного. Если смотреть результат каждый день и остановиться на первом p < 0,05, ложных находок становится в разы больше. +25% — это +1,25 п.п., на таком объёме это ещё в пределах шума. Решение примем в понедельник, когда наберём полную неделю».</p><p><b>5. Правило решения.</b> Фиксирую до теста: раскатываем, если конверсия выросла значимо при α = 0,05, а возвраты и retention платящих не хуже контроля больше чем на 1 п.п. Если эффект есть, но guardrails просели, — дорабатываем. Сегменты (iOS и Android, новые и вернувшиеся) смотрю только как проверку, а не как поиск «где сработало».</p>",
+    "en": "<p><b>1. Hypothesis and metric.</b> Shorter copy, reviews and a prominent trial button will lift paid conversion of paywall visitors. That conversion is the primary metric; the smallest effect worth changing the paywall for is +1 pp, from 5% to 6%.</p><p><b>2. Sample and duration.</b> By Lehr’s rule: 16 × 0.05 × 0.95 / 0.01² ≈ 7,600 people per group, about 15,200 in total. At 4,000 visitors a day that’s ~4 days, but I’d run a full week, ideally two: people behave differently on weekdays and weekends.</p><p><b>3. Guardrails.</b> Refunds and trial cancellations, day-7 and day-30 retention of new payers, ARPPU. A big trial button can bring in people who cancel later — then the conversion lift is misleading.</p><p><b>4. Reply to Andrew.</b> “Andrew, it looks promising, but it’s too early to roll out. Two days gave us about 4,000 people per group — half the sample we need — and not a single weekend. If we check every day and stop at the first p < 0.05, false positives multiply. +25% is +1.25 pp, still within the noise at this size. We’ll decide on Monday, once we have a full week.”</p><p><b>5. Decision rule.</b> Set before the test: roll out if conversion is significantly higher at α = 0.05 and refunds and payer retention are no more than 1 pp worse than control. If there’s a lift but guardrails drop, iterate. Segments (iOS vs Android, new vs returning) are only a sanity check, not a hunt for “where it worked.”</p>"
+   }
+  },
+  {
+   "id": "annual-plan",
+   "comp": [
+    "biz",
+    "lead"
+   ],
+   "theme": "economics",
+   "minutes": 15,
+   "title": {
+    "ru": "Годовая подписка",
+    "en": "The annual plan"
+   },
+   "company": {
+    "ru": "«Ритм» — трекер привычек по подписке за $9 в месяц. Та самая компания из игры.",
+    "en": "Rhythm — a habit tracker with a $9 monthly subscription. Yes, the company from the game."
+   },
+   "prompt": {
+    "ru": "<p>Финансовый директор предлагает запустить годовой план за $60 вместо $9 в месяц: «Деньги сразу, а кэша у нас всего на 8 месяцев». CEO просит тебя оценить идею.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Платящих подписчиков</td><td>20 000</td></tr><tr><td>Цена месячного плана</td><td>$9</td></tr><tr><td>Отток платящих в месяц</td><td>15%</td></tr><tr><td>Комиссия App Store и Google Play</td><td>15%</td></tr><tr><td>Запас денег</td><td>8 месяцев</td></tr></tbody></table></div>",
+    "en": "<p>The CFO proposes launching an annual plan at $60 instead of $9 a month: “Cash up front — and we only have 8 months of runway.” The CEO asks you to evaluate the idea.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Paying subscribers</td><td>20,000</td></tr><tr><td>Monthly plan price</td><td>$9</td></tr><tr><td>Monthly churn of paying users</td><td>15%</td></tr><tr><td>App Store and Google Play fee</td><td>15%</td></tr><tr><td>Runway</td><td>8 months</td></tr></tbody></table></div>"
+   },
+   "task": {
+    "ru": "Стоит ли запускать годовой план за $60? Посчитай, что выигрываем и чем рискуем, и предложи, как запускать.",
+    "en": "Should we launch the $60 annual plan? Work out what we gain and what we risk, and propose how to launch it."
+   },
+   "hint": {
+    "ru": "Посчитай, сколько в среднем приносит месячный подписчик, и подумай, кто именно купит годовой план.",
+    "en": "Work out what an average monthly subscriber brings in, and think about who exactly will buy the annual plan."
+   },
+   "rubric": [
+    {
+     "id": "ltv",
+     "name": {
+      "ru": "Расчёт LTV",
+      "en": "LTV math"
+     },
+     "desc": "Computes the value of a monthly subscriber: average lifetime ≈ 1 / 0.15 ≈ 6.7 months → ≈ $60 gross, ≈ $51 net after the 15% store fee. The annual plan gives $60 gross / $51 net up front plus possible renewal. Notes that $60 ≈ the average monthly LTV. 3 = correct math and this insight. 0 = no numbers.",
+     "good": {
+      "ru": "Считаешь, что средний месячный подписчик приносит ≈ $60 ($51 после комиссии) — столько же, сколько годовой план.",
+      "en": "You work out that the average monthly subscriber brings ≈ $60 ($51 after fees) — the same as the annual plan."
+     }
+    },
+    {
+     "id": "cannibal",
+     "name": {
+      "ru": "Каннибализация",
+      "en": "Cannibalization"
+     },
+     "desc": "Recognizes self-selection: loyal users who would stay 12+ months (on the monthly plan they’d pay $108 gross, ≈ $92 net) lose us money on the annual plan; users who would churn in 2–3 months but buy a year gain us money; the mix decides. Ideally: only 0.85^12 ≈ 14% of monthly subscribers survive 12 months. 3 = explains self-selection with numbers.",
+     "good": {
+      "ru": "Объясняешь, что годовой выберут лояльные (на месячном они принесли бы $108), и оцениваешь, сколько их: до года доживает ≈ 14%.",
+      "en": "You explain that loyal users pick annual (on monthly they’d pay $108) and estimate how many there are: ≈ 14% last a year."
+     }
+    },
+    {
+     "id": "cash",
+     "name": {
+      "ru": "Деньги и риски",
+      "en": "Cash & risks"
+     },
+     "desc": "Weighs the runway benefit (cash up front matters with 8 months of runway; e.g. if 4,000 users buy a year, that’s ≈ $204k net now) against long-term revenue loss; mentions refunds, monthly revenue recognition, unknown renewal rate, price anchoring. 3 = runway benefit vs long-term cost with an estimate.",
+     "good": {
+      "ru": "Взвешиваешь деньги сейчас для runway против потерь выручки в будущем — с оценкой.",
+      "en": "You weigh cash now for runway against future revenue lost — with an estimate."
+     }
+    },
+    {
+     "id": "test",
+     "name": {
+      "ru": "Как проверить",
+      "en": "Experiment"
+     },
+     "desc": "Proposes an A/B test on the paywall for new users (monthly only vs monthly + annual), primary metric = revenue per paywall visitor over a horizon (or conversion to paid plus projected revenue), plus share choosing annual and refunds; considers price variants ($60 vs $69–79) and handles existing subscribers separately (targeted offers, not a blanket switch). 3 = concrete test with a primary metric and guardrails.",
+     "good": {
+      "ru": "Предлагаешь A/B на пейволле для новых пользователей с главной метрикой — выручкой на посетителя.",
+      "en": "You propose a paywall A/B test for new users with revenue per visitor as the primary metric."
+     }
+    },
+    {
+     "id": "decision",
+     "name": {
+      "ru": "Решение",
+      "en": "Recommendation"
+     },
+     "desc": "Gives a clear recommendation with conditions (e.g. launch as a test for new users, smaller discount, existing subscribers only via targeted offers) and says what result would change the decision. 3 = clear, conditional, tied to the numbers. 0 = no decision.",
+     "good": {
+      "ru": "Даёшь ясную рекомендацию с условиями и говоришь, какой результат её изменит.",
+      "en": "You give a clear recommendation with conditions and say what result would change it."
+     }
+    }
+   ],
+   "red_flags": [
+    "Decides without any numbers",
+    "Claims annual plans are always better",
+    "Ignores cannibalization of loyal subscribers",
+    "Ignores the app store fee",
+    "No way to test the decision"
+   ],
+   "followup_hint": "Good follow-ups: at what price the annual plan stops losing money on loyal users; or what they’d do if 60% of current subscribers switch to annual in the first week.",
+   "reference": {
+    "ru": "<p><b>1. Сколько приносит месячный подписчик.</b> При оттоке 15% в месяц средняя «жизнь» ≈ 1 / 0,15 ≈ 6,7 месяца → ≈ $60 выручки, после комиссии магазинов ≈ $51. Годовой план — те же $60 ($51 нетто), только сразу, плюс шанс продления. Для среднего пользователя почти одно и то же.</p><p><b>2. Но годовой покупают не средние.</b> Его выбирают те, кто уверен, что останется. До 12 месяцев доживает 0,85¹² ≈ 14% месячных подписчиков, и каждый из них на месячном плане принёс бы $108 (≈ $92 нетто), а на годовом — $60. Если перейдут в основном лояльные — теряем выручку. Выигрываем на тех, кто ушёл бы через 2–3 месяца, но купил год, и на новых, которых годовая цена убедит заплатить.</p><p><b>3. Деньги сейчас.</b> Аргумент финдиректора реальный: если 4 000 человек купят год — это ≈ $204 тыс. нетто сразу, а при 8 месяцах запаса это важно. Риски: возвраты, выручку всё равно признаём помесячно, доля продлений неизвестна.</p><p><b>4. Как проверить.</b> A/B на пейволле для новых: контроль — только месяц, тест — месяц + год за $69. Главная метрика — выручка на посетителя пейволла с прогнозом на 12 месяцев; дополнительно — конверсия в оплату, доля годовых, возвраты. Текущим подписчикам годовой не предлагаю всем подряд — только тем, у кого высокий риск оттока, на 2–3-м месяце.</p><p><b>5. Решение.</b> Запускать, но как тест на новых и с меньшей скидкой: $69–79 вместо $60. Раскатываем на всех, если прирост конверсии перекрывает потери на лояльных. Если цель — только продлить запас денег, честно считаем, сколько долгосрочной выручки мы за это отдаём.</p>",
+    "en": "<p><b>1. What a monthly subscriber brings.</b> With 15% monthly churn, the average lifetime ≈ 1 / 0.15 ≈ 6.7 months → ≈ $60 revenue, ≈ $51 after store fees. The annual plan is the same $60 ($51 net), just up front, plus a chance of renewal. For the average user it’s nearly identical.</p><p><b>2. But average users don’t buy annual.</b> People who are sure they’ll stay choose it. Only 0.85¹² ≈ 14% of monthly subscribers last 12 months, and each of them would pay $108 (≈ $92 net) on the monthly plan versus $60 on annual. If mostly loyal users switch, we lose revenue. We win on people who’d have churned in 2–3 months but bought a year, and on new users the annual price convinces to pay.</p><p><b>3. Cash now.</b> The CFO’s point is real: if 4,000 people buy a year, that’s ≈ $204k net immediately, which matters with 8 months of runway. Risks: refunds, revenue is still recognized monthly, the renewal rate is unknown.</p><p><b>4. How to test.</b> A/B test the paywall for new users: control = monthly only, test = monthly + annual at $69. Primary metric: revenue per paywall visitor projected over 12 months; also conversion to paid, share choosing annual, refunds. I wouldn’t offer annual to all current subscribers — only to those at high churn risk, around month 2–3.</p><p><b>5. Decision.</b> Launch, but as a test for new users and with a smaller discount: $69–79 instead of $60. Roll out if the conversion gain outweighs the loss on loyal users. If the only goal is extending runway, be honest about how much long-term revenue we’re trading for it.</p>"
+   }
+  },
+  {
+   "id": "b2b-deadline",
+   "theme": "stakeholders",
+   "comp": [
+    "stake",
+    "lead"
+   ],
+   "minutes": 15,
+   "title": {
+    "ru": "Клиенту уже пообещали срок",
+    "en": "A deadline already promised to a client"
+   },
+   "company": {
+    "ru": "«Корзинка» — доставка продуктов за 30 минут в Берлине, Мюнхене и Гамбурге.",
+    "en": "Basket — 30-minute grocery delivery in Berlin, Munich and Hamburg."
+   },
+   "prompt": {
+    "ru": "<p>Коммерческий директор Макс договорился с сетью коворкингов в Берлине: они будут заказывать продукты и снеки для 40 офисов. Клиенту нужны оплата по счёту и ежемесячный отчёт по расходам. Макс уже пообещал запуск «через три недели».</p><p>Техлид Аня говорит, что оплата по счёту и отчёты — это минимум шесть недель, и тогда сдвинется запуск новых зон доставки.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Обещанный объём клиента</td><td>3 000 заказов в месяц</td></tr><tr><td>Средний чек офисного заказа</td><td>€60</td></tr><tr><td>Средний чек обычного заказа</td><td>€40</td></tr><tr><td>Маржа заказа после доставки</td><td>10%</td></tr><tr><td>Новые зоны доставки</td><td>запуск через 4 недели, план +4 000 заказов в месяц</td></tr></tbody></table></div>",
+    "en": "<p>Max, the commercial director, has closed a deal with a Berlin coworking chain: they’ll order groceries and snacks for 40 offices. The client needs invoice payments and a monthly spending report. Max has already promised a launch “in three weeks.”</p><p>Anna, the tech lead, says invoice payments and reports take at least six weeks — and that would push back the launch of new delivery zones.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Client’s promised volume</td><td>3,000 orders a month</td></tr><tr><td>Average office order</td><td>€60</td></tr><tr><td>Average regular order</td><td>€40</td></tr><tr><td>Margin per order after delivery</td><td>10%</td></tr><tr><td>New delivery zones</td><td>launch in 4 weeks, planned +4,000 orders a month</td></tr></tbody></table></div>"
+   },
+   "task": {
+    "ru": "Что ты сделаешь в ближайшие 48 часов? Как выстроишь разговор с Максом, Аней и клиентом?",
+    "en": "What do you do in the next 48 hours? How do you handle the conversations with Max, Anna and the client?"
+   },
+   "hint": {
+    "ru": "Ответ не обязан быть «да» или «нет». Посчитай, сколько весит каждая сторона, и выясни, что клиенту на самом деле нужно в первый день.",
+    "en": "The answer doesn’t have to be yes or no. Work out what each side is worth, and find out what the client actually needs on day one."
+   },
+   "rubric": [
+    {
+     "id": "value",
+     "name": {
+      "ru": "Цена вопроса",
+      "en": "Sizing the stakes"
+     },
+     "desc": "Quantifies both sides: the client ≈ 3,000 × €60 = €180k GMV and ≈ €18k margin a month; the new zones ≈ 4,000 × €40 = €160k GMV and ≈ €16k margin a month, so delaying them by 3–6 weeks costs roughly €11–22k of margin. 3 = both sides sized with correct math. 0 = no numbers.",
+     "good": {
+      "ru": "Считаешь обе стороны: клиент ≈ €180 тыс. оборота и ≈ €18 тыс. маржи в месяц, новые зоны ≈ €160 тыс. и ≈ €16 тыс., — и цену задержки.",
+      "en": "You size both sides: the client ≈ €180k GMV and ≈ €18k margin a month, the new zones ≈ €160k and ≈ €16k — and the cost of delay."
+     }
+    },
+    {
+     "id": "needs",
+     "name": {
+      "ru": "Что нужно клиенту",
+      "en": "What the client needs"
+     },
+     "desc": "Digs into what the client needs on day one vs later: they need to order from day one, while invoices and reports are monthly and can start manually (accounting issues invoices, an analyst builds the report), with automation later. 3 = separates day-one needs from the rest and proposes a manual MVP that needs no engineering. 1 = takes the requirement as given.",
+     "good": {
+      "ru": "Выясняешь, что клиенту нужно в первый день, и предлагаешь ручной MVP: счета выставляет бухгалтерия, отчёт собирает аналитик, автоматизация — позже.",
+      "en": "You find out what the client needs on day one and propose a manual MVP: accounting issues invoices, an analyst builds the report, automation comes later."
+     }
+    },
+    {
+     "id": "align",
+     "name": {
+      "ru": "Договориться внутри",
+      "en": "Aligning internally"
+     },
+     "desc": "Talks to Max and Anna separately first (what exactly was promised and what matters to the client; what in the six weeks is essential), then together with options and numbers; goes to the CEO only with a clear trade-off if they can’t agree; no blame. 3 = a concrete sequence of conversations leading to a shared decision. 0 = escalates right away or decides alone.",
+     "good": {
+      "ru": "Говоришь с Максом и Аней сначала по отдельности, потом вместе — с вариантами и цифрами, а к CEO идёшь только с ясным выбором, если не договорились.",
+      "en": "You talk to Max and Anna separately, then together with options and numbers, and go to the CEO only with a clear choice if you can’t agree."
+     }
+    },
+    {
+     "id": "client",
+     "name": {
+      "ru": "Разговор с клиентом",
+      "en": "The client"
+     },
+     "desc": "Helps Max reset expectations honestly: what the client gets in three weeks (orders with manual invoices and reports), what comes later and when; keeps Max as the owner of the relationship. 3 = a concrete message to the client that keeps both the deal and the trust. 0 = ignores the client or hides the change.",
+     "good": {
+      "ru": "Помогаешь Максу честно перестроить обещание: что клиент получит через три недели, что — позже и когда.",
+      "en": "You help Max reset the promise honestly: what the client gets in three weeks, what comes later and when."
+     }
+    },
+    {
+     "id": "process",
+     "name": {
+      "ru": "Чтобы не повторилось",
+      "en": "Preventing a repeat"
+     },
+     "desc": "Proposes a lightweight process fix without blame: dates for new functionality go to clients only after a quick check with product and engineering; a simple request template; a decision log. 3 = a concrete fix agreed with sales. 0 = nothing, or blames Max.",
+     "good": {
+      "ru": "Предлагаешь простое правило без поиска виноватых: сроки по новым функциям клиентам называют только после сверки с продуктом и разработкой.",
+      "en": "You propose a simple rule without blame: dates for new features go to clients only after a check with product and engineering."
+     }
+    }
+   ],
+   "red_flags": [
+    "Agrees to the three-week date and pressures the team",
+    "A flat no without exploring options",
+    "Escalates to the CEO before trying to align",
+    "Blames Max in front of others",
+    "No numbers on the deal or the cost of delay"
+   ],
+   "followup_hint": "Good follow-ups: what if the client refuses manual invoices; or what if Max says the deal falls apart without the original date.",
+   "reference": {
+    "ru": "<p><b>1. Цена вопроса.</b> Клиент: 3 000 × €60 = €180 тыс. оборота и ~€18 тыс. маржи в месяц. Новые зоны: 4 000 × €40 = €160 тыс. и ~€16 тыс. маржи. Сдвинуть зоны на 3–6 недель — потерять примерно €11–22 тыс. маржи. Обе стороны весомые, поэтому ищу вариант без жертвы.</p><p><b>2. Что нужно клиенту в первый день.</b> Уточняю у Макса и, если можно, у клиента: заказывать им нужно с первого дня, а счёт и отчёт — раз в месяц. Значит, на старте хватит ручного процесса: счета выставляет бухгалтерия, отчёт собирает аналитик из базы. Разработка не нужна, зоны не сдвигаются.</p><p><b>3. Договориться внутри.</b> Сначала по отдельности: с Максом — что именно обещано и что важно клиенту, с Аней — что из шести недель критично, а что можно отложить. Потом встречаемся втроём с вариантами и цифрами: ручной MVP через три недели, автоматизация после запуска зон. Если не договоримся — иду к CEO с ясным выбором и ценой каждого варианта.</p><p><b>4. Клиент.</b> Отношения ведёт Макс, я готовлю ему текст: «Через три недели вы заказываете, как договорились, а счёт и отчёт в конце месяца присылаем вручную. Оплату по счёту и отчёты в личном кабинете подключим к такой-то дате».</p><p><b>5. Чтобы не повторилось.</b> Без поиска виноватых договариваемся с Максом: сроки по новым функциям клиентам называем только после короткой сверки с продуктом и разработкой — на это хватает дня.</p>",
+    "en": "<p><b>1. The stakes.</b> The client: 3,000 × €60 = €180k GMV and ~€18k margin a month. The new zones: 4,000 × €40 = €160k and ~€16k margin. Pushing the zones back 3–6 weeks costs roughly €11–22k in margin. Both sides matter, so I look for an option that doesn’t sacrifice either.</p><p><b>2. What the client needs on day one.</b> I check with Max, and ideally the client: they need to order from day one, while invoices and reports are monthly. So a manual process is enough to start: accounting issues invoices, an analyst pulls the report from the database. No engineering needed, and the zones don’t move.</p><p><b>3. Aligning internally.</b> Separately first: with Max — what exactly was promised and what matters to the client; with Anna — what in the six weeks is essential and what can wait. Then the three of us meet with options and numbers: a manual MVP in three weeks, automation after the zones launch. If we can’t agree, I go to the CEO with a clear choice and the cost of each option.</p><p><b>4. The client.</b> Max owns the relationship; I draft his message: “In three weeks you start ordering as agreed, and we’ll send the invoice and report manually at the end of the month. Invoice payments and reports in your account will be live by such-and-such date.”</p><p><b>5. Preventing a repeat.</b> Without blame, we agree with Max: dates for new functionality go to clients only after a quick check with product and engineering — a day is enough.</p>"
+   }
+  }
+ ]
 }

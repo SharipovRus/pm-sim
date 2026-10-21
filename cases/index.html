@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
-<meta name="description" content="Кейсы с собеседований продакт-менеджера: пишешь ответ своими словами, ИИ-интервьюер оценивает его по критериям и задаёт уточняющий вопрос.">
+<meta name="description" content="8 кейсов с собеседований продакт-менеджера: пишешь ответ своими словами, сравниваешь с ответом сильного кандидата, оцениваешь себя по критериям интервьюера и прокачиваешь компетенции. Бесплатно, в браузере.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ритм — кейсы с собеседований продакта">
+<meta property="og:description" content="8 кейсов с собеседований продакт-менеджера: метрики, продукт, стратегия, A/B-тесты, юнит-экономика. Пишешь ответ, сравниваешь с сильным кандидатом и прокачиваешь компетенции.">
+<meta property="og:image" content="https://sharipovrus.github.io/pm-sim/og.png">
+<meta property="og:url" content="https://sharipovrus.github.io/pm-sim/cases/">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="author" content="Ruslan Sharipov">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232A4FE6'/%3E%3Cpath d='M7 22 L13 13 L18 18 L25 9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <title>Ритм · кейсы PM</title>
@@ -171,6 +176,18 @@ textarea:focus{border-color:var(--accent); outline:none}
 .followup .q{font-weight:600; margin-bottom:10px}
 .followup textarea{background:var(--surface)}
 .reference{font-size:14px}
+.self{display:grid; gap:10px}
+.self-row{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface2)}
+.self-row > b{font-size:14px}
+.self-row p.hint{margin:4px 0 10px; font-size:13px}
+.seg{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px}
+.seg button{display:flex; flex-direction:column; align-items:center; gap:1px; padding:6px 4px; border:1px solid var(--line); border-radius:9px; background:var(--surface); cursor:pointer; font-size:12px; color:var(--muted); line-height:1.25}
+.seg button b{font-family:var(--mono); font-size:15px; color:var(--ink)}
+.seg button:hover{border-color:var(--accent)}
+.seg button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
+.seg button[aria-pressed="true"] b{color:var(--accent)}
+.dots.s0 i{background:var(--line)}
+
 .chip.lvl.l0{background:var(--surface2); color:var(--muted)}
 .chip.lvl.l1{background:var(--warn-soft); border-color:var(--warn); color:var(--warn)}
 .chip.lvl.l2{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
@@ -327,7 +344,7 @@ function recommendation(){
 
 /* ============ render ============ */
 function renderHud(){
-  $('#hud').innerHTML = `<a class="brand" href="../${LANG==='en'?'?lang=en':''}"><b>${L('Ритм','Rhythm')}</b><span>${L('кейсы с собеседований · бета','interview cases · beta')}</span></a>
+  $('#hud').innerHTML = `<a class="brand" href="../${LANG==='en'?'?lang=en':''}"><b>${L('Ритм','Rhythm')}</b><span>${L('кейсы с собеседований','interview cases')}</span></a>
     <div class="hud-right">
       <a class="hud-btn" href="../${LANG==='en'?'?lang=en':''}">${L('Игра','The game')}</a>
       <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
@@ -340,7 +357,7 @@ function renderHud(){
 }
 
 function statusLine(){
-  if(!GRADING) return `<div class="notice"><b class="t">${L('Внутренний тест','Internal test')}</b>${L('Автоматическая проверка пока выключена. Напиши ответ, скопируй его вместе с кейсом и критериями в чат с ИИ (Claude, ChatGPT) — он оценит как интервьюер. Потом сравни с эталонным ответом.','Automatic grading is off for now. Write your answer, copy it together with the case and rubric into an AI chat (Claude, ChatGPT) to get it graded like an interviewer would, then compare with the reference answer.')}</div>`;
+  if(!GRADING) return '';
   if(!STATUS) return '';
   if(STATUS.error==='code') return '';
   if(STATUS.error) return `<div class="notice warn"><b class="t">${L('Проверка ответов сейчас недоступна','Answer grading is unavailable right now')}</b>${L('Кейсы можно читать и писать ответы — черновики сохраняются. Попробуй отправить чуть позже.','You can still read cases and write answers — drafts are saved. Try submitting a bit later.')}</div>`;
@@ -359,9 +376,10 @@ function renderList(){
   CUR = null;
   const rec = recommendation(), res = results();
   $('#view').innerHTML = `<div class="fade">
-    <div class="eyebrow"><span class="chip">${L('Бета','Beta')}</span><span>${L(`${DATA.cases.length} кейса · 10–15 минут на каждый`,`${DATA.cases.length} cases · 10–15 minutes each`)}</span></div>
+    <div class="eyebrow"><span>${casesCount(DATA.cases.length)} · ${L('10–15 минут на каждый','10–15 minutes each')}</span></div>
     <h1 class="h-display">${L('Кейсы с собеседований продакта','PM interview cases')}</h1>
-    <p class="lead">${L('Пишешь ответ своими словами, как на собеседовании. ИИ-интервьюер оценивает его по критериям, задаёт уточняющий вопрос и показывает, как ответил бы сильный кандидат.','Write your answer in your own words, like in an interview. An AI interviewer grades it against a rubric, asks a follow-up question and shows how a strong candidate would answer.')}</p>
+    <p class="lead">${GRADING ? L('Пишешь ответ своими словами, как на собеседовании. ИИ-интервьюер оценивает его по критериям, задаёт уточняющий вопрос и показывает, как ответил бы сильный кандидат.','Write your answer in your own words, like in an interview. An AI interviewer grades it against a rubric, asks a follow-up question and shows how a strong candidate would answer.')
+      : L('Пишешь ответ своими словами, как на собеседовании. Потом сравниваешь его с ответом сильного кандидата и оцениваешь себя по тем же критериям, что и интервьюер. Решённые кейсы прокачивают те же 7 компетенций, что в игре.','Write your answer in your own words, like in an interview. Then compare it with a strong candidate’s answer and rate yourself on the same criteria an interviewer uses. Solved cases level up the same 7 competencies as the game.')}</p>
     ${statusLine()}${gateCard()}
     ${rec ? `<div class="notice acc"><b class="t">${L('С чего начать','Where to start')}</b>${L(`В последней партии «Ритма» слабее всего вышла компетенция «${T(COMP_NAMES[rec.comp])}» (${LVL[rec.level]}). Попробуй кейс «${T(rec.c.title)}».`,`In your last Rhythm run, your weakest competency was “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Try the “${T(rec.c.title)}” case.`)}
       <div style="margin-top:10px"><button class="btn primary" data-act="open" data-id="${rec.c.id}">${L('Открыть кейс','Open the case')}</button></div></div>` : ''}
@@ -400,9 +418,10 @@ function renderCase(id){
       <textarea id="answer" placeholder="${L('Рассуждай так, как говорил бы вслух на собеседовании…','Reason the way you’d think out loud in an interview…')}">${escH(s.answer)}</textarea>
       <div class="row"><span class="hint grow" id="count"></span><span class="err" id="err" aria-live="polite"></span>
         ${GRADING ? `<button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again') : L('Отправить интервьюеру','Send to the interviewer')}</button>`
-          : `<button class="btn primary" data-act="copyPrompt">${L('Скопировать для проверки ИИ','Copy for AI grading')}</button><button class="btn" data-act="showRef">${L('Сравнить с эталоном','Compare with the reference')}</button>`}</div>
+          : `<button class="btn primary" data-act="selfCheck">${L('Сравнить с эталоном','Compare with the reference')}</button><button class="btn" data-act="copyPrompt">${L('Проверить в своём ИИ','Check with your AI')}</button>`}</div>
+      ${GRADING ? '' : `<p class="hint" style="margin:8px 0 0">${L('«Проверить в своём ИИ» скопирует кейс, критерии и твой ответ одним текстом: вставь его в ChatGPT или Claude — и получишь разбор, как от интервьюера.','“Check with your AI” copies the case, the rubric and your answer as one text: paste it into ChatGPT or Claude to get an interviewer-style review.')}</p>`}
     </div>
-    <div id="out">${s.result ? resultHtml(c, s) : ''}</div>
+    <div id="out">${s.result ? resultHtml(c, s) : (s.selfOpen ? selfHtml(c, s) : '')}</div>
   </div>`;
   updateCount(); window.scrollTo({top:0});
 }
@@ -434,6 +453,7 @@ function resultHtml(c, s){
     <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
   </div>`;
 }
+const casesCount = n => LANG==='en' ? `${n} ${n===1?'case':'cases'}` : `${n} ${n%10===1 && n%100!==11 ? 'кейс' : (n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 'кейса' : 'кейсов')}`;
 const nextCase = c => { const i = DATA.cases.indexOf(c); return DATA.cases[(i+1) % DATA.cases.length] === c ? null : DATA.cases[(i+1) % DATA.cases.length]; };
 
 function errorText(r){
@@ -521,13 +541,48 @@ async function copyPrompt(){
   err.style.color = ok ? 'var(--good)' : ''; err.textContent = ok ? L('Скопировано — вставь в чат с ИИ.','Copied — paste it into an AI chat.') : L('Не удалось скопировать.','Couldn’t copy.');
   track('copy');
 }
-function showRef(){
-  const c = CUR;
-  $('#out').innerHTML = `<div class="result fade"><div class="section-h" style="margin-top:0">${L('Сравни по критериям','Compare by criteria')}</div>
-    <ul>${c.rubric.map(r=>`<li>${escH(T(r.name))}</li>`).join('')}</ul>
-    <details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>
-    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div></div>`;
-  $('#out').scrollIntoView({behavior:'smooth', block:'start'}); track('reference');
+/* ============ self-check: compare with the reference and rate yourself on the rubric ============ */
+const SELF_LV = () => [L('нет','missing'), L('вскользь','briefly'), L('частично','partly'), L('полностью','fully')];
+const levelOf = t => t>=85 ? 'Lead' : t>=65 ? 'Senior' : t>=45 ? 'Middle' : 'Junior';
+const refBlock = c => `<details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>`;
+function selfHtml(c, s){
+  const sc = s.self || {};
+  if(s.selfResult){
+    const r = s.selfResult, weak = c.rubric.filter(x=>sc[x.id]<=1);
+    return `<div class="result fade" id="self-res">
+      <div class="score-head"><span class="score-big num">${r.total}<small> / 100</small></span>${levelChip(r.level)}<span class="chip">${L('самооценка','self-assessed')}</span></div>
+      ${levelUpHtml(s.ups)}
+      <div class="crit">${c.rubric.map(x=>`<div class="crit-row"><div class="crit-top"><b>${escH(T(x.name))}</b><span class="dots s${sc[x.id]}" aria-label="${sc[x.id]} / 3"><i></i><i></i><i></i></span></div><p>${escH(T(x.good))}</p></div>`).join('')}</div>
+      ${weak.length ? `<div class="fb warn"><b class="t">${L('Что подтянуть','What to work on')}</b><ul>${weak.map(x=>`<li>${escH(T(x.name))}: ${escH(T(x.good)).replace(/^./, ch=>ch.toLowerCase())}</li>`).join('')}</ul></div>` : ''}
+      <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn" data-act="selfRedo">${L('Переоценить','Rate again')}</button><button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
+    </div>${refBlock(c)}`;
+  }
+  return `<div class="result fade">${refBlock(c)}
+    <div class="section-h">${L('Оцени свой ответ','Rate your answer')}</div>
+    <p class="hint" style="margin:0 0 10px">${L('Сравни с эталоном и по каждому критерию отметь, насколько твой ответ его закрывает. Оценивай честно: на собеседовании интервьюер увидит то же самое.','Compare with the reference and mark how well your answer covers each criterion. Be honest: in an interview, the interviewer will see the same thing.')}</p>
+    <div class="self">${c.rubric.map(x=>`<div class="self-row"><b>${escH(T(x.name))}</b><p class="hint">${escH(T(x.good))}</p>
+      <div class="seg" role="group" aria-label="${escH(T(x.name))}">${SELF_LV().map((t,v)=>`<button data-act="selfMark" data-k="${x.id}" data-v="${v}" aria-pressed="${sc[x.id]===v}"><b>${v}</b>${t}</button>`).join('')}</div></div>`).join('')}</div>
+    <div class="row"><span class="err grow" id="serr" aria-live="polite"></span><button class="btn primary" data-act="selfScore">${L('Посчитать результат','Get my score')}</button></div>
+  </div>`;
+}
+function selfCheck(){
+  const c = CUR, s = SESSION[c.id], err = $('#err'); s.answer = $('#answer').value; store.set(DRAFT_KEY(c.id), s.answer);
+  if(s.answer.trim().length < 60){ err.style.color = ''; err.textContent = L('Сначала напиши ответ хотя бы в пару абзацев — так сравнение будет честным.','Write at least a couple of paragraphs first, so the comparison is fair.'); return; }
+  err.textContent = ''; s.selfOpen = true; s.self = s.self || {}; s.selfResult = null;
+  $('#out').innerHTML = selfHtml(c, s); $('#out').scrollIntoView({behavior:'smooth', block:'start'}); track('self-open');
+}
+function selfMark(b){
+  const s = SESSION[CUR.id]; s.self[b.dataset.k] = +b.dataset.v;
+  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+  const e = $('#serr'); if(e) e.textContent = '';
+}
+function selfScore(){
+  const c = CUR, s = SESSION[c.id], sc = s.self || {};
+  if(c.rubric.some(x=>sc[x.id]===undefined)){ $('#serr').textContent = L('Отметь все критерии.','Rate every criterion.'); return; }
+  const total = Math.round(c.rubric.reduce((a,x)=>a+sc[x.id], 0) / (3*c.rubric.length) * 100);
+  const before = profile(); saveResult(c.id, total);
+  s.selfResult = {total, level:levelOf(total)}; s.ups = levelUps(before, profile(), c);
+  $('#out').innerHTML = selfHtml(c, s); document.getElementById('self-res').scrollIntoView({behavior:'smooth', block:'start'}); track('self-score');
 }
 const LOADING = () => [L('Интервьюер читает ответ…','The interviewer is reading your answer…'), L('Сверяет с критериями…','Checking it against the rubric…'), L('Ищет, что можно усилить…','Looking for what to strengthen…'), L('Формулирует уточняющий вопрос…','Preparing a follow-up question…')];
 function startLoading(where){
@@ -592,7 +647,10 @@ document.addEventListener('click', e=>{
   if(a==='grade'){ grade(); return; }
   if(a==='followup'){ followup(); return; }
   if(a==='copyPrompt'){ copyPrompt(); return; }
-  if(a==='showRef'){ showRef(); return; }
+  if(a==='selfCheck'){ selfCheck(); return; }
+  if(a==='selfMark'){ selfMark(b); return; }
+  if(a==='selfScore'){ selfScore(); return; }
+  if(a==='selfRedo'){ const s = SESSION[CUR.id]; s.selfResult = null; $('#out').innerHTML = selfHtml(CUR, s); return; }
 });
 document.addEventListener('submit', async e=>{
   if(e.target.dataset.form!=='code') return;
