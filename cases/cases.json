@@ -129,8 +129,8 @@
     "en": "An app for daily commuters"
    },
    "company": {
-    "ru": "«Маршрут» — приложение общественного транспорта Чикаго: оплата проезда по QR, маршруты, время прибытия автобусов. 600 тысяч пользователей в месяц. Зарабатывает на комиссии с оплаты проезда и рекламе.",
-    "en": "Route — a public transport app in Chicago: QR fare payment, journey planning, bus arrival times. 600,000 monthly users. Revenue comes from a fee on fare payments and ads."
+    "ru": "«Маршрут» — приложение общественного транспорта Лос-Анджелеса: оплата проезда по QR, маршруты, время прибытия автобусов. 600 тысяч пользователей в месяц. Зарабатывает на комиссии с оплаты проезда и рекламе.",
+    "en": "Route — a public transport app in Los Angeles: QR fare payment, journey planning, bus arrival times. 600,000 monthly users. Revenue comes from a fee on fare payments and ads."
    },
    "prompt": {
     "ru": "<p>CEO хочет, чтобы люди открывали приложение чаще и не уходили к конкурентам. Он просит: «Придумай, что сделать для тех, кто каждый день ездит на работу на автобусе».</p><p><b>Что известно</b></p><ul><li>70% поездок — в будни, с 7 до 10 и с 17 до 20.</li><li>Треть пользователей открывает приложение только чтобы оплатить проезд и сразу закрывает.</li><li>Самая частая жалоба в отзывах: «Автобус на карте есть, а на остановке его нет».</li><li>Повлиять на расписание и количество автобусов «Маршрут» не может — это решает город.</li></ul>",
@@ -331,16 +331,16 @@
    "theme": "estimation",
    "minutes": 10,
    "title": {
-    "ru": "Рынок доставки еды в Чикаго",
-    "en": "Food delivery market in Chicago"
+    "ru": "Рынок доставки еды в Лос-Анджелесе",
+    "en": "Food delivery market in Los Angeles"
    },
    "company": {
-    "ru": "«Вилка» — стартап, который думает запустить в Чикаго доставку готовой еды из ресторанов.",
-    "en": "Fork — a startup thinking about launching restaurant food delivery in Chicago."
+    "ru": "«Вилка» — стартап, который думает запустить в Лос-Анджелесе доставку готовой еды из ресторанов.",
+    "en": "Fork — a startup thinking about launching restaurant food delivery in Los Angeles."
    },
    "prompt": {
-    "ru": "<p>Инвестор на встрече спрашивает: «Сколько жители Чикаго тратят на доставку готовой еды за год?» Интернета под рукой нет — нужно оценить вслух.</p><p><b>Что известно:</b> в Чикаго около 2,7 млн жителей (без пригородов).</p>",
-    "en": "<p>At a meeting, an investor asks: “How much do people in Chicago spend on restaurant food delivery per year?” You can’t look it up — you have to estimate out loud.</p><p><b>What we know:</b> Chicago has about 2.7 million people (city only, no suburbs).</p>"
+    "ru": "<p>Инвестор на встрече спрашивает: «Сколько жители Лос-Анджелеса тратят на доставку готовой еды за год?» Интернета под рукой нет — нужно оценить вслух.</p><p><b>Что известно:</b> в Лос-Анджелесе около 3,8 млн жителей (только сам город, без округа).</p>",
+    "en": "<p>At a meeting, an investor asks: “How much do people in Los Angeles spend on restaurant food delivery per year?” You can’t look it up — you have to estimate out loud.</p><p><b>What we know:</b> Los Angeles has about 3.8 million people (the city itself, not the county).</p>"
    },
    "task": {
     "ru": "Сделай оценку, проговаривая допущения. Важна логика, а не точное число.",
@@ -381,10 +381,10 @@
       "ru": "Допущения",
       "en": "Assumptions"
      },
-     "desc": "Each number is stated and justified (e.g. adults 18–60 ≈ 60% of the population, 35–45% of them order at least monthly, 2–4 orders a month, average order $30–40 with fees and tip). A result between roughly $300M and $2B a year is reasonable; being off by 10× signals broken assumptions. 3 = reasonable, justified, ranges where uncertain.",
+     "desc": "Each number is stated and justified (e.g. adults 18–60 ≈ 60% of the population, 35–45% of them order at least monthly, 2–4 orders a month, average order $30–40 with fees and tip). A result between roughly $400M and $3B a year is reasonable; being off by 10× signals broken assumptions. 3 = reasonable, justified, ranges where uncertain.",
      "good": {
-      "ru": "Каждое допущение называешь и обосновываешь, а итог попадает в разумные пределы — примерно $0,3–2 млрд в год.",
-      "en": "You state and justify every assumption, and the result lands in a sensible range — roughly $0.3–2B a year."
+      "ru": "Каждое допущение называешь и обосновываешь, а итог попадает в разумные пределы — примерно $0,4–3 млрд в год.",
+      "en": "You state and justify every assumption, and the result lands in a sensible range — roughly $0.4–3B a year."
      }
     },
     {
@@ -421,8 +421,8 @@
    ],
    "followup_hint": "Good follow-ups: which assumption moves the result most and how to check it cheaply; or how big the platform’s revenue (commission) would be compared with GMV.",
    "reference": {
-    "ru": "<p><b>Что считаем.</b> Деньги, которые жители платят за доставку готовой еды из ресторанов (через агрегаторы и собственную доставку ресторанов) за год — то есть оборот (GMV), а не выручку платформ. Продукты не считаю.</p><p><b>Формула.</b> Взрослые 18–60 × доля заказывающих × заказов в месяц × средний чек × 12.</p><p><b>Допущения.</b> Взрослых 18–60 — около 60% от 2,7 млн ≈ 1,6 млн. Хотя бы раз в месяц заказывают ~40% — в основном молодые и офисные, ≈ 650 тыс. человек. В среднем 3 заказа в месяц: кто-то берёт обед в офис каждый день, кто-то заказывает раз в выходные. Средний чек ~$35 с сервисным сбором и чаевыми.</p><p><b>Расчёт.</b> 650 тыс. × 3 × $35 ≈ $68 млн в месяц ≈ $820 млн в год.</p><p><b>Проверка с другой стороны.</b> Ресторанов и кафе с доставкой в Чикаго — порядка 5 000, в среднем по 15 заказов в день: 5 000 × 15 × 365 × $35 ≈ $960 млн. Две оценки близки — итог: $0,8–1 млрд в год.</p><p><b>Чувствительность.</b> Сильнее всего результат зависит от доли заказывающих и частоты. Дешевле всего проверить опросом на 300–500 человек или по открытым отчётам агрегаторов. Выручка платформ при комиссии 25–30% — около $200–300 млн.</p>",
-    "en": "<p><b>What I’m counting.</b> Money residents pay for restaurant food delivery (via aggregators and restaurants’ own delivery) per year — that’s GMV, not platform revenue. Groceries are excluded.</p><p><b>Formula.</b> Adults 18–60 × share who order × orders per month × average order × 12.</p><p><b>Assumptions.</b> Adults 18–60 are about 60% of 2.7M ≈ 1.6M. About 40% order at least monthly — mostly younger people and office workers — ≈ 650k people. 3 orders a month on average: some get lunch delivered to the office every day, others order once a weekend. Average order ~$35 with fees and tip.</p><p><b>Math.</b> 650k × 3 × $35 ≈ $68M a month ≈ $820M a year.</p><p><b>Cross-check from the supply side.</b> Roughly 5,000 restaurants and cafés in Chicago deliver, at ~15 orders a day each: 5,000 × 15 × 365 × $35 ≈ $960M. The two estimates are close, so my answer is $0.8–1B a year.</p><p><b>Sensitivity.</b> The share of people who order and their frequency move the result most. The cheapest check is a survey of 300–500 people or aggregators’ public reports. Platform revenue at a 25–30% commission would be about $200–300M.</p>"
+    "ru": "<p><b>Что считаем.</b> Деньги, которые жители платят за доставку готовой еды из ресторанов (через агрегаторы и собственную доставку ресторанов) за год — то есть оборот (GMV), а не выручку платформ. Продукты не считаю.</p><p><b>Формула.</b> Взрослые 18–60 × доля заказывающих × заказов в месяц × средний чек × 12.</p><p><b>Допущения.</b> Взрослых 18–60 — около 60% от 3,8 млн ≈ 2,3 млн. Хотя бы раз в месяц заказывают ~40% — в основном молодые и офисные, ≈ 900 тыс. человек. В среднем 3 заказа в месяц: кто-то берёт обед в офис каждый день, кто-то заказывает раз в выходные. Средний чек ~$35 с сервисным сбором и чаевыми.</p><p><b>Расчёт.</b> 900 тыс. × 3 × $35 ≈ $95 млн в месяц ≈ $1,1 млрд в год.</p><p><b>Проверка с другой стороны.</b> Ресторанов и кафе с доставкой в Лос-Анджелесе — порядка 7 000, в среднем по 15 заказов в день: 7 000 × 15 × 365 × $35 ≈ $1,3 млрд. Две оценки близки — итог: $1,1–1,3 млрд в год.</p><p><b>Чувствительность.</b> Сильнее всего результат зависит от доли заказывающих и частоты. Дешевле всего проверить опросом на 300–500 человек или по открытым отчётам агрегаторов. Выручка платформ при комиссии 25–30% — около $280–400 млн.</p>",
+    "en": "<p><b>What I’m counting.</b> Money residents pay for restaurant food delivery (via aggregators and restaurants’ own delivery) per year — that’s GMV, not platform revenue. Groceries are excluded.</p><p><b>Formula.</b> Adults 18–60 × share who order × orders per month × average order × 12.</p><p><b>Assumptions.</b> Adults 18–60 are about 60% of 3.8M ≈ 2.3M. About 40% order at least monthly — mostly younger people and office workers — ≈ 900k people. 3 orders a month on average: some get lunch delivered to the office every day, others order once a weekend. Average order ~$35 with fees and tip.</p><p><b>Math.</b> 900k × 3 × $35 ≈ $95M a month ≈ $1.1B a year.</p><p><b>Cross-check from the supply side.</b> Roughly 7,000 restaurants and cafés in Los Angeles deliver, at ~15 orders a day each: 7,000 × 15 × 365 × $35 ≈ $1.3B. The two estimates are close, so my answer is $1.1–1.3B a year.</p><p><b>Sensitivity.</b> The share of people who order and their frequency move the result most. The cheapest check is a survey of 300–500 people or aggregators’ public reports. Platform revenue at a 25–30% commission would be about $280–400M.</p>"
    }
   },
   {
