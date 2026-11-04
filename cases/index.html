@@ -208,16 +208,17 @@ textarea:focus{border-color:var(--accent); outline:none}
 </div>
 <script>
 /* ============ language, theme, analytics (same keys as the game) ============ */
-const LANGS = ['ru','en'], LANG_KEY = 'ritm-lang';
+const LANGS = ['ru','en','pt'], LANG_KEY = 'ritm-lang';
 let LANG = (()=>{
   try{
     const q = new URLSearchParams(location.search).get('lang'); if(LANGS.includes(q)) return q;
     const s = localStorage.getItem(LANG_KEY); if(LANGS.includes(s)) return s;
   }catch(e){}
-  return (navigator.languages||[navigator.language||'']).some(l=>/^(ru|uk|be|kk)/i.test(l)) ? 'ru' : 'en';
+  for(const l of (navigator.languages||[navigator.language||''])){ if(/^(ru|uk|be|kk)/i.test(l)) return 'ru'; if(/^pt/i.test(l)) return 'pt'; if(/^en/i.test(l)) return 'en'; }
+  return 'en';
 })();
-const L = (ru, en) => LANG==='en' ? en : ru;
-const T = o => o ? (o[LANG] ?? o.ru) : '';
+const L = (ru, en, pt) => LANG==='ru' ? ru : (LANG==='pt' && pt!==undefined ? pt : en);
+const T = o => o ? (o[LANG] ?? o.en ?? o.ru) : '';
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
@@ -271,7 +272,7 @@ async function call(action, body = {}){
 /* ============ data ============ */
 let DATA = null, STATUS = null, CUR = null;
 const SESSION = {};            // per case: {answer, result, reply, fres} for this visit
-const COMP_NAMES = {user:{ru:'Пользователь и дискавери', en:'Customer insight & discovery'}, strategy:{ru:'Стратегия и видение', en:'Strategy & vision'}, exec:{ru:'Приоритизация и execution', en:'Prioritization & execution'}, data:{ru:'Данные и эксперименты', en:'Data & experimentation'}, biz:{ru:'Бизнес и экономика продукта', en:'Business & product economics'}, stake:{ru:'Стейкхолдеры и коммуникации', en:'Stakeholders & communication'}, lead:{ru:'Лидерство и решения', en:'Leadership & decision-making'}};
+const COMP_NAMES = {user:{ru:'Пользователь и дискавери', en:'Customer insight & discovery', pt:'Usuário e discovery'}, strategy:{ru:'Стратегия и видение', en:'Strategy & vision', pt:'Estratégia e visão'}, exec:{ru:'Приоритизация и execution', en:'Prioritization & execution', pt:'Priorização e execução'}, data:{ru:'Данные и эксперименты', en:'Data & experimentation', pt:'Dados e experimentação'}, biz:{ru:'Бизнес и экономика продукта', en:'Business & product economics', pt:'Negócio e economia do produto'}, stake:{ru:'Стейкхолдеры и коммуникации', en:'Stakeholders & communication', pt:'Stakeholders e comunicação'}, lead:{ru:'Лидерство и решения', en:'Leadership & decision-making', pt:'Liderança e decisões'}};
 const LVL = ['Junior','Middle','Senior','Lead','Head'];
 const COMP_KEYS = ['user','strategy','exec','data','biz','stake','lead'];
 /* ============ competency profile from cases ============ */
@@ -295,12 +296,12 @@ function profile(){
 const lvlChip = i => `<span class="chip lvl l${i}">${LVL[i]}</span>`;
 function profileHtml(){
   const p = profile(), any = COMP_KEYS.some(k=>p[k]);
-  if(!any) return `<p class="hint" style="margin-top:14px">${L('Реши первый кейс — здесь появится твой профиль компетенций: те же 7, что в игре, от Junior до Head.','Solve your first case and your competency profile shows up here: the same 7 as in the game, from Junior to Head.')}</p>`;
-  return `<div class="section-h">${L('Твой профиль по кейсам','Your case profile')}</div>
-    <p class="hint" style="margin:0 0 10px">${L('Уровень — по лучшим баллам в кейсах на эту компетенцию. Для Lead нужно минимум 2 кейса, для Head — 3.','Levels come from your best scores in cases for each competency. Lead takes at least 2 cases, Head takes 3.')}</p>
+  if(!any) return `<p class="hint" style="margin-top:14px">${L('Реши первый кейс — здесь появится твой профиль компетенций: те же 7, что в игре, от Junior до Head.','Solve your first case and your competency profile shows up here: the same 7 as in the game, from Junior to Head.', 'Resolva o primeiro caso e o seu perfil de competências aparece aqui: as mesmas 7 do jogo, de Junior a Head.')}</p>`;
+  return `<div class="section-h">${L('Твой профиль по кейсам','Your case profile', 'Seu perfil nos casos')}</div>
+    <p class="hint" style="margin:0 0 10px">${L('Уровень — по лучшим баллам в кейсах на эту компетенцию. Для Lead нужно минимум 2 кейса, для Head — 3.','Levels come from your best scores in cases for each competency. Lead takes at least 2 cases, Head takes 3.', 'Os níveis vêm das suas melhores notas nos casos de cada competência. Lead exige pelo menos 2 casos, Head exige 3.')}</p>
     <div class="prof">${COMP_KEYS.map(k=>{ const r = p[k];
-      return r ? `<div class="prof-row"><b>${T(COMP_NAMES[k])} <span class="hint">${L(`кейсов: ${r.n}`, `${r.n} ${r.n===1?'case':'cases'}`)}</span></b>${lvlChip(r.level)}<div class="bar"><i style="width:${Math.round(r.score)}%"></i></div></div>`
-        : `<div class="prof-row muted"><b>${T(COMP_NAMES[k])}</b><span class="hint">${L('ещё не прокачивалась','not trained yet')}</span></div>`; }).join('')}</div>`;
+      return r ? `<div class="prof-row"><b>${T(COMP_NAMES[k])} <span class="hint">${L(`кейсов: ${r.n}`, `${r.n} ${r.n===1?'case':'cases'}`, `${r.n} ${r.n===1?'caso':'casos'}`)}</span></b>${lvlChip(r.level)}<div class="bar"><i style="width:${Math.round(r.score)}%"></i></div></div>`
+        : `<div class="prof-row muted"><b>${T(COMP_NAMES[k])}</b><span class="hint">${L('ещё не прокачивалась','not trained yet', 'ainda não treinada')}</span></div>`; }).join('')}</div>`;
 }
 // what changed for the case's competencies after a graded answer
 function levelUps(before, after, c){
@@ -308,12 +309,12 @@ function levelUps(before, after, c){
 }
 function levelUpHtml(ups){
   if(!ups) return '';
-  return `<div class="fb lvlup"><b class="t">${L('Прокачка компетенций','Competency progress')}</b><ul>${ups.map(u=>{
+  return `<div class="fb lvlup"><b class="t">${L('Прокачка компетенций','Competency progress', 'Progresso nas competências')}</b><ul>${ups.map(u=>{
     const name = T(COMP_NAMES[u.k]);
-    const what = u.from===null ? `<b>${LVL[u.to]}</b> ${L('— первый кейс','— first case')}`
+    const what = u.from===null ? `<b>${LVL[u.to]}</b> ${L('— первый кейс','— first case', '— primeiro caso')}`
       : u.to>u.from ? `${LVL[u.from]} → <b>${LVL[u.to]}</b> ↑`
-      : `${LVL[u.to]}${L(', без изменений',', no change')}`;
-    return `<li>${name}: ${what}${u.capped ? `<div class="hint">${L('Балл уже тянет выше — реши ещё кейс на эту компетенцию.','Your score is already higher — solve another case for this competency.')}</div>` : ''}</li>`; }).join('')}</ul></div>`;
+      : `${LVL[u.to]}${L(', без изменений',', no change', ', sem mudança')}`;
+    return `<li>${name}: ${what}${u.capped ? `<div class="hint">${L('Балл уже тянет выше — реши ещё кейс на эту компетенцию.','Your score is already higher — solve another case for this competency.', 'Sua nota já pede mais — resolva outro caso desta competência.')}</div>` : ''}</li>`; }).join('')}</ul></div>`;
 }
 const themeOf = id => DATA.themes.find(t=>t.id===id);
 const casesOf = th => DATA.cases.filter(c=>c.theme===th);
@@ -323,7 +324,7 @@ function saveResult(id, total){
   r[id] = {best:Math.max(p.best, total), last:total, n:p.n+1, at:Date.now()};
   store.set(RESULTS_KEY, r);
 }
-const levelChip = lv => `<span class="chip ${({Junior:'warn', Middle:'acc', Senior:'good', Lead:'xp'})[lv] || ''}">${L('уровень ответа','answer level')} ≈ ${lv}</span>`;
+const levelChip = lv => `<span class="chip ${({Junior:'warn', Middle:'acc', Senior:'good', Lead:'xp'})[lv] || ''}">${L('уровень ответа','answer level', 'nível da resposta')} ≈ ${lv}</span>`;
 
 // weakest competency of the last finished run in the game → a theme to start with
 function recommendation(){
@@ -339,82 +340,82 @@ function recommendation(){
 
 /* ============ render ============ */
 function renderHud(){
-  $('#hud').innerHTML = `<a class="brand" href="../${LANG==='en'?'?lang=en':''}"><b>${L('Ритм','Rhythm')}</b><span>${L('кейсы с собеседований','interview cases')}</span></a>
+  $('#hud').innerHTML = `<a class="brand" href="../${LANG==='ru'?'':'?lang=en'}"><b>${L('Ритм','Rhythm', 'Rhythm')}</b><span>${L('кейсы с собеседований','interview cases', 'casos de entrevista')}</span></a>
     <div class="hud-right">
-      <a class="hud-btn" href="../${LANG==='en'?'?lang=en':''}">${L('Игра','The game')}</a>
-      <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme') : L('Тёмная тема','Dark theme')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
-      <div class="lang" role="group" aria-label="${L('Язык','Language')}">${LANGS.map(l=>`<button data-act="lang" data-lang="${l}" aria-pressed="${l===LANG}">${l.toUpperCase()}</button>`).join('')}</div>
+      <a class="hud-btn" href="../${LANG==='ru'?'':'?lang=en'}">${L('Игра','The game', 'O jogo')}</a>
+      <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme', 'Tema claro') : L('Тёмная тема','Dark theme', 'Tema escuro')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
+      <div class="lang" role="group" aria-label="${L('Язык','Language', 'Idioma')}">${LANGS.map(l=>`<button data-act="lang" data-lang="${l}" aria-pressed="${l===LANG}">${l.toUpperCase()}</button>`).join('')}</div>
     </div>`;
-  document.documentElement.lang = LANG;
-  document.title = L('Ритм · кейсы PM','Rhythm · PM cases');
-  $('#foot').innerHTML = !GRADING ? L('Ответы никуда не отправляются: черновики хранятся только в этом браузере. Кейсы и компании вымышлены.','Your answers aren’t sent anywhere: drafts stay in this browser. Cases and companies are fictional.') : L('Ответы проверяет ИИ (Claude от Anthropic): текст ответа уходит на проверку и у нас не хранится. Не пиши в ответах личных данных. Кейсы и компании вымышлены.',
-    'Answers are graded by AI (Claude by Anthropic): your text is sent for grading and not stored by us. Don’t include personal data. Cases and companies are fictional.');
+  document.documentElement.lang = LANG==='pt' ? 'pt-BR' : LANG;
+  document.title = L('Ритм · кейсы PM','Rhythm · PM cases', 'Rhythm · casos de PM');
+  $('#foot').innerHTML = !GRADING ? L('Ответы никуда не отправляются: черновики хранятся только в этом браузере. Кейсы и компании вымышлены.','Your answers aren’t sent anywhere: drafts stay in this browser. Cases and companies are fictional.', 'Suas respostas não são enviadas a lugar nenhum: os rascunhos ficam neste navegador. Os casos e as empresas são fictícios.') : L('Ответы проверяет ИИ (Claude от Anthropic): текст ответа уходит на проверку и у нас не хранится. Не пиши в ответах личных данных. Кейсы и компании вымышлены.',
+    'Answers are graded by AI (Claude by Anthropic): your text is sent for grading and not stored by us. Don’t include personal data. Cases and companies are fictional.', 'As respostas são avaliadas por IA (Claude, da Anthropic): o texto é enviado para avaliação e não é armazenado por nós. Não inclua dados pessoais. Os casos e as empresas são fictícios.');
 }
 
 function statusLine(){
   if(!GRADING) return '';
   if(!STATUS) return '';
   if(STATUS.error==='code') return '';
-  if(STATUS.error) return `<div class="notice warn"><b class="t">${L('Проверка ответов сейчас недоступна','Answer grading is unavailable right now')}</b>${L('Кейсы можно читать и писать ответы — черновики сохраняются. Попробуй отправить чуть позже.','You can still read cases and write answers — drafts are saved. Try submitting a bit later.')}</div>`;
-  if(STATUS.owner || STATUS.limit===null) return `<p class="hint">${L('Бета · проверок без ограничений','Beta · unlimited checks')}</p>`;
+  if(STATUS.error) return `<div class="notice warn"><b class="t">${L('Проверка ответов сейчас недоступна','Answer grading is unavailable right now', 'A avaliação das respostas está indisponível agora')}</b>${L('Кейсы можно читать и писать ответы — черновики сохраняются. Попробуй отправить чуть позже.','You can still read cases and write answers — drafts are saved. Try submitting a bit later.', 'Você ainda pode ler os casos e escrever respostas — os rascunhos ficam salvos. Tente enviar um pouco mais tarde.')}</div>`;
+  if(STATUS.owner || STATUS.limit===null) return `<p class="hint">${L('Бета · проверок без ограничений','Beta · unlimited checks', 'Beta · avaliações ilimitadas')}</p>`;
   const left = Math.max(0, STATUS.limit - (STATUS.used||0));
-  return `<p class="hint">${L(`Бета · проверок на сегодня осталось: ${left} из ${STATUS.limit}`, `Beta · checks left today: ${left} of ${STATUS.limit}`)}</p>`;
+  return `<p class="hint">${L(`Бета · проверок на сегодня осталось: ${left} из ${STATUS.limit}`, `Beta · checks left today: ${left} of ${STATUS.limit}`, `Beta · avaliações restantes hoje: ${left} de ${STATUS.limit}`)}</p>`;
 }
 function gateCard(){
   if(!STATUS || STATUS.error!=='code') return '';
-  return `<div class="notice acc"><b class="t">${L('Закрытая бета','Private beta')}</b>${L('Чтобы отправлять ответы на проверку, введи код доступа.','Enter the access code to get your answers graded.')}
-    ${STATUS.given ? `<div class="err" style="margin-top:6px">${L('Код не подошёл.','That code didn’t work.')}</div>` : ''}
-    <form class="gate" data-form="code"><input id="code" autocomplete="off" placeholder="${L('Код доступа','Access code')}" aria-label="${L('Код доступа','Access code')}"><button class="btn primary">${L('Войти','Enter')}</button></form></div>`;
+  return `<div class="notice acc"><b class="t">${L('Закрытая бета','Private beta', 'Beta fechado')}</b>${L('Чтобы отправлять ответы на проверку, введи код доступа.','Enter the access code to get your answers graded.', 'Digite o código de acesso para ter suas respostas avaliadas.')}
+    ${STATUS.given ? `<div class="err" style="margin-top:6px">${L('Код не подошёл.','That code didn’t work.', 'Esse código não funcionou.')}</div>` : ''}
+    <form class="gate" data-form="code"><input id="code" autocomplete="off" placeholder="${L('Код доступа','Access code', 'Código de acesso')}" aria-label="${L('Код доступа','Access code', 'Código de acesso')}"><button class="btn primary">${L('Войти','Enter', 'Entrar')}</button></form></div>`;
 }
 
 function renderList(){
   CUR = null;
   const rec = recommendation(), res = results();
   $('#view').innerHTML = `<div class="fade">
-    <div class="eyebrow"><span>${casesCount(DATA.cases.length)} · ${L('10–15 минут на каждый','10–15 minutes each')}</span></div>
-    <h1 class="h-display">${L('Кейсы с собеседований продакта','PM interview cases')}</h1>
-    <p class="lead">${GRADING ? L('Пишешь ответ своими словами, как на собеседовании. ИИ-интервьюер оценивает его по критериям, задаёт уточняющий вопрос и показывает, как ответил бы сильный кандидат.','Write your answer in your own words, like in an interview. An AI interviewer grades it against a rubric, asks a follow-up question and shows how a strong candidate would answer.')
-      : L('Пишешь ответ своими словами, как на собеседовании. Игра проверяет его по критериям интервьюера: что ты учёл, а что упустил, — ставит балл и показывает ответ сильного кандидата. Решённые кейсы прокачивают те же 7 компетенций, что в игре.','Write your answer in your own words, like in an interview. The game checks it against an interviewer’s criteria — what you covered and what you missed — gives you a score and shows a strong candidate’s answer. Solved cases level up the same 7 competencies as the game.')}</p>
+    <div class="eyebrow"><span>${casesCount(DATA.cases.length)} · ${L('10–15 минут на каждый','10–15 minutes each', '10–15 minutos cada')}</span></div>
+    <h1 class="h-display">${L('Кейсы с собеседований продакта','PM interview cases', 'Casos de entrevista de PM')}</h1>
+    <p class="lead">${GRADING ? L('Пишешь ответ своими словами, как на собеседовании. ИИ-интервьюер оценивает его по критериям, задаёт уточняющий вопрос и показывает, как ответил бы сильный кандидат.','Write your answer in your own words, like in an interview. An AI interviewer grades it against a rubric, asks a follow-up question and shows how a strong candidate would answer.', 'Escreva sua resposta com as suas palavras, como numa entrevista. Um entrevistador de IA avalia pelos critérios, faz uma pergunta de follow-up e mostra como um candidato forte responderia.')
+      : L('Пишешь ответ своими словами, как на собеседовании. Игра проверяет его по критериям интервьюера: что ты учёл, а что упустил, — ставит балл и показывает ответ сильного кандидата. Решённые кейсы прокачивают те же 7 компетенций, что в игре.','Write your answer in your own words, like in an interview. The game checks it against an interviewer’s criteria — what you covered and what you missed — gives you a score and shows a strong candidate’s answer. Solved cases level up the same 7 competencies as the game.', 'Escreva sua resposta com as suas palavras, como numa entrevista. O jogo confere a resposta pelos critérios de um entrevistador — o que você cobriu e o que deixou de fora —, dá uma nota e mostra a resposta de um candidato forte. Os casos resolvidos evoluem as mesmas 7 competências do jogo.')}</p>
     ${statusLine()}${gateCard()}
-    ${rec ? `<div class="notice acc"><b class="t">${L('С чего начать','Where to start')}</b>${L(`В последней партии «Ритма» слабее всего вышла компетенция «${T(COMP_NAMES[rec.comp])}» (${LVL[rec.level]}). Попробуй кейс «${T(rec.c.title)}».`,`In your last Rhythm run, your weakest competency was “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Try the “${T(rec.c.title)}” case.`)}
-      <div style="margin-top:10px"><button class="btn primary" data-act="open" data-id="${rec.c.id}">${L('Открыть кейс','Open the case')}</button></div></div>` : ''}
+    ${rec ? `<div class="notice acc"><b class="t">${L('С чего начать','Where to start', 'Por onde começar')}</b>${L(`В последней партии «Ритма» слабее всего вышла компетенция «${T(COMP_NAMES[rec.comp])}» (${LVL[rec.level]}). Попробуй кейс «${T(rec.c.title)}».`,`In your last Rhythm run, your weakest competency was “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Try the “${T(rec.c.title)}” case.`, `Na sua última partida do Rhythm, a competência mais fraca foi “${T(COMP_NAMES[rec.comp])}” (${LVL[rec.level]}). Tente o caso “${T(rec.c.title)}”.`)}
+      <div style="margin-top:10px"><button class="btn primary" data-act="open" data-id="${rec.c.id}">${L('Открыть кейс','Open the case', 'Abrir o caso')}</button></div></div>` : ''}
     ${profileHtml()}
     ${DATA.themes.map(th=>{ const cs = casesOf(th.id);
       return `<div class="theme-h"><h3>${T(th.name)}</h3><span>${T(th.blurb)}</span></div>
       <div class="cards">${cs.length ? cs.map(c=>{ const r = res[c.id];
         return `<button class="ccard" data-act="open" data-id="${c.id}"><b>${T(c.title)}</b><span class="co">${escH(T(c.company).split(/ — | - /)[0])}</span>
-          <span class="meta"><span class="chip">~${c.minutes} ${L('мин','min')}</span>${r ? `<span class="chip ${r.best>=65?'good':'acc'}">${L('лучший','best')}: ${r.best} / 100</span>` : ''}</span></button>`; }).join('')
-        : `<div class="ccard soon"><b>${L('Скоро','Coming soon')}</b><span class="co">${L('Кейсы появятся к релизу','Cases arrive with the release')}</span></div>`}</div>`; }).join('')}
+          <span class="meta"><span class="chip">~${c.minutes} ${L('мин','min', 'min')}</span>${r ? `<span class="chip ${r.best>=65?'good':'acc'}">${L('лучший','best', 'melhor')}: ${r.best} / 100</span>` : ''}</span></button>`; }).join('')
+        : `<div class="ccard soon"><b>${L('Скоро','Coming soon', 'Em breve')}</b><span class="co">${L('Кейсы появятся к релизу','Cases arrive with the release', 'Os casos chegam com o lançamento')}</span></div>`}</div>`; }).join('')}
   </div>`;
 }
 
 const TIPS = () => L(
   '<ol><li>Уточни цель и допущения — одной-двумя фразами.</li><li>Проговори структуру ответа до деталей.</li><li>Используй цифры из условия, считай вслух.</li><li>Сравни варианты и выбери один — с причиной.</li><li>Закончи метрикой успеха и следующим шагом.</li></ol><p class="hint" style="margin:8px 0 0">Обычно хватает 150–400 слов. Списки и короткие абзацы — нормально.</p>',
-  '<ol><li>Clarify the goal and assumptions in a sentence or two.</li><li>Lay out the structure before the details.</li><li>Use the numbers from the brief and show your math.</li><li>Compare options and pick one, with a reason.</li><li>End with a success metric and the next step.</li></ol><p class="hint" style="margin:8px 0 0">150–400 words is usually enough. Lists and short paragraphs are fine.</p>');
+  '<ol><li>Clarify the goal and assumptions in a sentence or two.</li><li>Lay out the structure before the details.</li><li>Use the numbers from the brief and show your math.</li><li>Compare options and pick one, with a reason.</li><li>End with a success metric and the next step.</li></ol><p class="hint" style="margin:8px 0 0">150–400 words is usually enough. Lists and short paragraphs are fine.</p>', '<ol><li>Esclareça o objetivo e as premissas em uma ou duas frases.</li><li>Apresente a estrutura antes dos detalhes.</li><li>Use os números do enunciado e mostre as contas.</li><li>Compare opções e escolha uma, com o motivo.</li><li>Termine com uma métrica de sucesso e o próximo passo.</li></ol><p class="hint" style="margin:8px 0 0">De 150 a 400 palavras costuma bastar. Listas e parágrafos curtos funcionam bem.</p>');
 
 function renderCase(id){
   const c = DATA.cases.find(x=>x.id===id); if(!c){ renderList(); return; }
   CUR = c; const s = SESSION[id] || (SESSION[id] = {answer: store.get(DRAFT_KEY(id), '')});
   const th = themeOf(c.theme);
   $('#view').innerHTML = `<div class="fade">
-    <button class="link-btn back" data-act="list">← ${L('Все кейсы','All cases')}</button>
-    <div class="eyebrow"><span class="chip">${T(th.name)}</span><span>~${c.minutes} ${L('минут','minutes')}</span></div>
-    <p class="hint" style="margin:-6px 0 12px">${L('Прокачивает','Trains')}: ${caseComps(c).map(k=>T(COMP_NAMES[k])).join(' · ')}</p>
+    <button class="link-btn back" data-act="list">← ${L('Все кейсы','All cases', 'Todos os casos')}</button>
+    <div class="eyebrow"><span class="chip">${T(th.name)}</span><span>~${c.minutes} ${L('минут','minutes', 'minutos')}</span></div>
+    <p class="hint" style="margin:-6px 0 12px">${L('Прокачивает','Trains', 'Treina')}: ${caseComps(c).map(k=>T(COMP_NAMES[k])).join(' · ')}</p>
     <h2 class="h-display">${T(c.title)}</h2>
     <p class="company">${escH(T(c.company))}</p>
     <div class="prompt">${T(c.prompt)}</div>
     <div class="task">${escH(T(c.task))}</div>
-    <details class="more"><summary>${L('Подсказка','Hint')}</summary><div><p style="margin:0">${escH(T(c.hint))}</p></div></details>
-    <details class="more"><summary>${L('На что смотрит интервьюер','What the interviewer looks for')}</summary><div><ul>${c.rubric.map(r=>`<li>${escH(T(r.name))}</li>`).join('')}</ul></div></details>
-    <details class="more"><summary>${L('Как отвечать','How to answer')}</summary><div>${TIPS()}</div></details>
+    <details class="more"><summary>${L('Подсказка','Hint', 'Dica')}</summary><div><p style="margin:0">${escH(T(c.hint))}</p></div></details>
+    <details class="more"><summary>${L('На что смотрит интервьюер','What the interviewer looks for', 'O que o entrevistador observa')}</summary><div><ul>${c.rubric.map(r=>`<li>${escH(T(r.name))}</li>`).join('')}</ul></div></details>
+    <details class="more"><summary>${L('Как отвечать','How to answer', 'Como responder')}</summary><div>${TIPS()}</div></details>
     ${statusLine()}${gateCard()}
     <div class="answer-box">
-      <label for="answer">${L('Твой ответ','Your answer')}</label>
-      <textarea id="answer" placeholder="${L('Рассуждай так, как говорил бы вслух на собеседовании…','Reason the way you’d think out loud in an interview…')}">${escH(s.answer)}</textarea>
+      <label for="answer">${L('Твой ответ','Your answer', 'Sua resposta')}</label>
+      <textarea id="answer" placeholder="${L('Рассуждай так, как говорил бы вслух на собеседовании…','Reason the way you’d think out loud in an interview…', 'Raciocine como faria em voz alta numa entrevista…')}">${escH(s.answer)}</textarea>
       <div class="row"><span class="hint grow" id="count"></span><span class="err" id="err" aria-live="polite"></span>
-        ${GRADING ? `<button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again') : L('Отправить интервьюеру','Send to the interviewer')}</button>`
-          : `<button class="btn primary" data-act="autoCheck">${L('Проверить ответ','Check my answer')}</button><button class="btn" data-act="copyPrompt">${L('Проверить в своём ИИ','Check with your AI')}</button>`}</div>
-      ${GRADING ? '' : `<p class="hint" style="margin:8px 0 0">${L('Игра ищет в ответе ключевые пункты, которые ждёт интервьюер, и ставит оценку по каждому критерию. «Проверить в своём ИИ» скопирует кейс, критерии и ответ одним текстом для ChatGPT или Claude.','The game looks for the key points an interviewer expects and scores each criterion. “Check with your AI” copies the case, the rubric and your answer as one text for ChatGPT or Claude.')}</p>`}
+        ${GRADING ? `<button class="btn primary" data-act="grade" id="send">${s.result ? L('Отправить заново','Submit again', 'Enviar de novo') : L('Отправить интервьюеру','Send to the interviewer', 'Enviar ao entrevistador')}</button>`
+          : `<button class="btn primary" data-act="autoCheck">${L('Проверить ответ','Check my answer', 'Conferir minha resposta')}</button><button class="btn" data-act="copyPrompt">${L('Проверить в своём ИИ','Check with your AI', 'Conferir na sua IA')}</button>`}</div>
+      ${GRADING ? '' : `<p class="hint" style="margin:8px 0 0">${L('Игра ищет в ответе ключевые пункты, которые ждёт интервьюер, и ставит оценку по каждому критерию. «Проверить в своём ИИ» скопирует кейс, критерии и ответ одним текстом для ChatGPT или Claude.','The game looks for the key points an interviewer expects and scores each criterion. “Check with your AI” copies the case, the rubric and your answer as one text for ChatGPT or Claude.', 'O jogo procura na resposta os pontos-chave que o entrevistador espera e dá uma nota para cada critério. “Conferir na sua IA” copia o caso, os critérios e a sua resposta num único texto para o ChatGPT ou o Claude.')}</p>`}
     </div>
     <div id="out">${s.result ? resultHtml(c, s) : (s.auto ? autoHtml(c, s) : '')}</div>
   </div>`;
@@ -423,7 +424,7 @@ function renderCase(id){
 function updateCount(){
   const a = $('#answer'), n = $('#count'); if(!a || !n) return;
   const words = (a.value.trim().match(/\S+/g) || []).length;
-  n.textContent = L(`${words} слов · ${a.value.length} знаков`, `${words} words · ${a.value.length} characters`);
+  n.textContent = L(`${words} слов · ${a.value.length} знаков`, `${words} words · ${a.value.length} characters`, `${words} palavras · ${a.value.length} caracteres`);
 }
 
 function resultHtml(c, s){
@@ -436,28 +437,28 @@ function resultHtml(c, s){
     ${levelUpHtml(s.ups)}
     <div class="crit">${g.scores.map(sc=>`<div class="crit-row"><div class="crit-top"><b>${escH(names[sc.id] || sc.id)}</b><span class="dots s${sc.score}" aria-label="${sc.score} / 3"><i></i><i></i><i></i></span></div>
       <div class="bar"><i class="${sc.score>=3?'good':sc.score===2?'':sc.score===1?'warn':'bad'}" style="width:${Math.round(sc.score/3*100)}%"></i></div><p>${escH(sc.comment)}</p></div>`).join('')}</div>
-    ${list('good', L('Что получилось','What worked'), g.strengths)}
-    ${list('warn', L('Что добавить','What to add'), g.gaps)}
-    ${list('bad', L('Красные флаги','Red flags'), g.red_flags)}
-    ${g.follow_up ? `<div class="followup"><b class="t" style="display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">${L('Интервьюер уточняет','Follow-up question')}</b>
+    ${list('good', L('Что получилось','What worked', 'O que funcionou'), g.strengths)}
+    ${list('warn', L('Что добавить','What to add', 'O que acrescentar'), g.gaps)}
+    ${list('bad', L('Красные флаги','Red flags', 'Sinais de alerta'), g.red_flags)}
+    ${g.follow_up ? `<div class="followup"><b class="t" style="display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">${L('Интервьюер уточняет','Follow-up question', 'Pergunta de follow-up')}</b>
       <p class="q">${escH(g.follow_up)}</p>
-      ${f ? `<p><span class="dots s${f.score}" aria-label="${f.score} / 3"><i></i><i></i><i></i></span> ${escH(f.comment)}</p>${f.missing ? `<p class="hint" style="font-size:13px;margin:0">${L('Сильный ответ добавил бы: ','A strong reply would add: ')}${escH(f.missing)}</p>` : ''}`
-        : `<textarea class="short" id="reply" placeholder="${L('Ответь коротко, 2–5 предложений','Answer briefly, 2–5 sentences')}">${escH(s.reply || '')}</textarea>
-      <div class="row"><span class="err grow" id="ferr" aria-live="polite"></span><button class="btn" data-act="followup" id="fsend">${L('Ответить','Reply')}</button></div>`}</div>` : ''}
-    <details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>
-    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
+      ${f ? `<p><span class="dots s${f.score}" aria-label="${f.score} / 3"><i></i><i></i><i></i></span> ${escH(f.comment)}</p>${f.missing ? `<p class="hint" style="font-size:13px;margin:0">${L('Сильный ответ добавил бы: ','A strong reply would add: ', 'Uma resposta forte acrescentaria: ')}${escH(f.missing)}</p>` : ''}`
+        : `<textarea class="short" id="reply" placeholder="${L('Ответь коротко, 2–5 предложений','Answer briefly, 2–5 sentences', 'Responda em poucas palavras, 2–5 frases')}">${escH(s.reply || '')}</textarea>
+      <div class="row"><span class="err grow" id="ferr" aria-live="polite"></span><button class="btn" data-act="followup" id="fsend">${L('Ответить','Reply', 'Responder')}</button></div>`}</div>` : ''}
+    <details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer', 'Como um candidato forte responderia')}</summary><div class="reference">${T(c.reference)}</div></details>
+    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case', 'Próximo caso')} →</button>` : ''}<button class="btn ghost" data-act="list">${L('Все кейсы','All cases', 'Todos os casos')}</button></div>
   </div>`;
 }
-const casesCount = n => LANG==='en' ? `${n} ${n===1?'case':'cases'}` : `${n} ${n%10===1 && n%100!==11 ? 'кейс' : (n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 'кейса' : 'кейсов')}`;
+const casesCount = n => LANG==='pt' ? `${n} ${n===1?'caso':'casos'}` : LANG==='en' ? `${n} ${n===1?'case':'cases'}` : `${n} ${n%10===1 && n%100!==11 ? 'кейс' : (n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 'кейса' : 'кейсов')}`;
 const nextCase = c => { const i = DATA.cases.indexOf(c); return DATA.cases[(i+1) % DATA.cases.length] === c ? null : DATA.cases[(i+1) % DATA.cases.length]; };
 
 function errorText(r){
   const e = r.data && r.data.error;
-  if(e==='limit') return r.data.reason==='global' ? L('Бета сегодня перегружена — попробуй завтра.','The beta is at capacity today — try again tomorrow.') : L('На сегодня проверки закончились — приходи завтра.','You’ve used today’s checks — come back tomorrow.');
-  if(e==='length') return L('Ответ слишком короткий или слишком длинный.','The answer is too short or too long.');
-  if(e==='refusal') return L('Не получилось проверить этот ответ. Попробуй переформулировать.','Couldn’t grade this answer. Try rephrasing it.');
-  if(e==='code') return L('Нужен код доступа — он выше.','You need the access code — see above.');
-  return L('Сервер проверки не ответил. Попробуй ещё раз через минуту.','The grading server didn’t respond. Try again in a minute.');
+  if(e==='limit') return r.data.reason==='global' ? L('Бета сегодня перегружена — попробуй завтра.','The beta is at capacity today — try again tomorrow.', 'O beta está no limite hoje — tente de novo amanhã.') : L('На сегодня проверки закончились — приходи завтра.','You’ve used today’s checks — come back tomorrow.', 'Você já usou as avaliações de hoje — volte amanhã.');
+  if(e==='length') return L('Ответ слишком короткий или слишком длинный.','The answer is too short or too long.', 'A resposta está curta ou longa demais.');
+  if(e==='refusal') return L('Не получилось проверить этот ответ. Попробуй переформулировать.','Couldn’t grade this answer. Try rephrasing it.', 'Não foi possível avaliar esta resposta. Tente reformular.');
+  if(e==='code') return L('Нужен код доступа — он выше.','You need the access code — see above.', 'Você precisa do código de acesso — veja acima.');
+  return L('Сервер проверки не ответил. Попробуй ещё раз через минуту.','The grading server didn’t respond. Try again in a minute.', 'O servidor de avaliação não respondeu. Tente de novo em um minuto.');
 }
 // same rules as GRADER in supabase/functions/case-trainer/index.ts, as a plain prompt for any chat
 const htmlText = html => html
@@ -520,7 +521,32 @@ Reply in English:
 2. Total: sum of scores / ${c.rubric.length*3} × 100 and the answer level (85+ Lead, 65+ Senior, 45+ Middle, otherwise Junior).
 3. 1–3 strengths and the 1–4 most valuable improvements.
 4. Red flags, if any.
-5. One follow-up question an interviewer would ask next.`);
+5. One follow-up question an interviewer would ask next.`, `Você é um entrevistador de product management exigente, mas justo, numa empresa de ponta. Avalie a resposta escrita do candidato ao caso pelos critérios abaixo.
+
+Escala de cada critério: 0 = ausente ou errado; 1 = superficial ou genérico; 2 = sólido e específico para o caso, com lacunas; 3 = o que um PM sênior forte diria: específico, usa os números do caso, bem argumentado. O 3 precisa ser merecido. Avalie a substância, não o tamanho nem os jargões; um framework citado mas não aplicado ao caso vale no máximo 1. Erros de conta reduzem a nota.
+
+CASO: ${T(c.title)}
+${T(c.company)}
+
+${htmlText(T(c.prompt))}
+
+Tarefa: ${T(c.task)}
+
+CRITÉRIOS (descrições para o entrevistador, em inglês):
+${crit}
+
+SINAIS DE ALERTA:
+${flags}
+
+RESPOSTA DO CANDIDATO:
+${answer}
+
+Responda em português do Brasil, tratando o candidato por “você”:
+1. Para cada critério, uma nota de 0 a 3 e 1–2 frases sobre o que exatamente foi forte ou faltou.
+2. Total: soma das notas / ${c.rubric.length*3} × 100 e o nível da resposta (85+ Lead, 65+ Senior, 45+ Middle, abaixo disso Junior).
+3. 1–3 pontos fortes e as 1–4 melhorias mais valiosas.
+4. Sinais de alerta, se houver.
+5. Uma pergunta de follow-up que o entrevistador faria em seguida.`);
 }
 async function copyText(t){
   try{ await navigator.clipboard.writeText(t); return true; }
@@ -531,17 +557,18 @@ async function copyText(t){
 }
 async function copyPrompt(){
   const c = CUR, s = SESSION[c.id], err = $('#err'); s.answer = $('#answer').value;
-  if(s.answer.trim().length < 60){ err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to grade.'); return; }
+  if(s.answer.trim().length < 60){ err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to grade.', 'Escreva pelo menos dois parágrafos para que haja o que avaliar.'); return; }
   const ok = await copyText(gradePrompt(c, s.answer.trim()));
-  err.style.color = ok ? 'var(--good)' : ''; err.textContent = ok ? L('Скопировано — вставь в чат с ИИ.','Copied — paste it into an AI chat.') : L('Не удалось скопировать.','Couldn’t copy.');
+  err.style.color = ok ? 'var(--good)' : ''; err.textContent = ok ? L('Скопировано — вставь в чат с ИИ.','Copied — paste it into an AI chat.', 'Copiado — cole num chat de IA.') : L('Не удалось скопировать.','Couldn’t copy.', 'Não foi possível copiar.');
   track('copy');
 }
 /* ============ automatic check: key points per criterion ============ */
 // every criterion in cases.json has 2–4 key points with a regex ("re", unicode, case-insensitive).
 // A criterion scores round(3 × found / total); the case score is the share of the maximum, like the AI grading.
 const levelOf = t => t>=85 ? 'Lead' : t>=65 ? 'Senior' : t>=45 ? 'Middle' : 'Junior';
-const refBlock = c => `<details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer')}</summary><div class="reference">${T(c.reference)}</div></details>`;
-const normAnswer = t => t.toLowerCase().replace(/ё/g,'е').replace(/[\u00a0\u202f]/g,' ').replace(/\u2212/g,'-');
+const refBlock = c => `<details class="more" open><summary>${L('Как ответил бы сильный кандидат','How a strong candidate would answer', 'Como um candidato forte responderia')}</summary><div class="reference">${T(c.reference)}</div></details>`;
+const normAnswer = t => t.toLowerCase().replace(/ё/g,'е').replace(/[\u00a0\u202f]/g,' ').replace(/\u2212/g,'-')
+  .replace(/[àáâãä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o').replace(/[ùúûü]/g,'u').replace(/ç/g,'c').replace(/ñ/g,'n');
 const RE_CACHE = new Map();
 const pointRe = p => { if(!RE_CACHE.has(p.re)) RE_CACHE.set(p.re, new RegExp(p.re, 'ius')); return RE_CACHE.get(p.re); };
 function autoGrade(c, answer){
@@ -559,24 +586,24 @@ function autoHtml(c, s){
     <div class="crit">${c.rubric.map(r=>{ const x = byId[r.id];
       return `<div class="crit-row"><div class="crit-top"><b>${escH(T(r.name))}</b><span class="dots s${x.score}" aria-label="${x.score} / 3"><i></i><i></i><i></i></span></div>
         <ul class="pts">${r.points.map((p,i)=>`<li class="${x.found[i]?'':'miss'}">${escH(T(p.label))}</li>`).join('')}</ul></div>`; }).join('')}</div>
-    <p class="hint">${L('Проверка ищет в ответе ключевые пункты, а логику целиком не оценивает. Сверь своё рассуждение с ответом сильного кандидата ниже.','The check looks for key points in your answer; it doesn’t judge the whole line of reasoning. Compare your thinking with the strong answer below.')}</p>
-    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case')} →</button>` : ''}<button class="btn" data-act="editAnswer">${L('Улучшить ответ','Improve my answer')}</button><button class="btn ghost" data-act="list">${L('Все кейсы','All cases')}</button></div>
+    <p class="hint">${L('Проверка ищет в ответе ключевые пункты, а логику целиком не оценивает. Сверь своё рассуждение с ответом сильного кандидата ниже.','The check looks for key points in your answer; it doesn’t judge the whole line of reasoning. Compare your thinking with the strong answer below.', 'A conferência procura pontos-chave na sua resposta; ela não julga a linha de raciocínio inteira. Compare seu raciocínio com a resposta forte abaixo.')}</p>
+    <div class="row">${nextCase(c) ? `<button class="btn primary" data-act="open" data-id="${nextCase(c).id}">${L('Следующий кейс','Next case', 'Próximo caso')} →</button>` : ''}<button class="btn" data-act="editAnswer">${L('Улучшить ответ','Improve my answer', 'Melhorar minha resposta')}</button><button class="btn ghost" data-act="list">${L('Все кейсы','All cases', 'Todos os casos')}</button></div>
   </div>${refBlock(c)}`;
 }
 function autoCheck(){
   const c = CUR, s = SESSION[c.id], err = $('#err'); s.answer = $('#answer').value; store.set(DRAFT_KEY(c.id), s.answer);
-  if(s.answer.trim().length < 60){ err.style.color = ''; err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to check.'); return; }
+  if(s.answer.trim().length < 60){ err.style.color = ''; err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to check.', 'Escreva pelo menos dois parágrafos para que haja o que conferir.'); return; }
   err.textContent = '';
   const before = profile(); s.auto = autoGrade(c, s.answer); saveResult(c.id, s.auto.total); s.ups = levelUps(before, profile(), c);
   $('#out').innerHTML = autoHtml(c, s); document.getElementById('auto-res').scrollIntoView({behavior:'smooth', block:'start'}); track('auto-check');
 }
-const LOADING = () => [L('Интервьюер читает ответ…','The interviewer is reading your answer…'), L('Сверяет с критериями…','Checking it against the rubric…'), L('Ищет, что можно усилить…','Looking for what to strengthen…'), L('Формулирует уточняющий вопрос…','Preparing a follow-up question…')];
+const LOADING = () => [L('Интервьюер читает ответ…','The interviewer is reading your answer…', 'O entrevistador está lendo sua resposta…'), L('Сверяет с критериями…','Checking it against the rubric…', 'Comparando com os critérios…'), L('Ищет, что можно усилить…','Looking for what to strengthen…', 'Procurando o que fortalecer…'), L('Формулирует уточняющий вопрос…','Preparing a follow-up question…', 'Preparando uma pergunta de follow-up…')];
 function startLoading(where){
   const box = document.createElement('div'); box.className = 'loading';
   box.innerHTML = `<span class="spin"></span><span class="lt"></span><span class="hint num" style="margin-left:auto"></span>`;
   where.appendChild(box);
   const msgs = LOADING(), t0 = Date.now(); let i = 0;
-  const tick = () => { box.querySelector('.lt').textContent = msgs[Math.min(Math.floor((Date.now()-t0)/6000), msgs.length-1)]; box.querySelector('.num').textContent = Math.round((Date.now()-t0)/1000) + L(' с',' s'); };
+  const tick = () => { box.querySelector('.lt').textContent = msgs[Math.min(Math.floor((Date.now()-t0)/6000), msgs.length-1)]; box.querySelector('.num').textContent = Math.round((Date.now()-t0)/1000) + L(' с',' s', ' s'); };
   tick(); const h = setInterval(tick, 1000);
   return () => { clearInterval(h); box.remove(); };
 }
@@ -584,8 +611,8 @@ function startLoading(where){
 async function grade(){
   const c = CUR, s = SESSION[c.id], a = $('#answer'), err = $('#err'), btn = $('#send');
   s.answer = a.value; store.set(DRAFT_KEY(c.id), s.answer);
-  if(s.answer.trim().length < 60){ err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to grade.'); return; }
-  if(s.answer.length > 6000){ err.textContent = L('Слишком длинно: уложись в 6000 знаков.','Too long: keep it under 6,000 characters.'); return; }
+  if(s.answer.trim().length < 60){ err.textContent = L('Напиши хотя бы пару абзацев — так интервьюеру есть что оценить.','Write at least a couple of paragraphs so there’s something to grade.', 'Escreva pelo menos dois parágrafos para que haja o que avaliar.'); return; }
+  if(s.answer.length > 6000){ err.textContent = L('Слишком длинно: уложись в 6000 знаков.','Too long: keep it under 6,000 characters.', 'Longo demais: mantenha abaixo de 6.000 caracteres.'); return; }
   err.textContent = ''; btn.disabled = true; a.readOnly = true;
   const stop = startLoading($('.answer-box')); track('submit');
   const r = await call('grade', {caseId:c.id, answer:s.answer});
@@ -604,7 +631,7 @@ async function grade(){
 async function followup(){
   const c = CUR, s = SESSION[c.id], ta = $('#reply'), err = $('#ferr'), btn = $('#fsend');
   s.reply = ta.value;
-  if(s.reply.trim().length < 20){ err.textContent = L('Ответь хотя бы парой предложений.','Reply with at least a couple of sentences.'); return; }
+  if(s.reply.trim().length < 20){ err.textContent = L('Ответь хотя бы парой предложений.','Reply with at least a couple of sentences.', 'Responda com pelo menos duas frases.'); return; }
   err.textContent = ''; btn.disabled = true; ta.readOnly = true;
   const stop = startLoading(ta.parentElement);
   const r = await call('followup', {caseId:c.id, answer:s.answer, question:s.result.follow_up, reply:s.reply});
@@ -651,7 +678,7 @@ window.addEventListener('hashchange', route);
 (async ()=>{
   renderHud();
   try{ DATA = await (await fetch('cases.json', {cache:'no-cache'})).json(); }
-  catch(e){ $('#view').innerHTML = `<p>${L('Не удалось загрузить кейсы. Обнови страницу.','Couldn’t load the cases. Reload the page.')}</p>`; return; }
+  catch(e){ $('#view').innerHTML = `<p>${L('Не удалось загрузить кейсы. Обнови страницу.','Couldn’t load the cases. Reload the page.', 'Não foi possível carregar os casos. Recarregue a página.')}</p>`; return; }
   route();
   if(GRADING){ await refreshStatus(); route(); }
 })();
