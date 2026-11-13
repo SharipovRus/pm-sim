@@ -46,7 +46,7 @@
    "blurb": {
     "ru": "Оценить размер рынка без интернета: структура, допущения, проверка.",
     "en": "Size a market without Google: structure, assumptions, sanity check.",
-    "pt": "Dimensionar um mercado sem Google: estrutura, premissas, checagem."
+    "pt": "Dimensionar um mercado sem Google: estrutura, premissas e checagem de sanidade."
    }
   },
   {
@@ -110,7 +110,7 @@
    "blurb": {
     "ru": "LTV, CAC, цены и подписки: посчитать и принять решение.",
     "en": "LTV, CAC, pricing and subscriptions: do the math, make the call.",
-    "pt": "LTV, CAC, preço e assinaturas: fazer as contas e decidir."
+    "pt": "LTV, CAC, precificação e assinaturas: fazer as contas e decidir."
    }
   },
   {
@@ -148,17 +148,17 @@
    "company": {
     "ru": "«Маршрут» — приложение общественного транспорта Лос-Анджелеса: оплата проезда по QR, маршруты, время прибытия автобусов. 600 тысяч пользователей в месяц. Зарабатывает на комиссии с оплаты проезда и рекламе.",
     "en": "Route — a public transport app in Los Angeles: QR fare payment, journey planning, bus arrival times. 600,000 monthly users. Revenue comes from a fee on fare payments and ads.",
-    "pt": "Rota — app de transporte público de Los Angeles: pagamento da passagem por QR, rotas e horário de chegada dos ônibus. 600 mil usuários por mês. Ganha com uma taxa sobre o pagamento das passagens e com anúncios."
+    "pt": "Rota — app de transporte público de Los Angeles: pagamento da passagem por QR Code, planejamento de trajeto e previsão de chegada dos ônibus. 600 mil usuários por mês. A receita vem de uma taxa cobrada no pagamento das passagens e de anúncios."
    },
    "prompt": {
     "ru": "<p>CEO хочет, чтобы люди открывали приложение чаще и не уходили к конкурентам. Он просит: «Придумай, что сделать для тех, кто каждый день ездит на работу на автобусе».</p><p><b>Что известно</b></p><ul><li>70% поездок — в будни, с 7 до 10 и с 17 до 20.</li><li>Треть пользователей открывает приложение только чтобы оплатить проезд и сразу закрывает.</li><li>Самая частая жалоба в отзывах: «Автобус на карте есть, а на остановке его нет».</li><li>Повлиять на расписание и количество автобусов «Маршрут» не может — это решает город.</li></ul>",
     "en": "<p>The CEO wants people to open the app more often and not switch to competitors. He asks you: “Come up with something for people who take the bus to work every day.”</p><p><b>What we know</b></p><ul><li>70% of trips happen on weekdays, 7–10 am and 5–8 pm.</li><li>A third of users open the app only to pay the fare and close it right away.</li><li>The most common complaint in reviews: “The bus is on the map, but not at the stop.”</li><li>Route can’t change schedules or the number of buses — the city decides that.</li></ul>",
-    "pt": "<p>O CEO quer que as pessoas abram o app com mais frequência e não migrem para a concorrência. Ele pede: “Pense em algo para quem pega ônibus para ir ao trabalho todos os dias.”</p><p><b>O que sabemos</b></p><ul><li>70% das viagens acontecem em dias úteis, das 7h às 10h e das 17h às 20h.</li><li>Um terço dos usuários abre o app só para pagar a passagem e fecha logo em seguida.</li><li>A reclamação mais comum nas avaliações: “O ônibus aparece no mapa, mas não está no ponto.”</li><li>A Rota não pode mudar horários nem a quantidade de ônibus — isso é decisão da cidade.</li></ul>"
+    "pt": "<p>O CEO quer que as pessoas abram o app com mais frequência e não migrem para a concorrência. Ele pede a você: “Crie algo para quem pega ônibus para ir ao trabalho todos os dias.”</p><p><b>O que sabemos</b></p><ul><li>70% das viagens acontecem em dias úteis, das 7h às 10h e das 17h às 20h.</li><li>Um terço dos usuários abre o app só para pagar a passagem e fecha logo em seguida.</li><li>A reclamação mais comum nas avaliações: “O ônibus aparece no mapa, mas não está no ponto.”</li><li>A Rota não pode mudar horários nem a quantidade de ônibus — isso é decisão da prefeitura.</li></ul>"
    },
    "task": {
     "ru": "Предложи решение. Рассуждай как на продуктовом собеседовании: какая цель, для кого, какую проблему решаешь, какие есть варианты, что выбираешь и как поймёшь, что сработало.",
-    "en": "Propose a solution. Reason like in a product interview: what’s the goal, who it’s for, which problem you solve, what the options are, what you pick and how you’ll know it worked.",
-    "pt": "Proponha uma solução. Raciocine como numa entrevista de produto: qual é o objetivo, para quem, que problema você resolve, quais são as opções, o que você escolhe e como vai saber que funcionou."
+    "en": "Propose a solution. Think it through as you would in a product interview: what’s the goal, who it’s for, which problem you solve, what the options are, which one you pick and how you’ll know it worked.",
+    "pt": "Proponha uma solução. Estruture seu raciocínio como faria numa entrevista de produto: qual é o objetivo, para quem é, que problema resolve, quais são as opções, qual você escolhe e como vai saber se funcionou."
    },
    "hint": {
     "ru": "Не начинай с фич. Сначала цель и конкретный сегмент, потом боли — в условии уже есть главная жалоба.",
@@ -405,12 +405,12 @@
    "company": {
     "ru": "«Корзинка» — доставка продуктов за 30 минут в Берлине, Мюнхене и Гамбурге.",
     "en": "Basket — 30-minute grocery delivery in Berlin, Munich and Hamburg.",
-    "pt": "Cesta — entrega de mercado em 30 minutos em Berlim, Munique e Hamburgo."
+    "pt": "Cesta — app de entrega de compras de supermercado em até 30 minutos em Berlim, Munique e Hamburgo."
    },
    "prompt": {
     "ru": "<p>Понедельник, утро. Аналитик пишет в общий чат: «Заказы за прошлую неделю упали на 12% к позапрошлой». CEO просит к обеду понять, что случилось, и предложить план.</p><p><b>Заказы по платформам</b></p><div class='task-box'><table class='t'><thead><tr><th>Платформа</th><th>Позапрошлая неделя</th><th>Прошлая неделя</th><th>Изменение</th></tr></thead><tbody><tr><td>iOS</td><td>38 000</td><td>36 900</td><td>−3%</td></tr><tr><td>Android</td><td>40 000</td><td>31 400</td><td>−22%</td></tr><tr><td>Веб</td><td>6 000</td><td>5 600</td><td>−7%</td></tr><tr><td><b>Всего</b></td><td>84 000</td><td>73 900</td><td>−12%</td></tr></tbody></table></div><p><b>Заказы по городам</b></p><div class='task-box'><table class='t'><thead><tr><th>Город</th><th>Позапрошлая неделя</th><th>Прошлая неделя</th><th>Изменение</th></tr></thead><tbody><tr><td>Берлин</td><td>46 000</td><td>41 800</td><td>−9%</td></tr><tr><td>Мюнхен</td><td>26 000</td><td>23 600</td><td>−9%</td></tr><tr><td>Гамбург</td><td>12 000</td><td>8 500</td><td>−29%</td></tr><tr><td><b>Всего</b></td><td>84 000</td><td>73 900</td><td>−12%</td></tr></tbody></table></div><p><b>Что происходило на неделе</b></p><ul><li>Во вторник вышла версия Android-приложения 5.2 с новым экраном оплаты.</li><li>В среду в Гамбурге запустился конкурент: −50% на первый заказ.</li><li>Маркетинг на 10% сократил бюджет на рекламу в Мюнхене.</li><li>В субботу в Берлине весь день шёл дождь.</li></ul>",
     "en": "<p>Monday morning. An analyst posts in the team chat: “Orders last week were down 12% week over week.” The CEO wants to know by lunch what happened and what you plan to do.</p><p><b>Orders by platform</b></p><div class='task-box'><table class='t'><thead><tr><th>Platform</th><th>Week before</th><th>Last week</th><th>Change</th></tr></thead><tbody><tr><td>iOS</td><td>38,000</td><td>36,900</td><td>−3%</td></tr><tr><td>Android</td><td>40,000</td><td>31,400</td><td>−22%</td></tr><tr><td>Web</td><td>6,000</td><td>5,600</td><td>−7%</td></tr><tr><td><b>Total</b></td><td>84,000</td><td>73,900</td><td>−12%</td></tr></tbody></table></div><p><b>Orders by city</b></p><div class='task-box'><table class='t'><thead><tr><th>City</th><th>Week before</th><th>Last week</th><th>Change</th></tr></thead><tbody><tr><td>Berlin</td><td>46,000</td><td>41,800</td><td>−9%</td></tr><tr><td>Munich</td><td>26,000</td><td>23,600</td><td>−9%</td></tr><tr><td>Hamburg</td><td>12,000</td><td>8,500</td><td>−29%</td></tr><tr><td><b>Total</b></td><td>84,000</td><td>73,900</td><td>−12%</td></tr></tbody></table></div><p><b>What happened during the week</b></p><ul><li>On Tuesday, Android app version 5.2 shipped with a redesigned payment screen.</li><li>On Wednesday, a competitor launched in Hamburg with 50% off the first order.</li><li>Marketing cut the ad budget in Munich by 10%.</li><li>On Saturday it rained all day in Berlin.</li></ul>",
-    "pt": "<p>Segunda de manhã. Um analista escreve no chat do time: “Os pedidos da semana passada caíram 12% em relação à semana anterior.” O CEO quer entender até o almoço o que aconteceu e qual é o seu plano.</p><p><b>Pedidos por plataforma</b></p><div class='task-box'><table class='t'><thead><tr><th>Plataforma</th><th>Semana anterior</th><th>Semana passada</th><th>Variação</th></tr></thead><tbody><tr><td>iOS</td><td>38.000</td><td>36.900</td><td>−3%</td></tr><tr><td>Android</td><td>40.000</td><td>31.400</td><td>−22%</td></tr><tr><td>Web</td><td>6.000</td><td>5.600</td><td>−7%</td></tr><tr><td><b>Total</b></td><td>84.000</td><td>73.900</td><td>−12%</td></tr></tbody></table></div><p><b>Pedidos por cidade</b></p><div class='task-box'><table class='t'><thead><tr><th>Cidade</th><th>Semana anterior</th><th>Semana passada</th><th>Variação</th></tr></thead><tbody><tr><td>Berlim</td><td>46.000</td><td>41.800</td><td>−9%</td></tr><tr><td>Munique</td><td>26.000</td><td>23.600</td><td>−9%</td></tr><tr><td>Hamburgo</td><td>12.000</td><td>8.500</td><td>−29%</td></tr><tr><td><b>Total</b></td><td>84.000</td><td>73.900</td><td>−12%</td></tr></tbody></table></div><p><b>O que aconteceu na semana</b></p><ul><li>Na terça, saiu a versão 5.2 do app Android com uma nova tela de pagamento.</li><li>Na quarta, um concorrente lançou em Hamburgo com 50% de desconto no primeiro pedido.</li><li>O marketing cortou 10% do orçamento de anúncios em Munique.</li><li>No sábado, choveu o dia inteiro em Berlim.</li></ul>"
+    "pt": "<p>Segunda de manhã. Um analista escreve no chat do time: “Os pedidos da semana passada caíram 12% em relação à semana anterior.” O CEO quer entender até o almoço o que aconteceu e qual é o seu plano.</p><p><b>Pedidos por plataforma</b></p><div class='task-box'><table class='t'><thead><tr><th>Plataforma</th><th>Semana retrasada</th><th>Semana passada</th><th>Variação</th></tr></thead><tbody><tr><td>iOS</td><td>38.000</td><td>36.900</td><td>−3%</td></tr><tr><td>Android</td><td>40.000</td><td>31.400</td><td>−22%</td></tr><tr><td>Web</td><td>6.000</td><td>5.600</td><td>−7%</td></tr><tr><td><b>Total</b></td><td>84.000</td><td>73.900</td><td>−12%</td></tr></tbody></table></div><p><b>Pedidos por cidade</b></p><div class='task-box'><table class='t'><thead><tr><th>Cidade</th><th>Semana retrasada</th><th>Semana passada</th><th>Variação</th></tr></thead><tbody><tr><td>Berlim</td><td>46.000</td><td>41.800</td><td>−9%</td></tr><tr><td>Munique</td><td>26.000</td><td>23.600</td><td>−9%</td></tr><tr><td>Hamburgo</td><td>12.000</td><td>8.500</td><td>−29%</td></tr><tr><td><b>Total</b></td><td>84.000</td><td>73.900</td><td>−12%</td></tr></tbody></table></div><p><b>O que aconteceu na semana</b></p><ul><li>Na terça, saiu a versão 5.2 do app Android com uma nova tela de pagamento.</li><li>Na quarta, um concorrente chegou a Hamburgo oferecendo 50% de desconto no primeiro pedido.</li><li>O marketing cortou 10% do orçamento de anúncios em Munique.</li><li>No sábado, choveu o dia inteiro em Berlim.</li></ul>"
    },
    "task": {
     "ru": "Разберись, что произошло и что делать в первую очередь. Отвечай так, как рассуждал бы вслух на собеседовании: с чего начнёшь, какие гипотезы, как их проверишь и что сделаешь.",
@@ -420,7 +420,7 @@
    "hint": {
     "ru": "Сначала убедись, что падение настоящее, потом разложи его по сегментам — таблиц для этого хватает. Не все события недели одинаково важны.",
     "en": "First make sure the drop is real, then break it down by segment — the tables are enough for that. Not every event of the week matters equally.",
-    "pt": "Primeiro confirme que a queda é real, depois decomponha por segmento — as tabelas bastam para isso. Nem todo acontecimento da semana importa igual."
+    "pt": "Primeiro confirme que a queda é real, depois decomponha por segmento — as tabelas bastam para isso. Nem todo acontecimento da semana tem o mesmo peso."
    },
    "rubric": [
     {
@@ -428,7 +428,7 @@
      "name": {
       "ru": "Проверка данных",
       "en": "Sanity-check the data",
-      "pt": "Checar os dados"
+      "pt": "Validar os dados"
      },
      "desc": "Before diagnosing, checks that the drop is real: tracking or analytics changes (the Android 5.2 release could have broken event tracking), what counts as an order (placed vs delivered), seasonality and the same week last year. 3 = explicitly checks tracking (ideally the Android release) and compares with backend or payment data or seasonality. 0 = takes the number at face value.",
      "good": {
@@ -588,7 +588,7 @@
      "name": {
       "ru": "Действия",
       "en": "Actions",
-      "pt": "Ações"
+      "pt": "Plano de ação"
      },
      "desc": "Prioritized actions: immediately stop or roll back the 5.2 rollout or switch the old payment screen back via a feature flag or hotfix; tell the CEO the sizing; set a target (e.g. Android conversion back to the 5.1 level within 48 hours). For Hamburg: do not blindly match −50% everywhere, check unit economics, protect loyal customers with targeted offers, monitor their retention. Bonus: staged rollouts with an alert on payment conversion. 3 = prioritized actions with a success metric or timeline and a guardrail.",
      "good": {
@@ -662,7 +662,7 @@
    "company": {
     "ru": "«Вилка» — стартап, который думает запустить в Лос-Анджелесе доставку готовой еды из ресторанов.",
     "en": "Fork — a startup thinking about launching restaurant food delivery in Los Angeles.",
-    "pt": "Garfo — startup que pensa em lançar delivery de comida de restaurantes em Los Angeles."
+    "pt": "Garfo — startup que avalia lançar um serviço de delivery de comida de restaurantes em Los Angeles."
    },
    "prompt": {
     "ru": "<p>Инвестор на встрече спрашивает: «Сколько жители Лос-Анджелеса тратят на доставку готовой еды за год?» Интернета под рукой нет — нужно оценить вслух.</p><p><b>Что известно:</b> в Лос-Анджелесе около 3,8 млн жителей (только сам город, без округа).</p>",
@@ -677,7 +677,7 @@
    "hint": {
     "ru": "Определи, что именно считаешь, собери формулу из множителей и проверь результат вторым способом.",
     "en": "Define exactly what you’re counting, build a formula from factors, and check the result a second way.",
-    "pt": "Defina exatamente o que você está contando, monte uma fórmula com fatores e confira o resultado de um segundo jeito."
+    "pt": "Defina exatamente o que você está medindo, monte uma fórmula a partir de fatores e valide o resultado por um segundo caminho."
    },
    "rubric": [
     {
@@ -685,7 +685,7 @@
      "name": {
       "ru": "Что считаем",
       "en": "Define the market",
-      "pt": "O que contamos"
+      "pt": "Definição do mercado"
      },
      "desc": "Clarifies scope: restaurant food via delivery apps (and restaurants’ own delivery?), excludes groceries, period = one year, currency; distinguishes what customers pay (GMV) from platform revenue (commission). 3 = explicit definition including GMV vs platform revenue. 0 = no definition.",
      "good": {
@@ -805,7 +805,7 @@
      "name": {
       "ru": "Расчёт",
       "en": "Math",
-      "pt": "Contas"
+      "pt": "Cálculos"
      },
      "desc": "Arithmetic is correct and easy to follow, units are consistent, rounding is sensible. 3 = correct and readable. 0 = an order-of-magnitude error.",
      "good": {
@@ -837,7 +837,7 @@
      "name": {
       "ru": "Проверка",
       "en": "Sanity check",
-      "pt": "Checagem"
+      "pt": "Checagem de sanidade"
      },
      "desc": "Cross-checks with a second method (supply side: restaurants with delivery × orders a day × 365 × check; or couriers × deliveries a day; or share of household food spending), gives a range and names the most sensitive assumption. 3 = second method + range + sensitivity.",
      "good": {
@@ -903,12 +903,12 @@
    "company": {
     "ru": "«Корзинка» — доставка продуктов за 30 минут в Берлине, Мюнхене и Гамбурге. Берлин недавно вышел в ноль, два других города пока убыточны.",
     "en": "Basket — 30-minute grocery delivery in Berlin, Munich and Hamburg. Berlin has just broken even; the other two cities still lose money.",
-    "pt": "Cesta — entrega de mercado em 30 minutos em Berlim, Munique e Hamburgo. Berlim acabou de chegar ao break-even; as outras duas cidades ainda dão prejuízo."
+    "pt": "Cesta — app de entrega de compras de supermercado em até 30 minutos em Berlim, Munique e Hamburgo. Berlim acabou de chegar ao break-even; as outras duas cidades ainda dão prejuízo."
    },
    "prompt": {
     "ru": "<p>Инвестор на совете директоров: «Варшава — быстрорастущий город почти на 2 миллиона человек, и сильных игроков в быстрой доставке там нет. Запускайтесь до конца года — это будет главная история для следующего раунда». CEO просит тебя подготовить рекомендацию.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Берлин</th><th>Варшава</th></tr></thead><tbody><tr><td>Население</td><td>3,7 млн</td><td>1,9 млн</td></tr><tr><td>Средний чек продуктового заказа</td><td>€40</td><td>~€25</td></tr><tr><td>Доля продуктов, которые покупают онлайн</td><td>5%</td><td>3%</td></tr><tr><td>Стоимость доставки одного заказа</td><td>€4,5</td><td>~€3,5</td></tr><tr><td>Запуск одного даркстора</td><td>€150 тыс.</td><td>~€110 тыс.</td></tr></tbody></table></div><p><b>Что ещё известно</b></p><ul><li>Денег — €2 млн до следующего раунда, это примерно 14 месяцев.</li><li>Крупный маркетплейс объявил запуск быстрой доставки в Варшаве весной.</li><li>Отдельной команды на экспансию нет: те же разработчики делают продукт для трёх городов.</li></ul>",
     "en": "<p>At the board meeting, an investor says: “Warsaw is a fast-growing city of almost 2 million, and there are no strong players in quick delivery. Launch by the end of the year — it’ll be the headline for the next round.” The CEO asks you for a recommendation.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Berlin</th><th>Warsaw</th></tr></thead><tbody><tr><td>Population</td><td>3.7M</td><td>1.9M</td></tr><tr><td>Average grocery order</td><td>€40</td><td>~€25</td></tr><tr><td>Share of groceries bought online</td><td>5%</td><td>3%</td></tr><tr><td>Delivery cost per order</td><td>€4.5</td><td>~€3.5</td></tr><tr><td>Opening one dark store</td><td>€150k</td><td>~€110k</td></tr></tbody></table></div><p><b>What else we know</b></p><ul><li>There’s €2M until the next round, about 14 months of runway.</li><li>A large marketplace has announced quick delivery in Warsaw this spring.</li><li>There’s no separate expansion team: the same engineers build the product for all three cities.</li></ul>",
-    "pt": "<p>Na reunião do conselho, um investidor diz: “Varsóvia é uma cidade de quase 2 milhões que cresce rápido, e não há players fortes em entrega rápida. Lancem até o fim do ano — vai ser a grande história da próxima rodada.” O CEO pede a sua recomendação.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Berlim</th><th>Varsóvia</th></tr></thead><tbody><tr><td>População</td><td>3,7 mi</td><td>1,9 mi</td></tr><tr><td>Ticket médio de mercado</td><td>€40</td><td>~€25</td></tr><tr><td>Fatia das compras de mercado feitas online</td><td>5%</td><td>3%</td></tr><tr><td>Custo de entrega por pedido</td><td>€4,5</td><td>~€3,5</td></tr><tr><td>Abrir uma dark store</td><td>€150 mil</td><td>~€110 mil</td></tr></tbody></table></div><p><b>O que mais sabemos</b></p><ul><li>Há €2 milhões até a próxima rodada, cerca de 14 meses de caixa.</li><li>Um grande marketplace anunciou entrega rápida em Varsóvia para esta primavera.</li><li>Não existe um time separado para a expansão: os mesmos engenheiros fazem o produto das três cidades.</li></ul>"
+    "pt": "<p>Na reunião do conselho, um investidor diz: “Varsóvia é uma cidade de quase 2 milhões de habitantes que cresce rápido, e não há players fortes em delivery rápido. Lancem até o fim do ano — vai ser o grande destaque da próxima rodada de investimento.” O CEO pede a sua recomendação.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Berlim</th><th>Varsóvia</th></tr></thead><tbody><tr><td>População</td><td>3,7 mi</td><td>1,9 mi</td></tr><tr><td>Ticket médio de mercado</td><td>€40</td><td>~€25</td></tr><tr><td>Participação do online nas compras de supermercado</td><td>5%</td><td>3%</td></tr><tr><td>Custo de entrega por pedido</td><td>€4,50</td><td>~€3,50</td></tr><tr><td>Custo para abrir uma dark store</td><td>€150 mil</td><td>~€110 mil</td></tr></tbody></table></div><p><b>O que mais sabemos</b></p><ul><li>Temos €2 milhões em caixa até a próxima rodada, o suficiente para cerca de 14 meses (runway).</li><li>Um grande marketplace anunciou entrega rápida em Varsóvia para esta primavera.</li><li>Não existe um time separado para a expansão: os mesmos engenheiros fazem o produto das três cidades.</li></ul>"
    },
    "task": {
     "ru": "Стоит ли запускать Варшаву в этом году? Как ты придёшь к решению и как будешь запускать, если ответ «да»?",
@@ -918,7 +918,7 @@
    "hint": {
     "ru": "Растущий город — ещё не рынок. Посмотри, что таблица говорит об экономике одного заказа, и подумай, на что ещё можно потратить те же деньги и ту же команду.",
     "en": "A growing city isn’t yet a market. Look at what the table says about the economics of one order, and think about what else the same money and team could do.",
-    "pt": "Uma cidade em crescimento ainda não é um mercado. Veja o que a tabela diz sobre a economia de um pedido e pense no que mais o mesmo dinheiro e o mesmo time poderiam fazer."
+    "pt": "Uma cidade em crescimento ainda não é um mercado. Veja o que a tabela mostra sobre a unit economics de cada pedido e pense no que mais o mesmo dinheiro e o mesmo time poderiam fazer."
    },
    "rubric": [
     {
@@ -966,7 +966,7 @@
      "name": {
       "ru": "Экономика рынка",
       "en": "Market economics",
-      "pt": "Economia do mercado"
+      "pt": "Unit economics do mercado"
      },
      "desc": "Uses the data: with a €25 average order and 3% online share, Warsaw’s online grocery market is roughly a fifth of Berlin’s (1.9M × €25 × 3% vs 3.7M × €40 × 5% ≈ 0.19); delivery eats ~14% of a €25 order vs ~11% of €40, so each order is thinner and a dark store pays back more slowly. 3 = quantifies that the market is much smaller than the investor’s pitch suggests and what it means for payback. 1 = repeats the data without conclusions.",
      "good": {
@@ -1133,7 +1133,7 @@
    "reference": {
     "ru": "<p><b>1. Зачем.</b> Сначала уточняю цель: инвестору нужна история роста к раунду, компании — дойти до прибыли. Денег на 14 месяцев, Мюнхен и Гамбург убыточны. Значит, Варшава конкурирует не с «ничем», а с тем, чтобы довести до нуля два уже запущенных города.</p><p><b>2. Экономика.</b> Город растёт, но онлайн-рынок продуктов там пока небольшой: 1,9 млн × €25 × 3% против 3,7 млн × €40 × 5% — примерно пятая часть берлинского. Доставка за €3,5 съедает 14% чека против 11% в Берлине, то есть каждый заказ тоньше, и даркстор окупается заметно дольше.</p><p><b>3. Риски.</b> Весной заходит крупный маркетплейс с деньгами; у нас одна команда на всё; другая валюта, поставщики и платежи.</p><p><b>4. Как проверить дёшево.</b> 2–3 месяца исследования и пилот: один даркстор в самом плотном районе или партнёрство с местной сетью. Метрики: заказы в день на даркстор, маржа заказа после доставки, доля повторных покупок за 30 дней. Критерий остановки: если через три месяца даркстор не выходит хотя бы на половину берлинской загрузки при положительной марже заказа.</p><p><b>5. Решение.</b> Полный запуск в этом году не рекомендую. Рекомендую довести Мюнхен и Гамбург до нуля и параллельно провести недорогой пилот в Варшаве. Инвестору это даёт историю роста, подкреплённую юнит-экономикой, а не только размером и ростом города. Передумаю, если пилот покажет загрузку и маржу на уровне Берлина или найдётся партнёр, который возьмёт на себя расходы на запуск.</p>",
     "en": "<p><b>1. Why.</b> First I’d clarify the goal: the investor wants a growth story for the round, the company needs to reach profitability. There are 14 months of cash and Munich and Hamburg lose money. So Warsaw isn’t competing with “nothing” — it’s competing with getting two launched cities to break even.</p><p><b>2. Economics.</b> The city is growing, but its online grocery market is still small: 1.9M × €25 × 3% vs 3.7M × €40 × 5% is about a fifth of Berlin’s. A €3.5 delivery eats 14% of the order vs 11% in Berlin, so each order is thinner and a dark store pays back much more slowly.</p><p><b>3. Risks.</b> A well-funded marketplace arrives in spring; we have one team for everything; a different currency, suppliers and payments.</p><p><b>4. How to learn cheaply.</b> 2–3 months of research plus a pilot: one dark store in the densest district, or a partnership with a local chain. Metrics: orders per day per dark store, margin per order after delivery, 30-day repeat rate. Kill criterion: if after three months the dark store doesn’t reach at least half of Berlin’s volume with a positive margin per order.</p><p><b>5. Decision.</b> I wouldn’t do a full launch this year. I’d get Munich and Hamburg to break even and run an inexpensive pilot in Warsaw in parallel. That gives the investor a growth story backed by unit economics rather than city size and growth. I’d change my mind if the pilot shows Berlin-level volume and margin, or if a partner takes on the launch costs.</p>",
-    "pt": "<p><b>1. Por quê.</b> Primeiro eu esclareceria o objetivo: o investidor quer uma história de crescimento para a rodada; a empresa precisa chegar à lucratividade. Há 14 meses de caixa, e Munique e Hamburgo dão prejuízo. Então Varsóvia não compete com o “nada” — compete com levar duas cidades já lançadas ao break-even.</p><p><b>2. Economia.</b> A cidade cresce, mas o supermercado online ainda é pequeno lá: 1,9 mi × €25 × 3% vs 3,7 mi × €40 × 5% dá cerca de um quinto de Berlim. Uma entrega de €3,5 come 14% do pedido contra 11% em Berlim, então cada pedido é mais magro e a dark store tem um payback bem mais lento.</p><p><b>3. Riscos.</b> Um marketplace com muito dinheiro chega na primavera; temos um time só para tudo; outra moeda, fornecedores e pagamentos.</p><p><b>4. Como aprender barato.</b> 2–3 meses de pesquisa e um piloto: uma dark store no bairro mais denso, ou uma parceria com uma rede local. Métricas: pedidos por dia por dark store, margem por pedido depois da entrega, recompra em 30 dias. Critério de parada: se em três meses a dark store não chegar a pelo menos metade do volume de Berlim com margem positiva por pedido.</p><p><b>5. Decisão.</b> Eu não faria um lançamento completo este ano. Levaria Munique e Hamburgo ao break-even e, em paralelo, faria um piloto barato em Varsóvia. Isso dá ao investidor uma história de crescimento sustentada por unit economics, e não só pelo tamanho e pelo crescimento da cidade. Eu mudaria de ideia se o piloto mostrar volume e margem no nível de Berlim, ou se um parceiro assumir os custos de lançamento.</p>"
+    "pt": "<p><b>1. Por quê.</b> Primeiro eu esclareceria o objetivo: o investidor quer uma história de crescimento para a rodada; a empresa precisa chegar à lucratividade. Há 14 meses de caixa, e Munique e Hamburgo dão prejuízo. Então Varsóvia não compete com o “nada” — compete com levar duas cidades já lançadas ao break-even.</p><p><b>2. Economia.</b> A cidade cresce, mas o supermercado online ainda é pequeno lá: 1,9 mi × €25 × 3% vs 3,7 mi × €40 × 5% dá cerca de um quinto de Berlim. Uma entrega de €3,50 come 14% do pedido contra 11% em Berlim, então cada pedido é mais magro e a dark store tem um payback bem mais lento.</p><p><b>3. Riscos.</b> Um marketplace com muito dinheiro chega na primavera; temos um time só para tudo; outra moeda, fornecedores e pagamentos.</p><p><b>4. Como aprender barato.</b> 2–3 meses de pesquisa e um piloto: uma dark store no bairro mais denso, ou uma parceria com uma rede local. Métricas: pedidos por dia por dark store, margem por pedido depois da entrega, recompra em 30 dias. Critério de parada: se em três meses a dark store não chegar a pelo menos metade do volume de Berlim com margem positiva por pedido.</p><p><b>5. Decisão.</b> Eu não faria um lançamento completo este ano. Levaria Munique e Hamburgo ao break-even e, em paralelo, faria um piloto barato em Varsóvia. Isso dá ao investidor uma história de crescimento sustentada por unit economics, e não só pelo tamanho e pelo crescimento da cidade. Eu mudaria de ideia se o piloto mostrar volume e margem no nível de Berlim, ou se um parceiro assumir os custos de lançamento.</p>"
    }
   },
   {
@@ -1150,14 +1150,14 @@
     "pt": "O que entra no trimestre"
    },
    "company": {
-    "ru": "«Ритм» — трекер привычек по подписке. Цель квартала — поднять retention новых пользователей на 30-й день (D30) на 2 п.п.",
-    "en": "Rhythm — a habit tracker with a subscription. The quarter’s goal: lift day-30 retention (D30) of new users by 2 pp.",
-    "pt": "Rhythm — app de hábitos por assinatura. Meta do trimestre: aumentar em 2 p.p. a retenção de novos usuários no 30º dia (D30)."
+    "ru": "«Ритм» — трекер привычек по подписке. Цель квартала — поднять retention новых пользователей на 30-й день (D30) на 2 п.п. Та самая компания из игры.",
+    "en": "Rhythm — a habit tracker with a subscription. The quarter’s goal: lift day-30 retention (D30) of new users by 2 pp. Yes, the same company as in the game.",
+    "pt": "Rhythm — app de hábitos por assinatura. Meta do trimestre: aumentar em 2 p.p. a retenção de novos usuários no 30º dia (D30). Sim, é a mesma empresa do jogo."
    },
    "prompt": {
-    "ru": "<p>На квартал у команды 12 недель разработки. Инициатив пять, и у каждой есть сторонник.</p><div class='task-box'><table class='t'><thead><tr><th>Инициатива</th><th>Кто просит</th><th>Охват</th><th>Ожидаемый эффект</th><th>Уверенность</th><th>Работа</th></tr></thead><tbody><tr><td>Новый онбординг</td><td>Дима, аналитик</td><td>30 000 новых</td><td>+3 п.п. к D30 новых</td><td>70%</td><td>6 нед.</td></tr><tr><td>Виджет на главный экран</td><td>Кира, дизайнер</td><td>15 000</td><td>+1 п.п. к D30</td><td>50%</td><td>3 нед.</td></tr><tr><td>Интеграция с Apple Health</td><td>Лена, маркетинг: «отличный PR-повод»</td><td>6 000</td><td>+0,5 п.п. к D30</td><td>40%</td><td>8 нед.</td></tr><tr><td>Починить синхронизацию между устройствами</td><td>Оля, поддержка: баг у 12% платящих</td><td>2 400 платящих</td><td>−5 п.п. к их оттоку</td><td>80%</td><td>3 нед.</td></tr><tr><td>Семейная подписка</td><td>Андрей, CEO</td><td>~1 000 новых платящих</td><td>+$4 тыс. MRR</td><td>40%</td><td>5 нед.</td></tr></tbody></table></div>",
-    "en": "<p>The team has 12 weeks of engineering for the quarter. There are five initiatives, and each has a champion.</p><div class='task-box'><table class='t'><thead><tr><th>Initiative</th><th>Who asks</th><th>Reach</th><th>Expected effect</th><th>Confidence</th><th>Effort</th></tr></thead><tbody><tr><td>New onboarding</td><td>Dan, analyst</td><td>30,000 new users</td><td>+3 pp to new-user D30</td><td>70%</td><td>6 wks</td></tr><tr><td>Home screen widget</td><td>Kira, designer</td><td>15,000</td><td>+1 pp to D30</td><td>50%</td><td>3 wks</td></tr><tr><td>Apple Health integration</td><td>Lena, marketing: “a great PR hook”</td><td>6,000</td><td>+0.5 pp to D30</td><td>40%</td><td>8 wks</td></tr><tr><td>Fix sync between devices</td><td>Olga, support: a bug for 12% of payers</td><td>2,400 payers</td><td>−5 pp to their churn</td><td>80%</td><td>3 wks</td></tr><tr><td>Family plan</td><td>Andrew, CEO</td><td>~1,000 new payers</td><td>+$4k MRR</td><td>40%</td><td>5 wks</td></tr></tbody></table></div>",
-    "pt": "<p>Para o trimestre, o time tem 12 semanas de desenvolvimento. São cinco iniciativas, e cada uma tem um defensor.</p><div class='task-box'><table class='t'><thead><tr><th>Iniciativa</th><th>Quem pede</th><th>Alcance</th><th>Efeito esperado</th><th>Confiança</th><th>Esforço</th></tr></thead><tbody><tr><td>Novo onboarding</td><td>Dan, analista</td><td>30.000 novos</td><td>+3 p.p. no D30 dos novos</td><td>70%</td><td>6 sem.</td></tr><tr><td>Widget na tela inicial</td><td>Kira, designer</td><td>15.000</td><td>+1 p.p. no D30</td><td>50%</td><td>3 sem.</td></tr><tr><td>Integração com o Apple Health</td><td>Lena, marketing: “um ótimo gancho de PR”</td><td>6.000</td><td>+0,5 p.p. no D30</td><td>40%</td><td>8 sem.</td></tr><tr><td>Corrigir a sincronização entre dispositivos</td><td>Olga, suporte: um bug para 12% dos pagantes</td><td>2.400 pagantes</td><td>−5 p.p. no churn deles</td><td>80%</td><td>3 sem.</td></tr><tr><td>Plano família</td><td>Andrew, CEO</td><td>~1.000 novos pagantes</td><td>+US$ 4 mil de MRR</td><td>40%</td><td>5 sem.</td></tr></tbody></table></div>"
+    "ru": "<p>На квартал у команды 12 недель разработки. Инициатив пять, и у каждой есть сторонник.</p><div class='task-box'><table class='t stack'><thead><tr><th>Инициатива</th><th>Охват</th><th>Ожидаемый эффект</th><th>Уверенность</th><th>Работа</th></tr></thead><tbody><tr><td>Новый онбординг<small>Дима, аналитик</small></td><td>30 000 новых</td><td>+3 п.п. к D30 новых</td><td>70%</td><td>6 нед.</td></tr><tr><td>Виджет на главный экран<small>Кира, дизайнер</small></td><td>15 000</td><td>+1 п.п. к D30</td><td>50%</td><td>3 нед.</td></tr><tr><td>Интеграция с Apple Health<small>Лена, маркетинг: «отличный PR-повод»</small></td><td>6 000</td><td>+0,5 п.п. к D30</td><td>40%</td><td>8 нед.</td></tr><tr><td>Починить синхронизацию между устройствами<small>Оля, поддержка: баг у 12% платящих</small></td><td>2 400 платящих</td><td>−5 п.п. к их оттоку</td><td>80%</td><td>3 нед.</td></tr><tr><td>Семейная подписка<small>Андрей, CEO</small></td><td>~1 000 новых платящих</td><td>+$4 тыс. MRR</td><td>40%</td><td>5 нед.</td></tr></tbody></table></div>",
+    "en": "<p>The team has 12 weeks of engineering for the quarter. There are five initiatives, and each has a champion.</p><div class='task-box'><table class='t stack'><thead><tr><th>Initiative</th><th>Reach</th><th>Expected effect</th><th>Confidence</th><th>Effort</th></tr></thead><tbody><tr><td>New onboarding<small>Dan, analyst</small></td><td>30,000 new users</td><td>+3 pp to new-user D30</td><td>70%</td><td>6 wks</td></tr><tr><td>Home screen widget<small>Kira, designer</small></td><td>15,000</td><td>+1 pp to D30</td><td>50%</td><td>3 wks</td></tr><tr><td>Apple Health integration<small>Lena, marketing: “a great PR hook”</small></td><td>6,000</td><td>+0.5 pp to D30</td><td>40%</td><td>8 wks</td></tr><tr><td>Fix sync between devices<small>Olga, support: a bug for 12% of payers</small></td><td>2,400 payers</td><td>−5 pp to their churn</td><td>80%</td><td>3 wks</td></tr><tr><td>Family plan<small>Andrew, CEO</small></td><td>~1,000 new payers</td><td>+$4k MRR</td><td>40%</td><td>5 wks</td></tr></tbody></table></div>",
+    "pt": "<p>Para o trimestre, o time tem 12 semanas de desenvolvimento. São cinco iniciativas, e cada uma tem um sponsor.</p><div class='task-box'><table class='t stack'><thead><tr><th>Iniciativa</th><th>Alcance</th><th>Impacto esperado</th><th>Confiança</th><th>Esforço</th></tr></thead><tbody><tr><td>Novo onboarding<small>Dan, analista</small></td><td>30.000 novos usuários</td><td>+3 p.p. no D30 de novos usuários</td><td>70%</td><td>6 sem.</td></tr><tr><td>Widget na tela inicial<small>Kira, designer</small></td><td>15.000</td><td>+1 p.p. no D30</td><td>50%</td><td>3 sem.</td></tr><tr><td>Integração com o Apple Health<small>Lena, marketing: “uma ótima pauta para a imprensa”</small></td><td>6.000</td><td>+0,5 p.p. no D30</td><td>40%</td><td>8 sem.</td></tr><tr><td>Corrigir a sincronização entre dispositivos<small>Olga, suporte: um bug que afeta 12% dos assinantes pagantes</small></td><td>2.400 pagantes</td><td>−5 p.p. no churn desse grupo</td><td>80%</td><td>3 sem.</td></tr><tr><td>Plano família<small>Andrew, CEO</small></td><td>~1.000 novos pagantes</td><td>+US$ 4 mil de MRR</td><td>40%</td><td>5 sem.</td></tr></tbody></table></div>"
    },
    "task": {
     "ru": "Что берёшь в квартал и в каком порядке? Как объяснишь решение тем, чьи инициативы не вошли?",
@@ -1167,7 +1167,7 @@
    "hint": {
     "ru": "Начни с цели квартала: не все инициативы её двигают. Посчитай ожидаемый эффект с учётом уверенности и проверь, что план влезает в 12 недель с запасом.",
     "en": "Start from the quarter’s goal: not every initiative moves it. Work out expected impact adjusted for confidence, and check the plan fits into 12 weeks with a buffer.",
-    "pt": "Comece pela meta do trimestre: nem toda iniciativa mexe nela. Calcule o impacto esperado ajustado pela confiança e confira se o plano cabe em 12 semanas com folga."
+    "pt": "Comece pela meta do trimestre: nem toda iniciativa contribui para ela. Calcule o impacto esperado ajustado pela confiança e confira se o plano cabe em 12 semanas com folga."
    },
    "rubric": [
     {
@@ -1175,7 +1175,7 @@
      "name": {
       "ru": "Связь с целью",
       "en": "Tie to the goal",
-      "pt": "Ligação com a meta"
+      "pt": "Conexão com a meta"
      },
      "desc": "Ties the choice to the quarter goal (new-user D30 +2 pp) and separates initiatives that move it (onboarding, widget, a little Apple Health) from those that serve other goals (the sync bug → paying-user churn, the family plan → revenue, Apple Health → PR). 3 = explicit link to the goal for each pick. 0 = picks by who is loudest or most senior.",
      "good": {
@@ -1207,7 +1207,7 @@
      "name": {
       "ru": "Оценка",
       "en": "Scoring",
-      "pt": "Pontuação"
+      "pt": "Score das iniciativas"
      },
      "desc": "Uses a quantitative method (RICE, impact × confidence / effort or expected value): onboarding +3 × 0.7 ≈ +2.1 pp for 6 weeks — enough for the goal alone; widget +1 × 0.5 = +0.5 pp for 3 weeks; Apple Health +0.5 × 0.4 = +0.2 pp for 8 weeks. Arithmetic is correct; notes that effects in different units (churn, MRR) can’t be compared directly. 3 = correct expected values and the insight that onboarding alone covers the goal. 1 = names RICE without numbers.",
      "good": {
@@ -1382,7 +1382,7 @@
    "reference": {
     "ru": "<p><b>1. Цель.</b> Квартал про D30 новых пользователей +2 п.п. Её двигают онбординг и виджет. Баг синхронизации — про отток платящих, семейная подписка — про выручку, Apple Health — скорее про PR.</p><p><b>2. Расчёт с учётом уверенности.</b> Онбординг: +3 × 0,7 ≈ +2,1 п.п. за 6 недель — одного его хватает на цель. Виджет: +1 × 0,5 = +0,5 п.п. за 3 недели. Apple Health: +0,5 × 0,4 = +0,2 п.п. за 8 недель — самая дорогая и самая неуверенная ставка.</p><p><b>3. План на 12 недель.</b> Сначала баг синхронизации (3 недели): он не про цель квартала, но страдают 12% платящих, уверенность высокая, а каждый ушедший платящий стоит дорого. Потом онбординг (6 недель). Из оставшихся трёх недель 1–2 держу запасом на баги и сдвиги, а виджет беру как stretch goal, если онбординг выйдет раньше.</p><p><b>4. Что не вошло.</b> Apple Health — мало охвата, низкая уверенность, 8 недель. Семейную подписку предлагаю проверить дёшево: кнопка «Семейный план» на пейволле с листом ожидания — пара дней работы, и в следующем квартале решаем на данных.</p><p><b>5. Разговоры.</b> До планирования показываю всем критерии: цель квартала и расчёт. С Андреем говорю отдельно: семейная подписка не отвергнута — у неё будет тест и дата решения. Лене предлагаю PR-повод на запуске нового онбординга, Кире — виджет как следующий кандидат.</p>",
     "en": "<p><b>1. Goal.</b> The quarter is about new-user D30 +2 pp. Onboarding and the widget move it. The sync bug is about paying-user churn, the family plan about revenue, Apple Health mostly about PR.</p><p><b>2. Math adjusted for confidence.</b> Onboarding: +3 × 0.7 ≈ +2.1 pp in 6 weeks — enough for the goal on its own. Widget: +1 × 0.5 = +0.5 pp in 3 weeks. Apple Health: +0.5 × 0.4 = +0.2 pp in 8 weeks — the most expensive and least certain bet.</p><p><b>3. A 12-week plan.</b> First the sync bug (3 weeks): it isn’t the quarter’s goal, but 12% of payers suffer, confidence is high, and every paying user we lose is expensive. Then onboarding (6 weeks). Of the remaining three weeks, I keep 1–2 as a buffer for bugs and slips and treat the widget as a stretch goal if onboarding ships early.</p><p><b>4. What’s out.</b> Apple Health: low reach, low confidence, 8 weeks. For the family plan I’d run a cheap test: a “Family plan” button on the paywall with a waitlist — a couple of days of work — and decide next quarter on data.</p><p><b>5. Conversations.</b> Before planning I share the criteria with everyone: the quarter’s goal and the math. I talk to Andrew one-on-one: the family plan isn’t rejected — it gets a test and a decision date. I offer Lena a PR hook around the new onboarding launch, and Kira the widget as the next candidate.</p>",
-    "pt": "<p><b>1. Meta.</b> O trimestre é sobre o D30 dos novos usuários, +2 p.p. Quem mexe nisso são o onboarding e o widget. O bug de sincronização é sobre o churn dos pagantes, o plano família é sobre receita, o Apple Health é mais sobre PR.</p><p><b>2. Contas ajustadas pela confiança.</b> Onboarding: +3 × 0,7 ≈ +2,1 p.p. em 6 semanas — sozinho já basta para a meta. Widget: +1 × 0,5 = +0,5 p.p. em 3 semanas. Apple Health: +0,5 × 0,4 = +0,2 p.p. em 8 semanas — a aposta mais cara e mais incerta.</p><p><b>3. Um plano de 12 semanas.</b> Primeiro o bug de sincronização (3 semanas): não é a meta do trimestre, mas 12% dos pagantes sofrem com ele, a confiança é alta e cada pagante que perdemos custa caro. Depois o onboarding (6 semanas). Das três semanas restantes, deixo 1–2 de folga para bugs e atrasos e trato o widget como stretch goal, se o onboarding sair antes.</p><p><b>4. O que fica de fora.</b> Apple Health: pouco alcance, pouca confiança, 8 semanas. Para o plano família eu faria um teste barato: um botão “Plano família” no paywall com lista de espera — uns dois dias de trabalho — e decidimos no próximo trimestre com dados.</p><p><b>5. Conversas.</b> Antes do planejamento compartilho os critérios com todos: a meta do trimestre e as contas. Converso com o Andrew a sós: o plano família não foi rejeitado — ele ganha um teste e uma data de decisão. Ofereço à Lena um gancho de PR no lançamento do novo onboarding, e à Kira o widget como próximo candidato.</p>"
+    "pt": "<p><b>1. Meta.</b> O trimestre é sobre o D30 dos novos usuários, +2 p.p. Quem mexe nisso são o onboarding e o widget. O bug de sincronização é sobre o churn dos pagantes, o plano família é sobre receita, o Apple Health é mais sobre PR.</p><p><b>2. Contas ajustadas pela confiança.</b> Onboarding: +3 × 0,7 ≈ +2,1 p.p. em 6 semanas — sozinho já basta para a meta. Widget: +1 × 0,5 = +0,5 p.p. em 3 semanas. Apple Health: +0,5 × 0,4 = +0,2 p.p. em 8 semanas — a aposta mais cara e mais incerta.</p><p><b>3. Um plano de 12 semanas.</b> Primeiro o bug de sincronização (3 semanas): não é a meta do trimestre, mas 12% dos pagantes sofrem com ele, a confiança é alta e cada pagante que perdemos custa caro. Depois o onboarding (6 semanas). Das três semanas restantes, deixo 1–2 de folga para bugs e atrasos e trato o widget como stretch goal, se o onboarding sair antes.</p><p><b>4. O que fica de fora.</b> Apple Health: pouco alcance, pouca confiança, 8 semanas. Para o plano família eu faria um teste barato: um botão “Plano família” no paywall com lista de espera — uns dois dias de trabalho — e decidimos no próximo trimestre com dados.</p><p><b>5. Conversas.</b> Antes do planejamento compartilho os critérios com todos: a meta do trimestre e as contas. Converso com o Andrew a sós: o plano família não foi rejeitado — ele ganha um teste e uma data de decisão. Ofereço à Lena uma pauta para a imprensa no lançamento do novo onboarding, e à Kira o widget como próximo candidato.</p>"
    }
   },
   {
@@ -1399,14 +1399,14 @@
     "pt": "Testando um novo paywall"
    },
    "company": {
-    "ru": "«Ритм» — трекер привычек по подписке.",
-    "en": "Rhythm — a habit tracker with a subscription.",
-    "pt": "Rhythm — app de hábitos por assinatura."
+    "ru": "«Ритм» — трекер привычек по подписке. Та самая компания из игры.",
+    "en": "Rhythm — a habit tracker with a subscription. Yes, the same company as in the game.",
+    "pt": "Rhythm — app de hábitos por assinatura. Sim, é a mesma empresa do jogo."
    },
    "prompt": {
     "ru": "<p>Кира перерисовала пейвол: короче текст, отзывы пользователей, кнопка пробного периода крупнее. Вы запускаете A/B-тест.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Посетителей пейвола в день</td><td>4 000</td></tr><tr><td>Конверсия в оплату сейчас</td><td>5%</td></tr><tr><td>Минимальный эффект, ради которого стоит менять пейвол</td><td>+1 п.п. (до 6%)</td></tr></tbody></table></div><p>Через два дня после запуска Андрей пишет в общий чат: «В дашборде +25% к конверсии и p = 0,04! Раскатываем на всех?»</p>",
     "en": "<p>Kira redesigned the paywall: shorter copy, user reviews, a bigger free-trial button. You’re running an A/B test.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Paywall visitors a day</td><td>4,000</td></tr><tr><td>Paid conversion today</td><td>5%</td></tr><tr><td>Smallest effect worth changing the paywall for</td><td>+1 pp (to 6%)</td></tr></tbody></table></div><p>Two days after launch, Andrew posts in the team chat: “The dashboard shows +25% conversion and p = 0.04! Shall we roll it out to everyone?”</p>",
-    "pt": "<p>A Kira redesenhou o paywall: texto mais curto, avaliações de usuários e um botão de teste grátis maior. Vocês estão rodando um teste A/B.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Visitantes do paywall por dia</td><td>4.000</td></tr><tr><td>Conversão em pagamento hoje</td><td>5%</td></tr><tr><td>Menor efeito que justifica trocar o paywall</td><td>+1 p.p. (para 6%)</td></tr></tbody></table></div><p>Dois dias depois do lançamento, o Andrew escreve no chat do time: “O dashboard mostra +25% de conversão e p = 0,04! Vamos liberar para todo mundo?”</p>"
+    "pt": "<p>A Kira redesenhou o paywall: texto mais curto, avaliações de usuários e um botão maior para começar o período grátis. O time está rodando um teste A/B.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Visitantes do paywall por dia</td><td>4.000</td></tr><tr><td>Conversão atual para assinatura paga</td><td>5%</td></tr><tr><td>Menor efeito que justifica trocar o paywall (MDE)</td><td>+1 p.p. (para 6%)</td></tr></tbody></table></div><p>Dois dias depois do lançamento, o Andrew escreve no chat do time: “O dashboard mostra +25% de conversão e p = 0,04! Vamos liberar para todo mundo?”</p>"
    },
    "task": {
     "ru": "Спроектируй тест: метрика, размер выборки, длительность, guardrails, правило решения. И ответь Андрею.",
@@ -1416,7 +1416,7 @@
    "hint": {
     "ru": "Есть простое правило Лера: при α = 0,05 и мощности 80% нужно примерно 16 · p(1 − p) / δ² пользователей на группу. А потом подумай, почему два дня — мало, даже если p < 0,05.",
     "en": "There’s a simple rule of thumb, Lehr’s rule: at α = 0.05 and 80% power you need about 16 · p(1 − p) / δ² users per group. Then think about why two days is too short, even with p < 0.05.",
-    "pt": "Existe uma regra prática simples, a regra de Lehr: com α = 0,05 e poder de 80%, você precisa de cerca de 16 · p(1 − p) / δ² usuários por grupo. Depois pense por que dois dias é pouco, mesmo com p < 0,05."
+    "pt": "Existe uma regra prática simples, a regra de Lehr: com α = 0,05 e poder estatístico de 80%, você precisa de cerca de 16 · p(1 − p) / δ² usuários por grupo. Depois pense por que dois dias são pouco tempo, mesmo com p < 0,05."
    },
    "rubric": [
     {
@@ -1510,14 +1510,14 @@
      "good": {
       "ru": "Называешь guardrails: возвраты и отмены пробного периода, retention новых платящих, ARPPU — крупная кнопка пробного может привести менее мотивированных.",
       "en": "You name guardrails: refunds and trial cancellations, new payers’ retention, ARPPU — a bigger trial button can bring in less committed payers.",
-      "pt": "Você define guardrails: reembolsos e cancelamentos do teste grátis, retenção dos novos pagantes, ARPPU — um botão de teste maior pode trazer pagantes menos comprometidos."
+      "pt": "Você define guardrails: reembolsos e cancelamentos do período grátis, retenção dos novos pagantes, ARPPU — um botão maior de período grátis pode trazer pagantes menos comprometidos."
      },
      "points": [
       {
        "label": {
         "ru": "возвраты и отмены пробного",
         "en": "refunds and trial cancellations",
-        "pt": "reembolsos e cancelamentos do teste grátis"
+        "pt": "reembolsos e cancelamentos do período grátis"
        },
        "re": "возврат|refund|отмен|cancel|reembols"
       },
@@ -1623,7 +1623,7 @@
    "reference": {
     "ru": "<p><b>1. Гипотеза и метрика.</b> Короткий текст, отзывы и заметная кнопка пробного периода поднимут конверсию посетителя пейвола в оплату. Главная метрика — эта конверсия; минимальный эффект, ради которого стоит менять пейвол, — +1 п.п., с 5% до 6%.</p><p><b>2. Выборка и срок.</b> По правилу Лера: 16 × 0,05 × 0,95 / 0,01² ≈ 7 600 человек на группу, около 15 200 всего. При 4 000 посетителей в день это ~4 дня, но я запускаю тест на полную неделю, а лучше на две: в будни и выходные люди ведут себя по-разному.</p><p><b>3. Guardrails.</b> Возвраты и отмены пробного периода, retention новых платящих на 7-й и 30-й день, ARPPU. Крупная кнопка пробного может привести тех, кто потом отменит подписку, — тогда рост конверсии обманчив.</p><p><b>4. Ответ Андрею.</b> «Андрей, выглядит обнадёживающе, но раскатывать рано. За два дня набралось около 4 000 человек на группу — это половина нужной выборки, и не было ни одного выходного. Если смотреть результат каждый день и остановиться на первом p < 0,05, ложных находок становится в разы больше. +25% — это +1,25 п.п., на таком объёме это ещё в пределах шума. Решение примем в понедельник, когда наберём полную неделю».</p><p><b>5. Правило решения.</b> Фиксирую до теста: раскатываем, если конверсия выросла значимо при α = 0,05, а возвраты и retention платящих не хуже контроля больше чем на 1 п.п. Если эффект есть, но guardrails просели, — дорабатываем. Сегменты (iOS и Android, новые и вернувшиеся) смотрю только как проверку, а не как поиск «где сработало».</p>",
     "en": "<p><b>1. Hypothesis and metric.</b> Shorter copy, reviews and a prominent trial button will lift paid conversion of paywall visitors. That conversion is the primary metric; the smallest effect worth changing the paywall for is +1 pp, from 5% to 6%.</p><p><b>2. Sample and duration.</b> By Lehr’s rule: 16 × 0.05 × 0.95 / 0.01² ≈ 7,600 people per group, about 15,200 in total. At 4,000 visitors a day that’s ~4 days, but I’d run a full week, ideally two: people behave differently on weekdays and weekends.</p><p><b>3. Guardrails.</b> Refunds and trial cancellations, day-7 and day-30 retention of new payers, ARPPU. A big trial button can bring in people who cancel later — then the conversion lift is misleading.</p><p><b>4. Reply to Andrew.</b> “Andrew, it looks promising, but it’s too early to roll out. Two days gave us about 4,000 people per group — half the sample we need — and not a single weekend. If we check every day and stop at the first p < 0.05, false positives multiply. +25% is +1.25 pp, still within the noise at this size. We’ll decide on Monday, once we have a full week.”</p><p><b>5. Decision rule.</b> Set before the test: roll out if conversion is significantly higher at α = 0.05 and refunds and payer retention are no more than 1 pp worse than control. If there’s a lift but guardrails drop, iterate. Segments (iOS vs Android, new vs returning) are only a sanity check, not a hunt for “where it worked.”</p>",
-    "pt": "<p><b>1. Hipótese e métrica.</b> Texto mais curto, avaliações e um botão de teste grátis em destaque vão aumentar a conversão de visitantes do paywall em pagantes. Essa conversão é a métrica principal; o menor efeito que justifica trocar o paywall é +1 p.p., de 5% para 6%.</p><p><b>2. Amostra e duração.</b> Pela regra de Lehr: 16 × 0,05 × 0,95 / 0,01² ≈ 7.600 pessoas por grupo, cerca de 15.200 no total. Com 4.000 visitantes por dia, são ~4 dias, mas eu rodaria uma semana cheia, de preferência duas: as pessoas se comportam diferente em dias úteis e no fim de semana.</p><p><b>3. Guardrails.</b> Reembolsos e cancelamentos do teste grátis, retenção dos novos pagantes no 7º e no 30º dia, ARPPU. Um botão grande de teste pode trazer gente que cancela depois — aí o ganho de conversão engana.</p><p><b>4. Resposta ao Andrew.</b> “Andrew, parece promissor, mas ainda é cedo para liberar. Em dois dias juntamos cerca de 4.000 pessoas por grupo — metade da amostra necessária — e não passamos por nenhum fim de semana. Se olharmos todo dia e pararmos no primeiro p < 0,05, os falsos positivos se multiplicam. +25% é +1,25 p.p., ainda dentro do ruído com esse volume. Decidimos na segunda, quando tivermos uma semana cheia.”</p><p><b>5. Regra de decisão.</b> Definida antes do teste: liberamos se a conversão subir de forma significativa com α = 0,05 e os reembolsos e a retenção dos pagantes não ficarem mais de 1 p.p. piores que o controle. Se houver ganho, mas os guardrails caírem, iteramos. Segmentos (iOS vs Android, novos vs recorrentes) servem só como checagem, não como caça ao “onde funcionou”.</p>"
+    "pt": "<p><b>1. Hipótese e métrica.</b> Texto mais curto, avaliações e um botão do período grátis em destaque vão aumentar a conversão de visitantes do paywall em pagantes. Essa conversão é a métrica principal; o menor efeito que justifica trocar o paywall é +1 p.p., de 5% para 6%.</p><p><b>2. Amostra e duração.</b> Pela regra de Lehr: 16 × 0,05 × 0,95 / 0,01² ≈ 7.600 pessoas por grupo, cerca de 15.200 no total. Com 4.000 visitantes por dia, são ~4 dias, mas eu rodaria uma semana cheia, de preferência duas: as pessoas se comportam diferente em dias úteis e no fim de semana.</p><p><b>3. Guardrails.</b> Reembolsos e cancelamentos do período grátis, retenção dos novos pagantes no 7º e no 30º dia, ARPPU. Um botão grande de período grátis pode trazer gente que cancela depois — aí o ganho de conversão engana.</p><p><b>4. Resposta ao Andrew.</b> “Andrew, parece promissor, mas ainda é cedo para liberar. Em dois dias juntamos cerca de 4.000 pessoas por grupo — metade da amostra necessária — e não passamos por nenhum fim de semana. Se olharmos todo dia e pararmos no primeiro p < 0,05, os falsos positivos se multiplicam. +25% é +1,25 p.p., ainda dentro do ruído com esse volume. Decidimos na segunda, quando tivermos uma semana cheia.”</p><p><b>5. Regra de decisão.</b> Definida antes do teste: liberamos se a conversão subir de forma significativa com α = 0,05 e os reembolsos e a retenção dos pagantes não ficarem mais de 1 p.p. piores que o controle. Se houver ganho, mas os guardrails caírem, iteramos. Segmentos (iOS vs Android, novos vs recorrentes) servem só como checagem, não como caça ao “onde funcionou”.</p>"
    }
   },
   {
@@ -1642,12 +1642,12 @@
    "company": {
     "ru": "«Ритм» — трекер привычек по подписке за $9 в месяц. Та самая компания из игры.",
     "en": "Rhythm — a habit tracker with a $9 monthly subscription. Yes, the company from the game.",
-    "pt": "Rhythm — app de hábitos com assinatura mensal de US$ 9. Sim, a empresa do jogo."
+    "pt": "Rhythm — app de hábitos com assinatura mensal de US$ 9. Sim, é a mesma empresa do jogo."
    },
    "prompt": {
     "ru": "<p>Финансовый директор предлагает запустить годовой план за $60 вместо $9 в месяц: «Деньги сразу, а кэша у нас всего на 8 месяцев». CEO просит тебя оценить идею.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Платящих подписчиков</td><td>20 000</td></tr><tr><td>Цена месячного плана</td><td>$9</td></tr><tr><td>Отток платящих в месяц</td><td>15%</td></tr><tr><td>Комиссия App Store и Google Play</td><td>15%</td></tr><tr><td>Запас денег</td><td>8 месяцев</td></tr></tbody></table></div>",
     "en": "<p>The CFO proposes launching an annual plan at $60 instead of $9 a month: “Cash up front — and we only have 8 months of runway.” The CEO asks you to evaluate the idea.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Paying subscribers</td><td>20,000</td></tr><tr><td>Monthly plan price</td><td>$9</td></tr><tr><td>Monthly churn of paying users</td><td>15%</td></tr><tr><td>App Store and Google Play fee</td><td>15%</td></tr><tr><td>Runway</td><td>8 months</td></tr></tbody></table></div>",
-    "pt": "<p>O CFO propõe lançar um plano anual de US$ 60 em vez de US$ 9 por mês: “Dinheiro adiantado — e só temos 8 meses de runway.” O CEO pede que você avalie a ideia.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Assinantes pagantes</td><td>20.000</td></tr><tr><td>Preço do plano mensal</td><td>US$ 9</td></tr><tr><td>Churn mensal dos pagantes</td><td>15%</td></tr><tr><td>Taxa da App Store e do Google Play</td><td>15%</td></tr><tr><td>Runway</td><td>8 meses</td></tr></tbody></table></div>"
+    "pt": "<p>O CFO propõe lançar um plano anual de US$ 60 em vez de US$ 9 por mês: “Recebemos tudo adiantado — e só temos 8 meses de runway.” O CEO pede que você avalie a ideia.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Assinantes pagantes</td><td>20.000</td></tr><tr><td>Preço do plano mensal</td><td>US$ 9</td></tr><tr><td>Churn mensal dos pagantes</td><td>15%</td></tr><tr><td>Taxa da App Store e do Google Play</td><td>15%</td></tr><tr><td>Runway</td><td>8 meses</td></tr></tbody></table></div>"
    },
    "task": {
     "ru": "Стоит ли запускать годовой план за $60? Посчитай, что выигрываем и чем рискуем, и предложи, как запускать.",
@@ -1657,7 +1657,7 @@
    "hint": {
     "ru": "Посчитай, сколько в среднем приносит месячный подписчик, и подумай, кто именно купит годовой план.",
     "en": "Work out what an average monthly subscriber brings in, and think about who exactly will buy the annual plan.",
-    "pt": "Calcule quanto rende, em média, um assinante mensal e pense em quem exatamente vai comprar o plano anual."
+    "pt": "Calcule quanto um assinante mensal gera de receita, em média, e pense em quem, de fato, vai comprar o plano anual."
    },
    "rubric": [
     {
@@ -1875,12 +1875,12 @@
    "company": {
     "ru": "«Корзинка» — доставка продуктов за 30 минут в Берлине, Мюнхене и Гамбурге.",
     "en": "Basket — 30-minute grocery delivery in Berlin, Munich and Hamburg.",
-    "pt": "Cesta — entrega de mercado em 30 minutos em Berlim, Munique e Hamburgo."
+    "pt": "Cesta — app de entrega de compras de supermercado em até 30 minutos em Berlim, Munique e Hamburgo."
    },
    "prompt": {
     "ru": "<p>Коммерческий директор Макс договорился с сетью коворкингов в Берлине: они будут заказывать продукты и снеки для 40 офисов. Клиенту нужны оплата по счёту и ежемесячный отчёт по расходам. Макс уже пообещал запуск «через три недели».</p><p>Техлид Аня говорит, что оплата по счёту и отчёты — это минимум шесть недель, и тогда сдвинется запуск новых зон доставки.</p><div class='task-box'><table class='t'><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Обещанный объём клиента</td><td>3 000 заказов в месяц</td></tr><tr><td>Средний чек офисного заказа</td><td>€60</td></tr><tr><td>Средний чек обычного заказа</td><td>€40</td></tr><tr><td>Маржа заказа после доставки</td><td>10%</td></tr><tr><td>Новые зоны доставки</td><td>запуск через 4 недели, план +4 000 заказов в месяц</td></tr></tbody></table></div>",
     "en": "<p>Max, the commercial director, has closed a deal with a Berlin coworking chain: they’ll order groceries and snacks for 40 offices. The client needs invoice payments and a monthly spending report. Max has already promised a launch “in three weeks.”</p><p>Anna, the tech lead, says invoice payments and reports take at least six weeks — and that would push back the launch of new delivery zones.</p><div class='task-box'><table class='t'><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Client’s promised volume</td><td>3,000 orders a month</td></tr><tr><td>Average office order</td><td>€60</td></tr><tr><td>Average regular order</td><td>€40</td></tr><tr><td>Margin per order after delivery</td><td>10%</td></tr><tr><td>New delivery zones</td><td>launch in 4 weeks, planned +4,000 orders a month</td></tr></tbody></table></div>",
-    "pt": "<p>Max, o diretor comercial, fechou um acordo com uma rede de coworkings de Berlim: eles vão pedir compras de mercado e snacks para 40 escritórios. O cliente precisa de pagamento por fatura e de um relatório mensal de gastos. O Max já prometeu o lançamento “em três semanas”.</p><p>A Anna, tech lead, diz que pagamento por fatura e relatórios levam no mínimo seis semanas — e isso atrasaria o lançamento das novas zonas de entrega.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Volume prometido pelo cliente</td><td>3.000 pedidos por mês</td></tr><tr><td>Ticket médio de um pedido de escritório</td><td>€60</td></tr><tr><td>Ticket médio de um pedido comum</td><td>€40</td></tr><tr><td>Margem por pedido depois da entrega</td><td>10%</td></tr><tr><td>Novas zonas de entrega</td><td>lançamento em 4 semanas, previsão de +4.000 pedidos por mês</td></tr></tbody></table></div>"
+    "pt": "<p>Max, o diretor comercial, fechou um contrato com uma rede de coworkings de Berlim: eles vão pedir compras de mercado e snacks para 40 escritórios. O cliente precisa de pagamento faturado e de um relatório mensal de gastos. O Max já prometeu o lançamento “em três semanas”.</p><p>A Anna, tech lead, diz que o pagamento faturado e os relatórios levam no mínimo seis semanas — e isso atrasaria o lançamento das novas áreas de entrega.</p><div class='task-box'><table class='t'><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Volume prometido pelo cliente</td><td>3.000 pedidos por mês</td></tr><tr><td>Ticket médio de um pedido de escritório</td><td>€60</td></tr><tr><td>Ticket médio de um pedido comum</td><td>€40</td></tr><tr><td>Margem por pedido após o custo de entrega</td><td>10%</td></tr><tr><td>Novas áreas de entrega</td><td>lançamento em 4 semanas, previsão de +4.000 pedidos por mês</td></tr></tbody></table></div>"
    },
    "task": {
     "ru": "Что ты сделаешь в ближайшие 48 часов? Как выстроишь разговор с Максом, Аней и клиентом?",
@@ -1898,13 +1898,13 @@
      "name": {
       "ru": "Цена вопроса",
       "en": "Sizing the stakes",
-      "pt": "O que está em jogo"
+      "pt": "Dimensionar o impacto"
      },
      "desc": "Quantifies both sides: the client ≈ 3,000 × €60 = €180k GMV and ≈ €18k margin a month; the new zones ≈ 4,000 × €40 = €160k GMV and ≈ €16k margin a month, so delaying them by 3–6 weeks costs roughly €11–22k of margin. 3 = both sides sized with correct math. 0 = no numbers.",
      "good": {
       "ru": "Считаешь обе стороны: клиент ≈ €180 тыс. оборота и ≈ €18 тыс. маржи в месяц, новые зоны ≈ €160 тыс. и ≈ €16 тыс., — и цену задержки.",
       "en": "You size both sides: the client ≈ €180k GMV and ≈ €18k margin a month, the new zones ≈ €160k and ≈ €16k — and the cost of delay.",
-      "pt": "Você dimensiona os dois lados: o cliente ≈ €180 mil de GMV e ≈ €18 mil de margem por mês, as novas zonas ≈ €160 mil e ≈ €16 mil — e o custo do atraso."
+      "pt": "Você dimensiona os dois lados: o cliente ≈ €180 mil de GMV e ≈ €18 mil de margem por mês, as novas áreas de entrega ≈ €160 mil e ≈ €16 mil — e o custo do atraso."
      },
      "points": [
       {
@@ -1919,9 +1919,9 @@
        "label": {
         "ru": "посчитаны новые зоны",
         "en": "the new zones sized",
-        "pt": "as novas zonas dimensionadas"
+        "pt": "as novas áreas de entrega dimensionadas"
        },
-       "re": "160|€\\s?16|16 ?(тыс|k\\b)|зон\\p{L}*.{0,50}(марж|оборот)|zones?.{0,50}(margin|gmv)|zonas?.{0,50}(margem|faturamento)"
+       "re": "160|€\\s?16|16 ?(тыс|k\\b)|зон\\p{L}*.{0,50}(марж|оборот)|zones?.{0,50}(margin|gmv)|zonas?.{0,50}(margem|faturamento)|areas?.{0,50}(margem|faturamento)"
       },
       {
        "label": {
@@ -1970,7 +1970,7 @@
      "name": {
       "ru": "Договориться внутри",
       "en": "Aligning internally",
-      "pt": "Alinhar internamente"
+      "pt": "Alinhamento interno"
      },
      "desc": "Talks to Max and Anna separately first (what exactly was promised and what matters to the client; what in the six weeks is essential), then together with options and numbers; goes to the CEO only with a clear trade-off if they can’t agree; no blame. 3 = a concrete sequence of conversations leading to a shared decision. 0 = escalates right away or decides alone.",
      "good": {
@@ -2009,8 +2009,8 @@
      "id": "client",
      "name": {
       "ru": "Разговор с клиентом",
-      "en": "The client",
-      "pt": "O cliente"
+      "en": "Talking to the client",
+      "pt": "Conversa com o cliente"
      },
      "desc": "Helps Max reset expectations honestly: what the client gets in three weeks (orders with manual invoices and reports), what comes later and when; keeps Max as the owner of the relationship. 3 = a concrete message to the client that keeps both the deal and the trust. 0 = ignores the client or hides the change.",
      "good": {
@@ -2050,7 +2050,7 @@
      "name": {
       "ru": "Чтобы не повторилось",
       "en": "Preventing a repeat",
-      "pt": "Evitar que se repita"
+      "pt": "Evitar que isso se repita"
      },
      "desc": "Proposes a lightweight process fix without blame: dates for new functionality go to clients only after a quick check with product and engineering; a simple request template; a decision log. 3 = a concrete fix agreed with sales. 0 = nothing, or blames Max.",
      "good": {
@@ -2089,7 +2089,7 @@
    "reference": {
     "ru": "<p><b>1. Цена вопроса.</b> Клиент: 3 000 × €60 = €180 тыс. оборота и ~€18 тыс. маржи в месяц. Новые зоны: 4 000 × €40 = €160 тыс. и ~€16 тыс. маржи. Сдвинуть зоны на 3–6 недель — потерять примерно €11–22 тыс. маржи. Обе стороны весомые, поэтому ищу вариант без жертвы.</p><p><b>2. Что нужно клиенту в первый день.</b> Уточняю у Макса и, если можно, у клиента: заказывать им нужно с первого дня, а счёт и отчёт — раз в месяц. Значит, на старте хватит ручного процесса: счета выставляет бухгалтерия, отчёт собирает аналитик из базы. Разработка не нужна, зоны не сдвигаются.</p><p><b>3. Договориться внутри.</b> Сначала по отдельности: с Максом — что именно обещано и что важно клиенту, с Аней — что из шести недель критично, а что можно отложить. Потом встречаемся втроём с вариантами и цифрами: ручной MVP через три недели, автоматизация после запуска зон. Если не договоримся — иду к CEO с ясным выбором и ценой каждого варианта.</p><p><b>4. Клиент.</b> Отношения ведёт Макс, я готовлю ему текст: «Через три недели вы заказываете, как договорились, а счёт и отчёт в конце месяца присылаем вручную. Оплату по счёту и отчёты в личном кабинете подключим к такой-то дате».</p><p><b>5. Чтобы не повторилось.</b> Без поиска виноватых договариваемся с Максом: сроки по новым функциям клиентам называем только после короткой сверки с продуктом и разработкой — на это хватает дня.</p>",
     "en": "<p><b>1. The stakes.</b> The client: 3,000 × €60 = €180k GMV and ~€18k margin a month. The new zones: 4,000 × €40 = €160k and ~€16k margin. Pushing the zones back 3–6 weeks costs roughly €11–22k in margin. Both sides matter, so I look for an option that doesn’t sacrifice either.</p><p><b>2. What the client needs on day one.</b> I check with Max, and ideally the client: they need to order from day one, while invoices and reports are monthly. So a manual process is enough to start: accounting issues invoices, an analyst pulls the report from the database. No engineering needed, and the zones don’t move.</p><p><b>3. Aligning internally.</b> Separately first: with Max — what exactly was promised and what matters to the client; with Anna — what in the six weeks is essential and what can wait. Then the three of us meet with options and numbers: a manual MVP in three weeks, automation after the zones launch. If we can’t agree, I go to the CEO with a clear choice and the cost of each option.</p><p><b>4. The client.</b> Max owns the relationship; I draft his message: “In three weeks you start ordering as agreed, and we’ll send the invoice and report manually at the end of the month. Invoice payments and reports in your account will be live by such-and-such date.”</p><p><b>5. Preventing a repeat.</b> Without blame, we agree with Max: dates for new functionality go to clients only after a quick check with product and engineering — a day is enough.</p>",
-    "pt": "<p><b>1. O que está em jogo.</b> O cliente: 3.000 × €60 = €180 mil de GMV e ~€18 mil de margem por mês. As novas zonas: 4.000 × €40 = €160 mil e ~€16 mil de margem. Empurrar as zonas em 3–6 semanas custa cerca de €11–22 mil de margem. Os dois lados pesam, então procuro uma opção que não sacrifique nenhum.</p><p><b>2. Do que o cliente precisa no primeiro dia.</b> Confirmo com o Max e, se possível, com o cliente: eles precisam pedir desde o primeiro dia, enquanto fatura e relatório são mensais. Então um processo manual basta para começar: o financeiro emite as faturas e um analista tira o relatório da base de dados. Sem engenharia, e as zonas não atrasam.</p><p><b>3. Alinhar internamente.</b> Primeiro separadamente: com o Max — o que exatamente foi prometido e o que importa para o cliente; com a Anna — o que nas seis semanas é essencial e o que pode esperar. Depois nos reunimos os três com opções e números: MVP manual em três semanas, automação depois do lançamento das zonas. Se não houver acordo, levo ao CEO uma escolha clara com o custo de cada opção.</p><p><b>4. O cliente.</b> A relação é do Max; eu preparo a mensagem dele: “Em três semanas vocês começam a pedir como combinado, e mandamos a fatura e o relatório manualmente no fim do mês. O pagamento por fatura e os relatórios na sua conta ficam prontos até tal data.”</p><p><b>5. Evitar que se repita.</b> Sem caça às bruxas, combinamos com o Max: prazos de funcionalidades novas só vão ao cliente depois de uma checagem rápida com produto e engenharia — um dia basta.</p>"
+    "pt": "<p><b>1. O que está em jogo.</b> O cliente: 3.000 × €60 = €180 mil de GMV e ~€18 mil de margem por mês. As novas áreas de entrega: 4.000 × €40 = €160 mil e ~€16 mil de margem. Empurrar as áreas de entrega em 3–6 semanas custa cerca de €11–22 mil de margem. Os dois lados pesam, então procuro uma opção que não sacrifique nenhum.</p><p><b>2. Do que o cliente precisa no primeiro dia.</b> Confirmo com o Max e, se possível, com o cliente: eles precisam pedir desde o primeiro dia, enquanto fatura e relatório são mensais. Então um processo manual basta para começar: o financeiro emite as faturas e um analista tira o relatório da base de dados. Sem engenharia, e as áreas de entrega não atrasam.</p><p><b>3. Alinhar internamente.</b> Primeiro separadamente: com o Max — o que exatamente foi prometido e o que importa para o cliente; com a Anna — o que nas seis semanas é essencial e o que pode esperar. Depois nos reunimos os três com opções e números: MVP manual em três semanas, automação depois do lançamento das novas áreas. Se não houver acordo, levo ao CEO uma escolha clara com o custo de cada opção.</p><p><b>4. O cliente.</b> A relação é do Max; eu preparo a mensagem dele: “Em três semanas vocês começam a pedir como combinado, e mandamos a fatura e o relatório manualmente no fim do mês. O pagamento faturado e os relatórios na sua conta ficam prontos até tal data.”</p><p><b>5. Evitar que se repita.</b> Sem caça às bruxas, combinamos com o Max: prazos de funcionalidades novas só vão ao cliente depois de uma checagem rápida com produto e engenharia — um dia basta.</p>"
    }
   }
  ]
