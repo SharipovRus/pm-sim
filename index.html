@@ -5415,9 +5415,10 @@ function fxChips(fx){
   return `<div class="fx">${Object.keys(fx).map(k=>{ const v=fx[k], meta=FX_META[k]; const good = meta.inv ? v<0 : v>0; return `<span class="${good?'up':'down'}">${meta.label} ${meta.fmt(v)}</span>`; }).join('')}</div>`;
 }
 // languages that have a picture logo in img/logo-<lang>-{light,dark}.webp; the rest show the name as text
-const LOGO_LANGS = ['en'];
+const LOGO_LANGS = ['en','pt'];
+const LOGO_FILE = {pt:'en'};   // Portuguese uses the English wordmark
 const brandLogo = base => LOGO_LANGS.includes(LANG)
-  ? `<img class="brand-logo lt" src="${base}img/logo-${LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
+  ? `<img class="brand-logo lt" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
   : `<b>${L('Ритм','Rhythm', 'Rhythm')}</b>`;
 function renderHud(){
   const month = S ? S.month : 0;

@@ -352,9 +352,10 @@ function recommendation(){
 
 /* ============ render ============ */
 // languages that have a picture logo in img/logo-<lang>-{light,dark}.webp; the rest show the name as text
-const LOGO_LANGS = ['en'];
+const LOGO_LANGS = ['en','pt'];
+const LOGO_FILE = {pt:'en'};   // Portuguese uses the English wordmark
 const brandLogo = base => LOGO_LANGS.includes(LANG)
-  ? `<img class="brand-logo lt" src="${base}img/logo-${LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
+  ? `<img class="brand-logo lt" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
   : `<b>${L('Ритм','Rhythm', 'Rhythm')}</b>`;
 function renderHud(){
   $('#hud').innerHTML = `<a class="brand${LOGO_LANGS.includes(LANG)?' has-logo':''}" href="../${LANG==='ru'?'':'?lang='+LANG}">${brandLogo('../')}<span>${L('кейсы с собеседований','interview cases', 'cases de entrevista')}</span></a>
