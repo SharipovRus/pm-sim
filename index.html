@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Браузерный тренажёр продакт-менеджера: 10 месяцев управления подписочным приложением. Кейсы стейкхолдеров, задачи на метрики, юнит-экономику, A/B-тесты, приоритизацию и discovery. Со встроенной шпаргалкой по терминам.">
 <meta name="author" content="Ruslan Sharipov">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232A4FE6'/%3E%3Cpath d='M7 22 L13 13 L18 18 L25 9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Ритм — симулятор продакт-менеджера">
 <meta property="og:description" content="Браузерный тренажёр продакт-менеджера: 10 месяцев управления подписочным приложением. Кейсы стейкхолдеров, задачи на метрики, юнит-экономику, A/B-тесты, приоритизацию и discovery. Со встроенной шпаргалкой по терминам.">
@@ -5415,10 +5416,10 @@ function fxChips(fx){
   return `<div class="fx">${Object.keys(fx).map(k=>{ const v=fx[k], meta=FX_META[k]; const good = meta.inv ? v<0 : v>0; return `<span class="${good?'up':'down'}">${meta.label} ${meta.fmt(v)}</span>`; }).join('')}</div>`;
 }
 // languages that have a picture logo in img/logo-<lang>-{light,dark}.webp; the rest show the name as text
-const LOGO_LANGS = ['en','pt'];
+const LOGO_LANGS = ['ru','en','pt'];
 const LOGO_FILE = {pt:'en'};   // Portuguese uses the English wordmark
 const brandLogo = base => LOGO_LANGS.includes(LANG)
-  ? `<img class="brand-logo lt" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
+  ? `<img class="brand-logo lt" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-light.webp" alt="${L('Ритм','Rhythm','Rhythm')}"><img class="brand-logo dk" src="${base}img/logo-${LOGO_FILE[LANG] || LANG}-dark.webp" alt="${L('Ритм','Rhythm','Rhythm')}">`
   : `<b>${L('Ритм','Rhythm', 'Rhythm')}</b>`;
 function renderHud(){
   const month = S ? S.month : 0;
