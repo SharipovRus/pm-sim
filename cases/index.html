@@ -96,6 +96,13 @@ table.t.stack th:first-child, table.t.stack td:first-child{min-width:150px}
 .brand{display:flex; align-items:baseline; gap:10px; flex:1; min-width:0; text-decoration:none; color:var(--ink)}
 .brand b{font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:-.01em}
 .brand span{color:var(--muted); font-size:13px}
+/* picture logo (only languages listed in LOGO_LANGS have one); the light/dark file follows the theme */
+.brand.has-logo{align-items:center}
+.brand-logo{display:block; height:40px; width:auto}
+.brand-logo.dk{display:none}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .brand-logo.lt{display:none} :root:not([data-theme="light"]) .brand-logo.dk{display:block} }
+:root[data-theme="dark"] .brand-logo.lt{display:none} :root[data-theme="dark"] .brand-logo.dk{display:block}
+
 .hud-right{display:flex; align-items:center; gap:10px}
 .hud-btn{display:inline-flex; align-items:center; justify-content:center; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; color:var(--ink)}
 .hud-btn:hover{border-color:var(--accent); color:var(--accent)}
@@ -344,8 +351,13 @@ function recommendation(){
 }
 
 /* ============ render ============ */
+// languages that have a picture logo in img/logo-<lang>-{light,dark}.webp; the rest show the name as text
+const LOGO_LANGS = ['en'];
+const brandLogo = base => LOGO_LANGS.includes(LANG)
+  ? `<img class="brand-logo lt" src="${base}img/logo-${LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
+  : `<b>${L('Ритм','Rhythm', 'Rhythm')}</b>`;
 function renderHud(){
-  $('#hud').innerHTML = `<a class="brand" href="../${LANG==='ru'?'':'?lang='+LANG}"><b>${L('Ритм','Rhythm', 'Rhythm')}</b><span>${L('кейсы с собеседований','interview cases', 'cases de entrevista')}</span></a>
+  $('#hud').innerHTML = `<a class="brand${LOGO_LANGS.includes(LANG)?' has-logo':''}" href="../${LANG==='ru'?'':'?lang='+LANG}">${brandLogo('../')}<span>${L('кейсы с собеседований','interview cases', 'cases de entrevista')}</span></a>
     <div class="hud-right">
       <a class="hud-btn" href="../${LANG==='ru'?'':'?lang='+LANG}">${L('Игра','The game', 'O jogo')}</a>
       <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme', 'Tema claro') : L('Тёмная тема','Dark theme', 'Tema escuro')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>

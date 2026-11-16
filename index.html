@@ -63,6 +63,13 @@ button{font:inherit; color:inherit}
 .brand{display:flex; align-items:baseline; gap:10px}
 .brand b{font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:-.01em}
 .brand span{color:var(--muted); font-size:13px}
+/* picture logo (only languages listed in LOGO_LANGS have one); the light/dark file follows the theme */
+.brand.has-logo{align-items:center}
+.brand-logo{display:block; height:40px; width:auto}
+.brand-logo.dk{display:none}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .brand-logo.lt{display:none} :root:not([data-theme="light"]) .brand-logo.dk{display:block} }
+:root[data-theme="dark"] .brand-logo.lt{display:none} :root[data-theme="dark"] .brand-logo.dk{display:block}
+
 .track{flex:1 1 280px; display:flex; flex-direction:column; gap:6px; min-width:0}
 .track-label{display:flex; justify-content:space-between; font-size:12px; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
 .segs{display:grid; grid-template-columns:repeat(10,1fr); gap:4px}
@@ -5407,11 +5414,16 @@ function fxChips(fx){
   if(!fx) return '';
   return `<div class="fx">${Object.keys(fx).map(k=>{ const v=fx[k], meta=FX_META[k]; const good = meta.inv ? v<0 : v>0; return `<span class="${good?'up':'down'}">${meta.label} ${meta.fmt(v)}</span>`; }).join('')}</div>`;
 }
+// languages that have a picture logo in img/logo-<lang>-{light,dark}.webp; the rest show the name as text
+const LOGO_LANGS = ['en'];
+const brandLogo = base => LOGO_LANGS.includes(LANG)
+  ? `<img class="brand-logo lt" src="${base}img/logo-${LANG}-light.webp" alt="Rhythm" width="720" height="189"><img class="brand-logo dk" src="${base}img/logo-${LANG}-dark.webp" alt="Rhythm" width="720" height="180">`
+  : `<b>${L('Ритм','Rhythm', 'Rhythm')}</b>`;
 function renderHud(){
   const month = S ? S.month : 0;
   const segs = Array.from({length:MONTHS},(_,i)=>{ const n=i+1; let c='seg'; if(S && (n<month || (S.ended && n<=month) || (n===month && ['summary','end'].includes(S.phase)))) c+=' done'; else if(S && n===month) c+=' now'; return `<div class="${c}"></div>`; }).join('');
   $('#hud').innerHTML = `
-    <div class="brand"><b>${L('Ритм','Rhythm', 'Rhythm')}</b><span>${L('симулятор продакт-менеджера','product manager simulator', 'simulador de PM')}</span></div>
+    <div class="brand${LOGO_LANGS.includes(LANG)?' has-logo':''}">${brandLogo('')}<span>${L('симулятор продакт-менеджера','product manager simulator', 'simulador de PM')}</span></div>
     <div class="track"><div class="track-label"><span>${S?L(`Месяц ${Math.min(month,MONTHS)} из ${MONTHS}`,`Month ${Math.min(month,MONTHS)} of ${MONTHS}`, `Mês ${Math.min(month,MONTHS)} de ${MONTHS}`):L('10 месяцев','10 months', '10 meses')}</span><span>${S?int(totalXp())+' XP':''}</span></div><div class="segs">${segs}</div></div>
     ${S ? `<button class="hud-btn" data-act="home" title="${L('Игра сохранится, вернуться можно с главного экрана','Your game is saved; continue from the main screen', 'Sua partida está salva; continue pela tela inicial')}">${L('Меню','Menu', 'Menu')}</button>` : ''}
     <button class="hud-btn" data-act="sheet">${L('Шпаргалка','Cheat sheet', 'Glossário')}</button>
