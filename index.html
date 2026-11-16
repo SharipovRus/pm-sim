@@ -5170,6 +5170,8 @@ function closeMatrix(){ const s = document.getElementById('matrix'); if(s) s.hid
 // Supabase project (schema: supabase/migrations). The publishable key is public by design:
 // the table is closed, the browser can only call submit_score() and top_scores(), which validate input.
 const LB = {url:'https://xcqnfeebhxjarxcsjrop.supabase.co', key:'sb_publishable_L6S8ESxoLEJj5HU9rKY0Gw_tL6m-m9Y'}, PLAYER_KEY = 'ritm-player';
+// the database accepts only 'ru' and 'en' (check constraint), so Portuguese players are saved as 'en'
+const DB_LANG = () => LANG==='ru' ? 'ru' : 'en';
 const lbOn = () => !!(LB.url && LB.key);
 const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const GRADE_PT = {'Intern':'Estágio', 'Junior PM':'PM Júnior', 'Middle PM':'PM Pleno', 'Senior PM':'PM Sênior', 'Lead PM':'Lead PM', 'Head of Product':'Head de Produto'};
@@ -5238,7 +5240,7 @@ async function lbSubmit(){
   try{
     const res = await lbRpc('submit_score', {p_token:p.token, p_name:p.name, p_linkedin:p.linkedin, p_score:Math.round(f.total*100),
       p_s1:+f.s1.toFixed(4), p_s2:+f.s2.toFixed(4), p_biz:+f.biz.toFixed(4), p_mrr_x:+clamp(f.growth,0,20).toFixed(2), p_ltv_cac:+clamp(d.ratio,0,50).toFixed(2),
-      p_months:Math.min(S.month, MONTHS), p_bust:S.m.cash<0, p_lang:LANG});
+      p_months:Math.min(S.month, MONTHS), p_bust:S.m.cash<0, p_lang:DB_LANG()});
     setPlayer(p); S.lbResult = res; save(); track(old ? 'lb-submit' : 'lb-join');
     delete box.dataset.edit; renderLb();
   }catch(e){ renderLb(lbError(e)); }
@@ -5352,7 +5354,7 @@ async function certIssue(){
   const f = finalScore(), d = derive(S.m);
   try{
     const c = await lbRpc('issue_certificate', {p_name:name, p_score:Math.round(f.total*100), p_s1:+f.s1.toFixed(4), p_s2:+f.s2.toFixed(4), p_biz:+f.biz.toFixed(4),
-      p_mrr_x:+clamp(f.growth,0,20).toFixed(2), p_ltv_cac:+clamp(d.ratio,0,50).toFixed(2), p_retention:+(d.effRet*100).toFixed(2), p_tranche:S.review ? S.review.lvl : 'none', p_lang:LANG});
+      p_mrr_x:+clamp(f.growth,0,20).toFixed(2), p_ltv_cac:+clamp(d.ratio,0,50).toFixed(2), p_retention:+(d.effRet*100).toFixed(2), p_tranche:S.review ? S.review.lvl : 'none', p_lang:DB_LANG()});
     S.cert = c; save(); try{ localStorage.setItem(CERT_NAME_KEY, name); }catch(e){}
     track('cert-issue'); renderCertBox();
   }catch(e){
