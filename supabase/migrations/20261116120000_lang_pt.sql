@@ -4,8 +4,13 @@ alter table public.leaderboard  drop constraint if exists leaderboard_lang_check
 alter table public.leaderboard  add  constraint leaderboard_lang_check  check (lang in ('ru','en','pt'));
 alter table public.certificates drop constraint if exists certificates_lang_check;
 alter table public.certificates add  constraint certificates_lang_check check (lang in ('ru','en','pt'));
-alter table public.case_checks  drop constraint if exists case_checks_lang_check;
-alter table public.case_checks  add  constraint case_checks_lang_check  check (lang in ('ru','en','pt'));
+-- case_checks exists only if the case-trainer migration was applied (it is not needed while GRADING is off)
+do $$ begin
+  if to_regclass('public.case_checks') is not null then
+    alter table public.case_checks drop constraint if exists case_checks_lang_check;
+    alter table public.case_checks add  constraint case_checks_lang_check check (lang in ('ru','en','pt'));
+  end if;
+end $$;
 
 -- 2. submit_score() and issue_certificate() stop rejecting 'pt' (the rest of each function is unchanged)
 do $$
