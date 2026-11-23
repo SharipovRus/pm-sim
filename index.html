@@ -253,6 +253,54 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.trail{--lo:20px; --span:74px; position:relative; height:148px; margin:-6px 0 14px; overflow:hidden; border-radius:12px; border:1px solid var(--line)}
+.trail svg{position:absolute; left:0; right:0; bottom:var(--lo); height:var(--span); width:100%; overflow:visible}
+.trail polyline{fill:none; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke}
+.tr-walked{stroke:var(--accent); stroke-width:2.5; opacity:.55}
+.tr-ahead{stroke:var(--muted); stroke-width:2; stroke-dasharray:1 7; opacity:.6}
+.tr-earth{position:absolute; left:-14px; bottom:-18px; width:62px; image-rendering:auto}
+.tr-moon{position:absolute; left:93%; bottom:calc(var(--lo) + var(--span) - 22px); width:46px; margin-left:-23px}
+.tw{position:absolute; opacity:.75; animation:tw 2.8s ease-in-out infinite}
+@keyframes tw{50%{opacity:.2; transform:scale(.8)}}
+.rk{position:absolute; width:40px; height:28px; margin-left:-20px; margin-bottom:-6px}
+.rk > img:first-child{position:absolute; left:0; top:0; width:40px; height:28px; object-fit:contain; object-position:top}
+.rk.ahead > img:first-child{opacity:.38; filter:grayscale(.6)}
+.rk::after{content:''; position:absolute; left:50%; top:30px; width:6px; height:6px; margin-left:-3px; border-radius:50%}
+.rk.up::after{background:var(--good)} .rk.down::after{background:var(--bad)}
+.rk.now::after{background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.rk-flag{position:absolute; left:24px; bottom:22px; width:16px}
+.mascot{position:absolute; width:50px; height:50px; margin-left:-25px; margin-bottom:-1px; transition:left 1s cubic-bezier(.45,.05,.3,1), bottom 1s cubic-bezier(.3,1.4,.5,1); transform-origin:50% 100%; z-index:2}
+.mascot.run{animation:m-hop .24s ease-in-out infinite}
+.mascot.m-happy:not(.run){animation:m-bounce 1.1s ease-in-out infinite}
+.mascot.m-party:not(.run){animation:m-jump .9s ease-in-out infinite}
+.mascot.m-summit:not(.run){animation:m-bounce 1.6s ease-in-out infinite}
+.mascot.m-worried:not(.run){animation:m-shake .6s ease-in-out infinite}
+.mascot{cursor:pointer; -webkit-tap-highlight-color:transparent}
+.tw.dot{width:3px; height:3px; background:var(--muted); opacity:.45; border-radius:0}
+.xp-fly{position:fixed; z-index:50; transform:translate(-50%,-100%); font-family:var(--mono); font-weight:700; font-size:14px; padding:3px 9px; border-radius:999px; pointer-events:none; white-space:nowrap; animation:xp-pop .6s cubic-bezier(.3,1.6,.5,1) both; transition:left .8s cubic-bezier(.5,0,.75,0), top .8s cubic-bezier(.5,0,.75,0), opacity .8s, transform .8s}
+.xp-fly.big{background:var(--xp-soft); color:var(--xp); border:1px solid var(--xp); font-size:16px}
+.xp-fly.small{background:var(--surface); color:var(--xp); border:1px solid var(--line)}
+.xp-fly.minus{background:var(--bad-soft); color:var(--bad); border:1px solid var(--bad)}
+.xp-fly.go{transform:translate(-50%,-50%) scale(.6); opacity:.35}
+@keyframes xp-pop{0%{opacity:0; transform:translate(-50%,-60%) scale(.5)} 100%{opacity:1; transform:translate(-50%,-100%) scale(1)}}
+.rank i.hit-up{animation:hit-up .7s ease-out}
+.rank i.hit-down{animation:hit-down .7s ease-out}
+@keyframes hit-up{0%{transform:scale(1.35); box-shadow:0 0 0 6px var(--xp-soft)} 100%{transform:scale(1)}}
+@keyframes hit-down{0%{transform:scale(1.25); background:var(--bad-soft); color:var(--bad)} 25%{transform:translateX(-3px)} 50%{transform:translateX(3px)} 100%{transform:none}}
+.mascot.ouch{animation:m-shake .4s ease-in-out 3 !important; filter:saturate(.6)}
+@media (prefers-reduced-motion: reduce){ .xp-fly{display:none} }
+
+.mascot.lol{animation:m-lol .26s ease-in-out 5 !important}
+@keyframes m-lol{0%,100%{transform:translateY(0) rotate(0)} 30%{transform:translateY(-6px) rotate(-7deg)} 70%{transform:translateY(-6px) rotate(7deg)}}
+.ha{position:absolute; transform:translateX(-50%); font-family:var(--display); font-weight:700; font-size:13px; color:var(--xp); white-space:nowrap; pointer-events:none; animation:ha 1.3s ease-out forwards; z-index:3}
+@keyframes ha{0%{opacity:0; transform:translate(-50%,6px)} 20%{opacity:1} 100%{opacity:0; transform:translate(-50%,-18px)}}
+@keyframes m-hop{50%{transform:translateY(-8px)}}
+@keyframes m-bounce{50%{transform:translateY(-3px)}}
+@keyframes m-jump{45%{transform:translateY(-10px)} 55%{transform:translateY(-10px)}}
+@keyframes m-shake{25%{transform:translateX(-1px)} 75%{transform:translateX(1px)}}
+@media (prefers-reduced-motion: reduce){ .mascot, .tw{animation:none !important; transition:none} }
+@media (max-width:560px){ .trail{--lo:16px; --span:60px; height:124px} .rk{width:30px; height:21px; margin-left:-15px} .rk > img:first-child{width:30px; height:21px} .rk::after{top:22px} .rk-flag{left:18px; bottom:17px; width:12px} .mascot{width:40px; height:40px; margin-left:-20px} .tr-earth{width:48px; left:-12px; bottom:-14px} .tr-moon{width:36px; margin-left:-18px; bottom:calc(var(--lo) + var(--span) - 16px)} }
+
 .prog{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:var(--surface)}
 .prog-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 12px; margin-bottom:6px}
 .prog-head b{font-family:var(--display); font-size:15px}
@@ -465,7 +513,7 @@ const MONTHS = 10, TEAM_COST = 35000, MARGIN = 0.7, START_CASH = 350000, SAVE_KE
 const REVIEW = {month:5, tranche:300000, full:1.25, half:1.10};
 // share of the team on tech debt (0–0.4): debt drifts +drift a month, each 10% of the team removes paydown/10
 const DEBT_WORK = {drift:3, paydown:25, organic:1.5, morale:10, max:0.4, penalty:0.0015};
-// a hint in a challenge: right answer with a hint gives HINT.xp instead of 40 and counts half in the score
+// a hint in a challenge: opening it costs HINT.cost XP at once (S.xpPen); a right answer with a hint counts half in the score
 const HINT = {xp:25, cost:15};
 // marketing owns the spend: the PM recommends, Lena moves toward her own number when trust is low
 const MKT = {pref:30000, trustLo:30, trustHi:70};
@@ -4285,6 +4333,7 @@ function pickScenarios(){
   return ids;
 }
 function newGame(){
+  TRAIL_AT = null; XP_SHOWN = null;
   const m = {users:45000, ret:0.80, conv:0.05, arppu:9, cac:2.5, viral:0.03, cash:START_CASH, trust:60, morale:62, debt:40, budget:20000, budgetRec:20000, debtShare:0};
   const d = derive(m);
   S = { v:2, month:1, phase:'scenario', m,
@@ -4337,7 +4386,7 @@ function answerChallenge(val){
   } else { ok = val===c.answer; S.cur.chalAns = val; }
   S.cur.chalOk = ok;
   const hint = !!S.cur.hintUsed;
-  S.xp[c.d] += ok ? (hint ? HINT.xp : 40) : 10; S.acc[c.d][0] += ok ? (hint ? 1 : 2) : 0; S.acc[c.d][1] += 2;
+  S.xp[c.d] += ok ? 40 : 10; S.acc[c.d][0] += ok ? (hint ? 1 : 2) : 0; S.acc[c.d][1] += 2;
   if(ok) applyFx(CHAL_BONUS[c.d].fx);
   streakHit(ok);
   // the task text in both languages, so the end screen can show it again
@@ -4387,7 +4436,7 @@ function load(){ try{ const s = JSON.parse(localStorage.getItem(SAVE_KEY)); retu
 function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
 
 /* ============ scoring ============ */
-function totalXp(){ return Object.values(S.xp).reduce((a,b)=>a+b,0); }
+function totalXp(){ return Object.values(S.xp).reduce((a,b)=>a+b,0) - (S.xpPen||0); }   // xpPen: XP spent on hints
 // XP gives a level; job titles come only from the final grade, so the two never disagree
 const levelFromXp = x => Math.floor(x/100)+1;
 function finalScore(){
@@ -5620,7 +5669,7 @@ function renderChallenge(){
     ${c.hint && S.cur.hintUsed ? `<div class="hint-box"><b>${L('Подсказка','Hint', 'Dica')}</b>${c.hint}</div>` : ''}
     ${c.hint && !done && !S.cur.hintUsed ? `<p style="margin:0 0 12px"><button class="btn ghost hint-btn" data-act="hint">💡 ${L(`Подсказка (−${HINT.cost} XP)`,`Hint (−${HINT.cost} XP)`, `Dica (−${HINT.cost} XP)`)}</button></p>` : ''}
     ${body}
-    ${done ? `<div class="verdict ${S.cur.chalOk?'best':'bad'}"><h3>${S.cur.chalOk?(S.cur.hintUsed?L('Верно, с подсказкой','Correct, with a hint', 'Correto, com dica'):L('Верно','Correct', 'Correto')):L('Мимо','Miss', 'Incorreto')}<span class="xp">+${S.cur.chalOk?(S.cur.hintUsed?HINT.xp:40):10} XP</span></h3>${c.type==='number'?`<p>${L('Правильный ответ:','Correct answer:', 'Resposta correta:')} <b class="num">${c.unit==='$'?USD()+int(c.answer):dec(c.answer,1)+' '+c.unit}</b>${S.cur.chalOk?'':` · ${L('твой:','yours:', 'a sua:')} <span class="num">${S.cur.chalAns}</span>`}</p>`:''}<p>${c.explain}</p>${S.cur.chalOk?`<p class="hint">${L('Бонус:','Bonus:', 'Bônus:')} ${b.why}.</p>${fxChips(b.fx)}`:''}</div>
+    ${done ? `<div class="verdict ${S.cur.chalOk?'best':'bad'}"><h3>${S.cur.chalOk?(S.cur.hintUsed?L('Верно, с подсказкой','Correct, with a hint', 'Correto, com dica'):L('Верно','Correct', 'Correto')):L('Мимо','Miss', 'Incorreto')}<span class="xp">+${S.cur.chalOk?40:10} XP</span></h3>${c.type==='number'?`<p>${L('Правильный ответ:','Correct answer:', 'Resposta correta:')} <b class="num">${c.unit==='$'?USD()+int(c.answer):dec(c.answer,1)+' '+c.unit}</b>${S.cur.chalOk?'':` · ${L('твой:','yours:', 'a sua:')} <span class="num">${S.cur.chalAns}</span>`}</p>`:''}<p>${c.explain}</p>${S.cur.chalOk?`<p class="hint">${L('Бонус:','Bonus:', 'Bônus:')} ${b.why}.</p>${fxChips(b.fx)}`:''}</div>
       <div class="actions"><button class="btn primary" data-act="close" data-primary>${S.month>=MONTHS?L('Закрыть последний месяц →','Close the final month →', 'Fechar o último mês →'):L('Закрыть месяц →','Close the month →', 'Fechar o mês →')}</button></div>` : ''}
   </div>`;
 }
@@ -5725,6 +5774,116 @@ function renderEnd(){
     <div class="actions"><button class="btn primary" data-act="new" data-primary>${L('Сыграть ещё раз — новые кейсы','Play again — new cases', 'Jogar de novo — novas situações')}</button></div>
   </div>`;
 }
+/* ============ trail: the mascot flies from Earth to the Moon ============ */
+// A strip above every game screen: 10 floating rocks (months) between Earth and the Moon.
+// The path is the player's own: a closed month's rock sits as high as the MRR got (log scale, ×1.6 = near the Moon),
+// so drops show as steps down. Rocks of the months ahead are faded and lead on to the Moon.
+// The mascot stands on the current month, hops to the next rock when a month starts and lands on the Moon after a full run.
+// Sprites live in img/trail/: mascot-<pose>.webp and space-<object>.webp.
+const TR = 'img/trail/';
+const trailX = i => i>=MONTHS ? 93 : 9 + i*(76/(MONTHS-1));       // % from the left; i = MONTHS is the Moon
+let TRAIL_AT = null;                                               // rock the mascot was last drawn on
+// the sky: sparkle sprites plus tiny pixel dots, from a fixed seed
+const SKY = (()=>{ let r = 7; const rnd = () => (r = (r*16807) % 2147483647) / 2147483647, out = [];
+  for(let k=0;k<34;k++){ const big = k<12; out.push([+(6+rnd()*84).toFixed(1), +(4+rnd()*(big?40:62)).toFixed(1), big ? (k%3===0 ? 'gold' : 'white') : 'dot', big ? 7+Math.round(rnd()*7) : 0, +(rnd()*3).toFixed(2)]); }
+  return out; })();
+function trailF(i){                                                // height of rock i, 0..1 (1 = the Moon)
+  const H = S.history, base = H[0].mrr, f = h => Math.max(.04, Math.min(.9, .22 + .6*Math.log(h.mrr/base)/Math.log(1.6)));   // ×1.6 ≈ near the Moon, a drop steps down
+  if(i>=MONTHS) return 1;
+  if(H[i+1]) return f(H[i+1]);
+  const last = H.length-2, from = last>=0 ? f(H[last+1]) : f(H[0]), steps = MONTHS - last;
+  const t = (i - last)/steps;                                      // months ahead: on to the Moon, with a little wobble
+  return Math.max(.04, Math.min(.92, from + (1-from)*t + (i%2 ? .07 : -.05)));
+}
+const trailPos = i => ({left: trailX(i)+'%', bottom: `calc(var(--lo) + ${trailF(i).toFixed(3)} * var(--span))`});
+function mascotMood(){
+  const m = S.m, d = derive(m), H = S.history;
+  if(S.phase==='end') return m.cash<0 ? 'sad' : 'summit';
+  if(S.phase==='summary'){ const prev = H[H.length-2]; if(d.runway<3) return 'worried'; return prev && d.mrr<prev.mrr ? 'worried' : 'happy'; }
+  if(S.phase==='scenFeedback'){ const sc = SCEN.find(x=>x.id===S.cur.scenId), q = sc.options[S.cur.choice].q; return q==='best' ? 'party' : q==='bad' ? 'worried' : 'calm'; }
+  if(S.phase==='chalFeedback') return S.cur.chalOk ? 'party' : 'worried';
+  return d.runway<3 ? 'worried' : 'calm';
+}
+const POSE = {calm:'calm', happy:'runB', party:'party', worried:'worried', sad:'sad', summit:'summit'};
+function trailHtml(){
+  const H = S.history, mood = mascotMood();
+  const at = S.phase==='end' && S.m.cash>=0 ? MONTHS : Math.min(S.month, MONTHS) - 1;
+  const rocks = Array.from({length:MONTHS}, (_,i)=>{
+    const h = H[i+1], prev = H[i], p = trailPos(i);
+    const cls = h ? (h.mrr>=prev.mrr ? 'up' : 'down') : (i===at ? 'now' : 'ahead');
+    const tip = h ? `${L('Месяц','Month','Mês')} ${i+1}: MRR ${money(h.mrr)}` : `${L('Месяц','Month','Mês')} ${i+1}`;
+    return `<span class="rk ${cls}" style="left:${p.left}; bottom:${p.bottom}" title="${tip}"><img src="${TR}space-rock${i%4+1}.webp" alt="">${i+1===REVIEW.month ? `<img class="rk-flag" src="${TR}space-flag.webp" alt="">` : ''}</span>`;
+  }).join('');
+  // the route through the rock tops: walked part solid, the rest dotted
+  const pt = i => `${(trailX(i)*10).toFixed(1)},${((1-trailF(i))*1000).toFixed(1)}`;
+  const done = Math.min(H.length-1, MONTHS);
+  const walked = Array.from({length:done}, (_,i)=>pt(i)).join(' ');
+  const ahead = Array.from({length:MONTHS+1-Math.max(0,done-1)}, (_,k)=>pt(Math.max(0,done-1)+k)).join(' ');
+  const stars = SKY.map(([x,y,c,w,dl])=>c==='dot'
+      ? `<i class="tw dot" style="left:${x}%; top:${y}%; animation-delay:${dl}s"></i>`
+      : `<img class="tw" src="${TR}space-star-${c}.webp" alt="" style="left:${x}%; top:${y}%; width:${w}px; animation-delay:${dl}s">`).join('');
+  const p = trailPos(at);
+  return `<div class="trail" id="trail" aria-hidden="true">
+    ${stars}
+    <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+      ${done>1 ? `<polyline points="${walked}" class="tr-walked"/>` : ''}
+      <polyline points="${ahead}" class="tr-ahead"/>
+    </svg>
+    <img class="tr-earth" src="${TR}space-earth.webp" alt="">
+    <img class="tr-moon" src="${TR}space-moon.webp" alt="">
+    ${rocks}
+    <img class="mascot m-${mood}" id="mascot" data-act="tickle" src="${TR}mascot-${POSE[mood]}.webp" alt="" data-at="${at}" style="left:${p.left}; bottom:${p.bottom}">
+  </div>`;
+}
+// after a render: if the rock changed by one, start on the previous rock and hop to the new one
+function trailRun(){
+  const el = document.getElementById('mascot'); if(!el) return;
+  const at = +el.dataset.at, from = TRAIL_AT; TRAIL_AT = at;
+  if(from===null || from===at || Math.abs(at-from)>1 || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const a = trailPos(from), b = trailPos(at), keep = el.getAttribute('src');
+  el.style.transition = 'none'; el.style.left = a.left; el.style.bottom = a.bottom; el.classList.add('run');
+  let f = 0; el.src = TR+'mascot-runA.webp';
+  const tick = setInterval(()=>{ el.src = TR + (f++%2 ? 'mascot-runA.webp' : 'mascot-runB.webp'); }, 120);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.transition = ''; el.style.left = b.left; el.style.bottom = b.bottom; }));
+  setTimeout(()=>{ clearInterval(tick); el.classList.remove('run'); el.src = keep; }, 1100);
+}
+// XP change after a render: a "+30 XP" (or "−15 XP") pops over the mascot's head and flies up into the XP chip
+// in the header; the chip keeps the old number until it lands, then counts and flashes. A minus makes the mascot sad for a moment.
+let XP_SHOWN = null;
+function xpFly(){
+  if(!S){ XP_SHOWN = null; return; }
+  const now = totalXp(), was = XP_SHOWN; XP_SHOWN = now;
+  if(was===null || was===now) return;
+  const chip = document.querySelector('.rank i'), lvl = document.querySelector('.rank b');
+  const d = now - was, text = (d>0?'+':'−') + Math.abs(d) + ' XP';
+  const track = document.querySelector('.track-label span:last-child');
+  const setChip = v => { if(chip) chip.textContent = int(v) + ' XP'; if(track) track.textContent = int(v) + ' XP'; if(lvl) lvl.textContent = L('Уровень','Level','Nível') + ' ' + levelFromXp(v); };
+  const vis = el => { if(!el) return null; const r = el.getBoundingClientRect(); return r.bottom>0 && r.top<innerHeight && r.width ? r : null; };
+  const from = vis(document.getElementById('mascot')) || vis(document.querySelector('.verdict .xp'));
+  if(!chip || !from || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ setChip(now); return; }
+  setChip(was);
+  const m = document.getElementById('mascot');
+  if(d<0 && m && !m.classList.contains('run')){ const keep = m.getAttribute('src'); m.src = TR+'mascot-sad.webp'; m.classList.add('ouch'); setTimeout(()=>{ m.src = keep; m.classList.remove('ouch'); }, 1400); }
+  const f = document.createElement('div');
+  f.className = 'xp-fly ' + (d<0 ? 'minus' : d>=25 ? 'big' : 'small'); f.textContent = text;
+  const x0 = from.left + from.width/2, y0 = from.top - 6;
+  f.style.left = x0+'px'; f.style.top = y0+'px'; document.body.appendChild(f);
+  // 1) pop over the head, 2) fly to the chip, 3) land: update the number and flash
+  setTimeout(()=>{ const c = chip.getBoundingClientRect(); f.classList.add('go'); f.style.left = (c.left + c.width/2)+'px'; f.style.top = (c.top + c.height/2)+'px'; }, 650);
+  setTimeout(()=>{ f.remove(); setChip(now); chip.classList.remove('hit-up','hit-down'); void chip.offsetWidth; chip.classList.add(d<0 ? 'hit-down' : 'hit-up'); }, 1500);
+}
+// a tap on the mascot makes it laugh: the laughing sprite, a giggle and a floating "ha-ha"
+function tickle(el){
+  if(el.classList.contains('run') || el.classList.contains('lol')) return;
+  const keep = el.getAttribute('src'); el.src = TR+'mascot-party.webp'; el.classList.add('lol');
+  const ha = document.createElement('span'); ha.className = 'ha'; ha.textContent = L('ха-ха!','ha-ha!','kkkk!');
+  ha.style.left = el.style.left; ha.style.bottom = `calc(${el.style.bottom} + 44px)`; el.parentNode.appendChild(ha);
+  setTimeout(()=>{ el.classList.remove('lol'); el.src = keep; ha.remove(); }, 1300);
+  track('mascot-tickle');
+}
+// preload the run frames so the first hop does not blink
+['runA','runB','party'].forEach(p=>{ const i = new Image(); i.src = TR+'mascot-'+p+'.webp'; });
+
 /* ============ quick mode ============ */
 // 10 challenges in a row against the clock, no simulation. Lives in Q, apart from the game state S,
 // so a saved game is never touched. Best result is kept in this browser (QUICK_KEY).
@@ -5804,6 +5963,7 @@ function render(){
   if(!S){ renderIntro(); annotate($('#stage')); return; }
   ({scenario:renderScenario, scenFeedback:renderScenario, challenge:renderChallenge, chalFeedback:renderChallenge, summary:renderSummary, end:renderEnd})[S.phase]();
   if(S.phase!=='end') $('#stage').insertAdjacentHTML('afterbegin', goalBar());
+  $('#stage').insertAdjacentHTML('afterbegin', trailHtml()); trailRun(); xpFly();
   annotate($('#stage'));
   if(S.phase==='end'){ paintCard(); renderCertBox(); renderLb(); }
 }
@@ -5820,7 +5980,7 @@ document.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
   const a = b.dataset.act;
   if(a==='lang'){ setLang(b.dataset.lang); return; }
-  if(a==='hint'){ if(S && S.phase==='challenge' && !S.cur.hintUsed){ S.cur.hintUsed = true; track('hint'); save(); render(); } return; }
+  if(a==='hint'){ if(S && S.phase==='challenge' && !S.cur.hintUsed){ S.cur.hintUsed = true; S.xpPen = (S.xpPen||0) + Math.min(HINT.cost, Math.max(0, totalXp())); /* never below zero */ track('hint'); save(); render(); } return; }
   if(a==='theme'){ setTheme(themeNow()==='dark' ? 'light' : 'dark'); return; }
   if(a==='shareCard'){ shareCard(); return; }
   if(a==='publishImg'){ publishImage(); return; }
@@ -5836,6 +5996,7 @@ document.addEventListener('click', e=>{
   if(a==='boardClose'){ closeBoard(); return; }
   if(a==='matrix'){ closeTerm(); openMatrix(); return; }
   if(a==='recall'){ openRecall(b); return; }
+  if(a==='tickle'){ tickle(b); return; }
   if(a==='qStart'){ quickStart(); return; }
   if(a==='qExit'){ quickExit(); return; }
   if(a==='qAns'){ quickAnswer(+b.dataset.i); return; }
