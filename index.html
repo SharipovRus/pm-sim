@@ -5272,8 +5272,7 @@ async function openBoard(){
   s.hidden = false; track('lb-open');
   try{
     const rows = await lbRpc('top_scores', {p_limit:50}), p = getPlayer();
-    const total = rows.length ? rows[0].total : 0;
-    $('#board-body').innerHTML = `<p class="hint" style="margin:0">${L(`Показаны ${Math.min(50,total)} лучших результатов — по одному, лучшему, от каждого игрока. Всего в лидерборде: ${total}.`,`Showing the top ${Math.min(50,total)} results — each player’s best run. On the leaderboard: ${total}.`, `Mostrando os ${Math.min(50,total)} melhores resultados — a melhor partida de cada participante. No ranking: ${total}.`)} <span id="lb-played"></span></p>${lbRows(rows, p && p.name)}`;
+    $('#board-body').innerHTML = `<p class="hint" style="margin:0">${L('Лидерборд показывает 50 лучших результатов.','The leaderboard shows the top 50 results.','O ranking mostra os 50 melhores resultados.')} <span id="lb-played"></span></p>${lbRows(rows, p && p.name)}`;
     playedCount().then(n=>{ const el = $('#lb-played'); if(el && n) el.textContent = L(`Всего в игру сыграли: ${int(n)}.`, `Players so far: ${int(n)}.`, `Pessoas que já jogaram: ${int(n)}.`); });
   }catch(e){ $('#board-body').innerHTML = `<p class="hint">${L('Не удалось загрузить лидерборд.','Couldn’t load the leaderboard.', 'Não foi possível carregar o ranking.')}</p>`; }
 }
