@@ -5251,6 +5251,18 @@ async function lbSubmit(){
     delete box.dataset.edit; renderLb();
   }catch(e){ renderLb(lbError(e)); }
 }
+// how many people started a game: GoatCounter's public counter for the start-<lang> events
+// (needs "Allow adding visitor counts on your website" in the GoatCounter settings; otherwise the line stays hidden)
+let PLAYED = null;
+async function playedCount(){
+  if(PLAYED!==null) return PLAYED;
+  if(!GC_CODE) return 0;
+  try{
+    const nums = await Promise.all(LANGS.map(lg=>fetch(`https://${GC_CODE}.goatcounter.com/counter/start-${lg}.json`).then(r=>r.ok ? r.json() : null).catch(()=>null)));
+    PLAYED = nums.reduce((a,x)=>a + (x && x.count ? +String(x.count).replace(/\D/g,'') : 0), 0);
+  }catch(e){ PLAYED = 0; }
+  return PLAYED;
+}
 async function openBoard(){
   let s = document.getElementById('board');
   if(!s){ s = document.createElement('div'); s.id = 'board'; document.body.appendChild(s); }
@@ -5260,7 +5272,9 @@ async function openBoard(){
   s.hidden = false; track('lb-open');
   try{
     const rows = await lbRpc('top_scores', {p_limit:50}), p = getPlayer();
-    $('#board-body').innerHTML = `<p class="hint" style="margin:0">${L(`Лучший результат каждого игрока. Всего игроков: ${rows.length ? rows[0].total : 0}.`,`Each player’s best run. Players: ${rows.length ? rows[0].total : 0}.`, `A melhor partida de cada participante. Participantes: ${rows.length ? rows[0].total : 0}.`)}</p>${lbRows(rows, p && p.name)}`;
+    const total = rows.length ? rows[0].total : 0;
+    $('#board-body').innerHTML = `<p class="hint" style="margin:0">${L(`Показаны ${Math.min(50,total)} лучших результатов — по одному, лучшему, от каждого игрока. Всего в лидерборде: ${total}.`,`Showing the top ${Math.min(50,total)} results — each player’s best run. On the leaderboard: ${total}.`, `Mostrando os ${Math.min(50,total)} melhores resultados — a melhor partida de cada participante. No ranking: ${total}.`)} <span id="lb-played"></span></p>${lbRows(rows, p && p.name)}`;
+    playedCount().then(n=>{ const el = $('#lb-played'); if(el && n) el.textContent = L(`Всего в игру сыграли: ${int(n)}.`, `Players so far: ${int(n)}.`, `Pessoas que já jogaram: ${int(n)}.`); });
   }catch(e){ $('#board-body').innerHTML = `<p class="hint">${L('Не удалось загрузить лидерборд.','Couldn’t load the leaderboard.', 'Não foi possível carregar o ranking.')}</p>`; }
 }
 function closeBoard(){ const s = document.getElementById('board'); if(s) s.hidden = true; }
