@@ -269,12 +269,12 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .rk.up::after{background:var(--good)} .rk.down::after{background:var(--bad)}
 .rk.now::after{background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
 .rk-flag{position:absolute; left:24px; bottom:22px; width:16px}
-.mascot{position:absolute; width:50px; height:50px; margin-left:-25px; margin-bottom:-1px; transition:left 1s cubic-bezier(.45,.05,.3,1), bottom 1s cubic-bezier(.3,1.4,.5,1); transform-origin:50% 100%; z-index:2}
-.mascot.run{animation:m-hop .24s ease-in-out infinite}
-.mascot.m-happy:not(.run){animation:m-bounce 1.1s ease-in-out infinite}
-.mascot.m-party:not(.run){animation:m-jump .9s ease-in-out infinite}
-.mascot.m-summit:not(.run){animation:m-bounce 1.6s ease-in-out infinite}
-.mascot.m-worried:not(.run){animation:m-shake .6s ease-in-out infinite}
+.mascot{position:absolute; width:50px; height:50px; margin-left:-25px; margin-bottom:-1px; transition:left 1s ease-in-out, bottom 1s ease-in-out; transform-origin:50% 100%; z-index:2}
+.mascot.hopping{animation:m-hop .24s ease-in-out infinite}
+.mascot.m-happy:not(.hopping){animation:m-bounce 1.1s ease-in-out infinite}
+.mascot.m-party:not(.hopping){animation:m-jump .9s ease-in-out infinite}
+.mascot.m-summit:not(.hopping){animation:m-bounce 1.6s ease-in-out infinite}
+.mascot.m-worried:not(.hopping){animation:m-shake .6s ease-in-out infinite}
 .mascot{cursor:pointer; -webkit-tap-highlight-color:transparent}
 .tw.dot{width:3px; height:3px; background:var(--muted); opacity:.45; border-radius:0}
 .xp-fly{position:fixed; z-index:50; transform:translate(-50%,-100%); font-family:var(--mono); font-weight:700; font-size:14px; padding:3px 9px; border-radius:999px; pointer-events:none; white-space:nowrap; animation:xp-pop .6s cubic-bezier(.3,1.6,.5,1) both; transition:left .8s cubic-bezier(.5,0,.75,0), top .8s cubic-bezier(.5,0,.75,0), opacity .8s, transform .8s}
@@ -294,7 +294,7 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 @keyframes m-lol{0%,100%{transform:translateY(0) rotate(0)} 30%{transform:translateY(-6px) rotate(-7deg)} 70%{transform:translateY(-6px) rotate(7deg)}}
 .ha{position:absolute; transform:translateX(-50%); font-family:var(--display); font-weight:700; font-size:13px; color:var(--xp); white-space:nowrap; pointer-events:none; animation:ha 1.3s ease-out forwards; z-index:3}
 @keyframes ha{0%{opacity:0; transform:translate(-50%,6px)} 20%{opacity:1} 100%{opacity:0; transform:translate(-50%,-18px)}}
-@keyframes m-hop{50%{transform:translateY(-8px)}}
+@keyframes m-hop{50%{transform:translateY(-3px)}}
 @keyframes m-bounce{50%{transform:translateY(-3px)}}
 @keyframes m-jump{45%{transform:translateY(-10px)} 55%{transform:translateY(-10px)}}
 @keyframes m-shake{25%{transform:translateX(-1px)} 75%{transform:translateX(1px)}}
@@ -5841,11 +5841,11 @@ function trailRun(){
   const at = +el.dataset.at, from = TRAIL_AT; TRAIL_AT = at;
   if(from===null || from===at || Math.abs(at-from)>1 || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
   const a = trailPos(from), b = trailPos(at), keep = el.getAttribute('src');
-  el.style.transition = 'none'; el.style.left = a.left; el.style.bottom = a.bottom; el.classList.add('run');
+  el.style.transition = 'none'; el.style.left = a.left; el.style.bottom = a.bottom; el.classList.add('hopping');
   let f = 0; el.src = TR+'mascot-runA.webp';
   const tick = setInterval(()=>{ el.src = TR + (f++%2 ? 'mascot-runA.webp' : 'mascot-runB.webp'); }, 120);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.transition = ''; el.style.left = b.left; el.style.bottom = b.bottom; }));
-  setTimeout(()=>{ clearInterval(tick); el.classList.remove('run'); el.src = keep; }, 1100);
+  setTimeout(()=>{ clearInterval(tick); el.classList.remove('hopping'); el.src = keep; }, 1100);
 }
 // XP change after a render: a "+30 XP" (or "−15 XP") pops over the mascot's head and flies up into the XP chip
 // in the header; the chip keeps the old number until it lands, then counts and flashes. A minus makes the mascot sad for a moment.
@@ -5863,7 +5863,7 @@ function xpFly(){
   if(!chip || !from || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ setChip(now); return; }
   setChip(was);
   const m = document.getElementById('mascot');
-  if(d<0 && m && !m.classList.contains('run')){ const keep = m.getAttribute('src'); m.src = TR+'mascot-sad.webp'; m.classList.add('ouch'); setTimeout(()=>{ m.src = keep; m.classList.remove('ouch'); }, 1400); }
+  if(d<0 && m && !m.classList.contains('hopping')){ const keep = m.getAttribute('src'); m.src = TR+'mascot-sad.webp'; m.classList.add('ouch'); setTimeout(()=>{ m.src = keep; m.classList.remove('ouch'); }, 1400); }
   const f = document.createElement('div');
   f.className = 'xp-fly ' + (d<0 ? 'minus' : d>=25 ? 'big' : 'small'); f.textContent = text;
   const x0 = from.left + from.width/2, y0 = from.top - 6;
@@ -5874,7 +5874,7 @@ function xpFly(){
 }
 // a tap on the mascot makes it laugh: the laughing sprite, a giggle and a floating "ha-ha"
 function tickle(el){
-  if(el.classList.contains('run') || el.classList.contains('lol')) return;
+  if(el.classList.contains('hopping') || el.classList.contains('lol')) return;
   const keep = el.getAttribute('src'); el.src = TR+'mascot-party.webp'; el.classList.add('lol');
   const ha = document.createElement('span'); ha.className = 'ha'; ha.textContent = L('ха-ха!','ha-ha!','kkkk!');
   ha.style.left = el.style.left; ha.style.bottom = `calc(${el.style.bottom} + 44px)`; el.parentNode.appendChild(ha);
