@@ -253,6 +253,15 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .badge b{display:block; font-size:14px}
 .badge.on{border-style:solid; border-color:var(--xp); background:var(--xp-soft); color:var(--ink)}
 .chip.dilemma{background:var(--xp-soft); border-color:var(--xp); color:var(--xp)}
+.prog{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:var(--surface)}
+.prog-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 12px; margin-bottom:6px}
+.prog-head b{font-family:var(--display); font-size:15px}
+.prog svg{display:block; max-width:560px}
+.prog-ups{margin:6px 0 0; padding-left:18px; font-size:13px}
+.prog-ups b.up{color:var(--good)} .prog-ups b.down{color:var(--bad)}
+.row-btn{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:10px}
+.row-btn .btn{padding:8px 14px; font-size:13px}
+
 a.btn{text-decoration:none; color:var(--ink)}
 a.btn.primary{color:var(--accent-ink)}
 .cases-cta{border:1px solid var(--accent); background:var(--accent-soft); border-radius:12px; padding:14px 16px; margin:18px 0}
@@ -5135,6 +5144,38 @@ function saveRun(){
 // the run before the current one (for "compared with last time")
 function prevRun(){ const runs = getRuns(); const i = runs.findIndex(r=>r.at===S.runAt); return i>=0 ? runs[i+1] : runs[0]; }
 const runDate = ts => new Intl.DateTimeFormat(({en:'en-US', pt:'pt-BR'})[LANG] || 'ru-RU', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}).format(new Date(ts));
+// progress across runs: a score chart, what changed since the first run, and a text to share
+function progressHtml(runs){
+  if(runs.length < 2) return '';
+  const seq = runs.slice().reverse(), first = seq[0], last = seq[seq.length-1], d = last.score - first.score;
+  const W = 560, H = 150, pl = 30, pr = 12, pt = 14, pb = 22, n = seq.length;
+  const X = i => pl + (n===1 ? 0 : i*(W-pl-pr)/(n-1)), Y = v => pt + (100-v)*(H-pt-pb)/100;
+  const line = seq.map((r,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(r.score).toFixed(1)).join(' ');
+  const grid = [0,50,100].map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`).join('');
+  const dots = seq.map((r,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(r.score).toFixed(1)}" r="${i===n-1?5:3.5}" fill="${i===n-1?'var(--xp)':'var(--accent)'}"><title>${runDate(r.at)}: ${r.score} / 100</title></circle>`).join('');
+  const ups = COMP_KEYS.filter(k=>first.comps && last.comps && first.comps[k]!=null && last.comps[k]!=null && last.comps[k]!==first.comps[k])
+    .map(k=>`<li>${compName(k)}: ${lvlName(first.comps[k])} → <b class="${last.comps[k]>first.comps[k]?'up':'down'}">${lvlName(last.comps[k])}</b></li>`).join('');
+  return `<div class="prog">
+    <div class="prog-head"><b>${L('Прогресс','Progress','Progresso')}</b><span class="run-dl ${d>0?'up':(d<0?'down':'')}">${d===0 ? L('без изменений','no change','sem mudança') : (d>0?'+':'−')+Math.abs(d)+L(' с первой партии',' since your first run',' desde a primeira partida')}</span></div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${L('Баллы по партиям','Score by run','Nota por partida')}">${grid}<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg>
+    ${ups ? `<ul class="prog-ups">${ups}</ul>` : ''}
+    <div class="row-btn"><button class="btn" data-act="progShare">${L('Скопировать для поста','Copy for a post','Copiar para um post')}</button><span class="hint" id="prog-hint" aria-live="polite"></span></div>
+  </div>`;
+}
+function progressText(){
+  const seq = getRuns().slice().reverse(), first = seq[0], last = seq[seq.length-1], d = last.score - first.score;
+  const days = Math.max(1, Math.round((last.at - first.at)/86400000));
+  const ups = COMP_KEYS.filter(k=>first.comps && last.comps && first.comps[k]!=null && last.comps[k]!=null && last.comps[k]>first.comps[k]).map(k=>`${compName(k)}: ${lvlName(first.comps[k])} → ${lvlName(last.comps[k])}`);
+  const delta = (d>=0?'+':'−') + Math.abs(d);
+  return L(`Мой прогресс в «Ритме», симуляторе продакт-менеджера: ${first.score} → ${last.score} из 100 (${delta}). Партий: ${seq.length}, дней: ${days}. ${ups.length ? 'Выросло: ' + ups.join('; ') + '. ' : ''}Попробуй сам: ${shareUrl()} #ProductManagement`,
+    `My progress in Rhythm, a product manager simulator: ${first.score} → ${last.score} out of 100 (${delta}) over ${seq.length} runs and ${days} ${days===1?'day':'days'}. ${ups.length ? 'What grew: ' + ups.join('; ') + '. ' : ''}Try it yourself: ${shareUrl()} #ProductManagement`,
+    `Meu progresso no Rhythm, um simulador de product manager: ${first.score} → ${last.score} de 100 (${delta}) em ${seq.length} partidas e ${days} ${days===1?'dia':'dias'}. ${ups.length ? 'O que evoluiu: ' + ups.join('; ') + '. ' : ''}Experimente: ${shareUrl()} #ProductManagement`);
+}
+async function shareProgress(){
+  const ok = await copyText(progressText()), el = document.getElementById('prog-hint');
+  if(el) el.textContent = ok ? L('Скопировано — вставь в пост.','Copied — paste it into a post.','Copiado — cole em um post.') : L('Не удалось скопировать.','Couldn’t copy.','Não foi possível copiar.');
+  track('progress-share');
+}
 function openRuns(){
   let s = document.getElementById('runs');
   if(!s){ s = document.createElement('div'); s.id = 'runs'; document.body.appendChild(s); }
@@ -5148,6 +5189,7 @@ function openRuns(){
     <div class="sheet-body">
       ${runs.length ? `<p class="hint" style="margin:0">${L(`Партий: ${runs.length} · лучшая: ${best.score} / 100 (${gradeL(best.grade)}). История хранится в этом браузере.`,`Runs: ${runs.length} · best: ${best.score} / 100 (${gradeL(best.grade)}). History is kept in this browser.`, `Partidas: ${runs.length} · melhor: ${best.score} / 100 (${gradeL(best.grade)}). O histórico fica salvo neste navegador.`)}</p>
       <p class="hint" style="margin:0">${L('Буквы — уровень по компетенции: J — Junior, M — Middle, S — Senior, L — Lead, H — Head.','Letters are the competency level: J — Junior, M — Middle, S — Senior, L — Lead, H — Head.', 'As letras indicam o nível da competência: J — Júnior, M — Pleno (Middle), S — Sênior, L — Lead, H — Head.')}</p>
+      ${progressHtml(runs)}
       <div class="runs-list">${runs.map((r,i)=>{ const nx = runs[i+1]; const dl = nx ? r.score - nx.score : null;
         return `<div class="run${r===best?' best':''}"><div class="run-top"><span class="run-date">${runDate(r.at)}</span>${r===best?`<span class="chip lvl-chip l4">${L('лучшая','best', 'melhor')}</span>`:''}</div>
         <div class="run-main"><b>${gradeL(r.grade)}</b><span class="num">${r.score} / 100</span>${dl!==null&&dl!==0?`<span class="run-dl ${dl>0?'up':'down'}">${dl>0?'+':'−'}${Math.abs(dl)}</span>`:''}</div>
@@ -5531,6 +5573,7 @@ function renderIntro(){
       ${saved && !saved.ended ? `<button class="btn primary" data-act="continue" data-primary>${L('Продолжить · месяц','Continue · month', 'Continuar · mês')} ${saved.month}</button><button class="btn" data-act="new">${L('Начать заново','Start over', 'Recomeçar')}</button>` : `<button class="btn primary" data-act="new" data-primary>${L('Начать игру','Start the game', 'Começar o jogo')}</button>`}
       ${lbOn() ? `<button class="btn ghost" data-act="board">${L('Лидерборд','Leaderboard', 'Ranking')}</button>` : ''}
       <button class="btn ghost" data-act="matrix">${L('Матрица компетенций','Competency matrix', 'Matriz de competências')}</button>
+      <button class="btn ghost" data-act="qStart">${L('Быстрый режим · 10 задач','Quick mode · 10 challenges','Modo rápido · 10 desafios')}${quickBest() ? ` · ${quickBest().ok}/${QUICK_N}` : ''}</button>
       <a class="btn ghost" href="cases/${LQ()}">${L('Кейсы с собеседований','Interview cases', 'Cases de entrevista')}</a>
       ${getRuns().length ? `<button class="btn ghost" data-act="runs">${L('Мои партии','My runs', 'Minhas partidas')} · ${getRuns().length}</button>` : ''}
       <span class="hint">${L('Кейсы и цифры каждый раз новые','Cases and numbers change every run', 'As situações e os números mudam a cada partida')}</span>
@@ -5682,7 +5725,79 @@ function renderEnd(){
     <div class="actions"><button class="btn primary" data-act="new" data-primary>${L('Сыграть ещё раз — новые кейсы','Play again — new cases', 'Jogar de novo — novas situações')}</button></div>
   </div>`;
 }
+/* ============ quick mode ============ */
+// 10 challenges in a row against the clock, no simulation. Lives in Q, apart from the game state S,
+// so a saved game is never touched. Best result is kept in this browser (QUICK_KEY).
+const QUICK_KEY = 'ritm-quick', QUICK_N = 10;
+let Q = null, qTimer = null;
+const quickBest = () => { try{ return JSON.parse(localStorage.getItem(QUICK_KEY)) || null; }catch(e){ return null; } };
+const mmss = ms => { const t = Math.round(ms/1000); return Math.floor(t/60) + ':' + String(t%60).padStart(2,'0'); };
+function quickStart(){
+  const keys = pickBalanced(Object.keys(CHAL).map(k=>({id:k, d:CHAL[k].d})), QUICK_N);
+  Q = {keys, i:0, cur:genChal(keys[0]), ans:null, ok:null, log:[], t0:Date.now(), ms:0, done:false};
+  clearInterval(qTimer);
+  qTimer = setInterval(()=>{ const el = document.getElementById('q-time'); if(el && Q && !Q.done) el.textContent = mmss(Date.now() - Q.t0); }, 1000);
+  track('quick-start'); render(); window.scrollTo({top:0});
+}
+function quickExit(){ Q = null; clearInterval(qTimer); render(); window.scrollTo({top:0}); }
+function quickAnswer(val){
+  if(!Q || Q.ok!==null) return;
+  const c = Q.cur; let ok, shown;
+  if(c.type==='number'){
+    const raw = String(val).replace(/US\$/i,'').replace(/[\s$]/g,'');
+    const v = parseFloat(LANG==='en' ? raw.replace(/,/g,'') : (LANG==='pt' && raw.includes(',') ? raw.replace(/\./g,'') : raw).replace(',','.'));
+    if(isNaN(v)){ const inp = $('#q-num'); if(inp){ inp.setAttribute('aria-invalid','true'); inp.placeholder = L('Введи число','Enter a number','Digite um número'); inp.focus(); } return; }
+    ok = Math.abs(v-c.answer) <= Math.max(Math.abs(c.answer)*c.tol, c.abs||0); shown = v;
+  } else { ok = val===c.answer; shown = val; }
+  Q.ans = shown; Q.ok = ok;
+  Q.log.push({key:c.key, ok, title:Object.fromEntries(LANGS.map(lg=>[lg, c.txt[lg].title]))});
+  render();
+}
+function quickNext(){
+  if(!Q || Q.ok===null) return;
+  if(Q.i >= QUICK_N-1){
+    Q.done = true; Q.ms = Date.now() - Q.t0; clearInterval(qTimer);
+    const okN = Q.log.filter(l=>l.ok).length, prev = quickBest();
+    Q.prevBest = prev; Q.record = !prev || okN>prev.ok || (okN===prev.ok && Q.ms<prev.ms);
+    if(Q.record){ try{ localStorage.setItem(QUICK_KEY, JSON.stringify({ok:okN, ms:Q.ms, at:Date.now()})); }catch(e){} }
+    track('quick-finish');
+  } else { Q.i++; Q.cur = genChal(Q.keys[Q.i]); Q.ans = null; Q.ok = null; }
+  render(); window.scrollTo({top:0});
+}
+function renderQuick(){
+  if(Q.done){
+    const okN = Q.log.filter(l=>l.ok).length, pb = Q.prevBest;
+    $('#stage').innerHTML = `<div class="fade">
+      <div class="eyebrow"><span>${L('Быстрый режим','Quick mode','Modo rápido')}</span></div>
+      <h2 class="h-display">${okN>=9 ? L('Отличная форма','In great shape','Em ótima forma') : okN>=6 ? L('Хорошая разминка','A good warm-up','Um bom aquecimento') : L('Есть что подтянуть','Room to improve','Há o que melhorar')}</h2>
+      <div class="grade"><span class="grade-badge">${okN} / ${QUICK_N}</span><span class="score">${mmss(Q.ms)}</span>${Q.record && pb ? `<span class="vs-prev up">${L('новый рекорд','new personal best','novo recorde pessoal')}</span>` : ''}</div>
+      ${pb && !Q.record ? `<p class="hint">${L(`Твой рекорд: ${pb.ok} / ${QUICK_N} за ${mmss(pb.ms)}.`,`Your best: ${pb.ok} / ${QUICK_N} in ${mmss(pb.ms)}.`,`Seu recorde: ${pb.ok} / ${QUICK_N} em ${mmss(pb.ms)}.`)}</p>` : ''}
+      <div class="review">${Q.log.map(l=>`<div class="rev"><span class="dot ${l.ok?'best':'bad'}"></span><b>${TL(l.title)} · ${compName(chalTags(l.key, CHAL[l.key].d)[0])}</b></div>`).join('')}</div>
+      <div class="actions"><button class="btn primary" data-act="qStart" data-primary>${L('Ещё 10 задач','Another 10','Mais 10 desafios')}</button><button class="btn ghost" data-act="qExit">${L('В меню','Back to the menu','Voltar ao menu')}</button></div>
+    </div>`;
+    return;
+  }
+  const c = Object.assign({}, Q.cur, TL(Q.cur.txt)), done = Q.ok!==null;
+  let body;
+  if(c.type==='choice'){
+    body = `<div class="opts">${c.options.map((t,i)=>{ let cls='opt'; if(done){ if(i===c.answer) cls+=' is-best'; else if(i===Q.ans) cls+=' is-wrong'; } return `<button class="${cls}" data-act="qAns" data-i="${i}" ${done?'disabled':''}><kbd>${i+1}</kbd><span>${t}</span></button>`; }).join('')}</div>`;
+  } else {
+    body = `<div class="num-row"><input id="q-num" type="text" inputmode="decimal" autocomplete="off" placeholder="${L('Ответ','Answer','Resposta')}, ${c.unit}" ${done?`disabled value="${Q.ans}"`:''}><button class="btn primary" data-act="qNum" ${done?'disabled':''}>${L('Проверить','Check','Avaliar')}</button></div><p class="hint" style="margin-top:8px">${L('Допустимая погрешность','Allowed margin of error','Margem de erro aceita')} — ${Math.round(c.tol*100)}%${c.abs?` ${L('или','or','ou')} ±${dec(c.abs,1)} ${c.unit}`:''}</p>`;
+  }
+  $('#stage').innerHTML = `<div class="fade">
+    <div class="eyebrow"><span>${L('Быстрый режим','Quick mode','Modo rápido')} · ${Q.i+1} / ${QUICK_N}</span><span class="chip num" id="q-time">${mmss(Date.now() - Q.t0)}</span>${compChips(chalTags(c.key, c.d))}<button class="link-btn" data-act="qExit" style="margin-left:auto">${L('Выйти','Exit','Sair')}</button></div>
+    <h2 class="h-display">${c.title}</h2>
+    <div style="margin-bottom:16px">${c.prompt}</div>
+    <p><b>${c.question}</b></p>
+    ${body}
+    ${done ? `<div class="verdict ${Q.ok?'best':'bad'}"><h3>${Q.ok?L('Верно','Correct','Correto'):L('Мимо','Miss','Incorreto')}</h3>${c.type==='number'?`<p>${L('Правильный ответ:','Correct answer:','Resposta correta:')} <b class="num">${c.unit==='$'?USD()+int(c.answer):dec(c.answer,1)+' '+c.unit}</b></p>`:''}<p>${c.explain}</p></div>
+      <div class="actions"><button class="btn primary" data-act="qNext" data-primary>${Q.i>=QUICK_N-1 ? L('К результату →','See the result →','Ver o resultado →') : L('Дальше →','Next →','Próximo →')}</button></div>` : ''}
+  </div>`;
+  if(!done){ const inp = $('#q-num'); if(inp && window.innerWidth>620) inp.focus(); }
+}
+
 function render(){
+  if(Q && !CERT_VIEW){ renderHud(); $('#dash').innerHTML = ''; $('#dash').hidden = true; closeTerm(); renderQuick(); annotate($('#stage')); return; }
   if(CERT_VIEW){ renderHud(); $('#dash').innerHTML = ''; $('#dash').hidden = true; closeTerm(); renderCertView(); return; }
   renderHud(); renderDash();
   closeTerm();
@@ -5721,6 +5836,12 @@ document.addEventListener('click', e=>{
   if(a==='boardClose'){ closeBoard(); return; }
   if(a==='matrix'){ closeTerm(); openMatrix(); return; }
   if(a==='recall'){ openRecall(b); return; }
+  if(a==='qStart'){ quickStart(); return; }
+  if(a==='qExit'){ quickExit(); return; }
+  if(a==='qAns'){ quickAnswer(+b.dataset.i); return; }
+  if(a==='qNum'){ quickAnswer($('#q-num').value); return; }
+  if(a==='qNext'){ quickNext(); return; }
+  if(a==='progShare'){ shareProgress(b); return; }
   if(a==='home'){ save(); S = null; render(); window.scrollTo({top:0}); track('home'); return; }
   if(a==='compInfo'){ openCompInfo(b); return; }
   if(a==='matrixClose'){ closeMatrix(); return; }
@@ -5751,6 +5872,7 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){ const rn = document.getElementById('runs'); if(rn && !rn.hidden){ closeRuns(); return; } const mx = document.getElementById('matrix'); if(mx && !mx.hidden){ closeMatrix(); return; } const bd = document.getElementById('board'); if(bd && !bd.hidden){ closeBoard(); return; } const s = document.getElementById('sheet'); if(s && !s.hidden){ closeSheet(); return; } closeTerm(); return; }
   if(e.target.id==='lb-name' || e.target.id==='lb-li'){ if(e.key==='Enter'){ e.preventDefault(); lbSubmit(); } return; }
   if(e.target.id==='cert-name'){ if(e.key==='Enter'){ e.preventDefault(); certIssue(); } return; }
+  if(e.target.id==='q-num'){ if(e.key==='Enter'){ e.preventDefault(); quickAnswer(e.target.value); } return; }
   if(e.target.id==='ans-num'){ if(e.key==='Enter'){ e.preventDefault(); answerChallenge(e.target.value); } return; }
   if(e.target.tagName==='INPUT') return;
   if(e.key==='?'){ openSheet(); return; }
