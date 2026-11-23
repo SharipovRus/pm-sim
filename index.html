@@ -84,6 +84,8 @@ button{font:inherit; color:inherit}
 :root[data-theme="light"]{color-scheme:light} :root[data-theme="dark"]{color-scheme:dark}
 .hud-btn.theme-btn{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0}
 .hud-btn.theme-btn svg{width:17px; height:17px; flex:none}
+.hud-btn.music-btn{color:var(--muted)}
+.hud-btn.music-btn[aria-pressed="true"]{color:var(--accent); border-color:var(--accent)}
 .lang{display:inline-flex; padding:3px; gap:2px; border:1px solid var(--line); border-radius:999px; background:var(--surface)}
 .lang button{padding:4px 10px; border:0; border-radius:999px; background:none; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:.04em; color:var(--muted)}
 .lang button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
@@ -490,6 +492,99 @@ function setTheme(t){
 }
 const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>';
 const ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
+const ICON_NOTE = on => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>${on ? '' : '<path d="M3 3l18 18"/>'}</svg>`;
+
+/* ============ music: calm generative background, made in the browser ============ */
+// No audio files and no licences: Web Audio plays slow 4-chord loops (soft pads + bass) and sparse
+// pentatonic piano notes on top, a different melody every time. Off by default; the choice is saved.
+// Browsers allow sound only after a click, so a saved "on" starts with the first click on the page.
+// Pauses while the tab is hidden.
+const MUSIC_KEY = 'ritm-music';
+const Music = (()=>{
+  const BEAT = 60/66, STEP = BEAT/2, BAR = 16;                  // one chord = 8 beats, scheduled in eighths
+  const hz = n => 440 * Math.pow(2, (n-69)/12);
+  const CH = {                                                   // bass note + pad voicing (MIDI), all in C major
+    C:{b:48, pad:[52,55,59,62]}, Am:{b:45, pad:[55,59,60,64]}, F:{b:41, pad:[57,60,64,67]},
+    G:{b:43, pad:[57,59,62,64]}, Em:{b:40, pad:[55,59,62,64]}, Dm:{b:38, pad:[53,57,60,64]}
+  };
+  const PROGS = [['C','Am','F','G'], ['F','G','Em','Am'], ['Dm','G','C','Am'], ['Am','F','C','G']];
+  const SCALE = [67,69,72,74,76,79,81,84];                       // C major pentatonic: never clashes
+  let wanted = false, playing = false, ctx = null, master, buses, timer = null;
+  let nextT = 0, step = 0, prog = 0, mel = 3, density = .7;
+  try{ wanted = localStorage.getItem(MUSIC_KEY)==='on'; }catch(e){}
+
+  function build(){
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.connect(ctx.destination);
+    master = ctx.createGain(); master.gain.value = 0; master.connect(comp);
+    const tone = ctx.createBiquadFilter(); tone.type = 'lowpass'; tone.frequency.value = 2800; tone.connect(master);
+    // reverb from a decaying noise burst
+    const rev = ctx.createConvolver(), n = Math.round(ctx.sampleRate*3.2), ir = ctx.createBuffer(2, n, ctx.sampleRate);
+    for(let c=0;c<2;c++){ const d = ir.getChannelData(c); for(let i=0;i<n;i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/n, 3); }
+    rev.buffer = ir; rev.connect(tone);
+    const bus = send => { const g = ctx.createGain(), s = ctx.createGain(); s.gain.value = send; g.connect(tone); g.connect(s); s.connect(rev); return g; };
+    buses = {pad:bus(.5), keys:bus(.65), bass:bus(.12)};
+  }
+  // one oscillator with an envelope: attack a, hold, release r
+  function voice(bus, type, f, t, a, hold, r, vol, detune=0, cut=0){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = f; o.detune.value = detune;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t+a); g.gain.setValueAtTime(vol, t+a+hold);
+    g.gain.exponentialRampToValueAtTime(.0001, t+a+hold+r);
+    o.connect(g);
+    if(cut){ const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = cut; g.connect(lp); lp.connect(bus); } else g.connect(bus);
+    o.start(t); o.stop(t+a+hold+r+.05);
+  }
+  const pad = (ch, t) => ch.pad.forEach(n => { const hold = BAR*STEP - 2.2;
+    voice(buses.pad, 'triangle', hz(n), t, 2.2, hold, 3, .02, -6, 1000); voice(buses.pad, 'sine', hz(n), t, 2.2, hold, 3, .02, 6); });
+  const bass = (ch, t, v) => { voice(buses.bass, 'sine', hz(ch.b), t, .05, BEAT*1.5, 1.6, .15*v); voice(buses.bass, 'triangle', hz(ch.b+12), t, .05, BEAT, 1, .025*v, 0, 500); };
+  const keys = (n, t, v) => { voice(buses.keys, 'sine', hz(n), t, .008, 0, 2.4, v); voice(buses.keys, 'sine', hz(n)*2, t, .005, 0, .8, v*.18); voice(buses.keys, 'sine', hz(n)*4, t, .003, 0, .25, v*.05); };
+
+  function eighth(t, s, ch){
+    if(s===0){ pad(ch, t); bass(ch, t, 1); }
+    if(s===10) bass(ch, t, .55);
+    const p = (s===0 ? .55 : s%4===0 ? .38 : s%2===0 ? .22 : .1) * density;
+    if(Math.random() < p){
+      mel = Math.max(0, Math.min(SCALE.length-1, mel + [-2,-1,-1,0,1,1,2][Math.floor(Math.random()*7)]));
+      const tt = t + (Math.random()-.5)*.025, v = .045 + Math.random()*.03;
+      keys(SCALE[mel], tt, v);
+      if(Math.random() < .15 && mel>=2) keys(SCALE[mel-2], tt+.03, v*.6);   // now and then a soft double note
+    }
+  }
+  function pump(){
+    while(nextT < ctx.currentTime + .5){
+      const s = step % BAR, k = Math.floor(step/BAR);
+      if(s===0){
+        if(k && k%8===0) prog = (prog + 1 + Math.floor(Math.random()*(PROGS.length-1))) % PROGS.length;   // new loop every 2 rounds
+        density = .35 + Math.random()*.75;                       // some chords busier, some almost silent
+      }
+      eighth(nextT, s, CH[PROGS[prog][k%4]]);
+      nextT += STEP; step++;
+    }
+  }
+  function start(){
+    if(playing) return;
+    try{ if(!ctx) build(); ctx.resume(); }catch(e){ return; }
+    playing = true;
+    step = Math.ceil(step/BAR)*BAR; nextT = ctx.currentTime + .15;  // always restart on a chord
+    pump(); timer = setInterval(pump, 120);
+    const now = ctx.currentTime; master.gain.cancelScheduledValues(now); master.gain.setValueAtTime(master.gain.value, now); master.gain.linearRampToValueAtTime(.9, now + 2.5);
+  }
+  function stop(){
+    if(!playing) return; playing = false; clearInterval(timer);
+    const now = ctx.currentTime; master.gain.cancelScheduledValues(now); master.gain.setValueAtTime(master.gain.value, now); master.gain.linearRampToValueAtTime(0, now + .8);
+    setTimeout(()=>{ if(!playing) ctx.suspend(); }, 900);
+  }
+  // a saved "on" waits for the first click/key (browsers block sound before that)
+  const wake = e => { if(wanted && !playing && !document.hidden && !(e.target.closest && e.target.closest('[data-act="music"]'))) start(); };
+  document.addEventListener('pointerdown', wake, true);
+  document.addEventListener('keydown', wake, true);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) stop(); else if(wanted && ctx) start(); });
+  return {
+    on: () => wanted,
+    toggle(){ wanted = !wanted; try{ localStorage.setItem(MUSIC_KEY, wanted ? 'on' : 'off'); }catch(e){} wanted ? start() : stop(); track(wanted ? 'music-on' : 'music-off'); }
+  };
+})();
 
 /* ============ analytics ============ */
 // GoatCounter: no cookies, no personal data. Empty code = analytics off; never runs locally.
@@ -5533,6 +5628,7 @@ function renderHud(){
     <div class="track"><div class="track-label"><span>${S?L(`Месяц ${Math.min(month,MONTHS)} из ${MONTHS}`,`Month ${Math.min(month,MONTHS)} of ${MONTHS}`, `Mês ${Math.min(month,MONTHS)} de ${MONTHS}`):L('10 месяцев','10 months', '10 meses')}</span><span>${S?int(totalXp())+' XP':''}</span></div><div class="segs">${segs}</div></div>
     ${S ? `<button class="hud-btn" data-act="home" title="${L('Игра сохранится, вернуться можно с главного экрана','Your game is saved; continue from the main screen', 'Sua partida está salva; continue pela tela inicial')}">${L('Меню','Menu', 'Menu')}</button>` : ''}
     <button class="hud-btn" data-act="sheet">${L('Шпаргалка','Cheat sheet', 'Glossário')}</button>
+    <button class="hud-btn theme-btn music-btn" data-act="music" aria-pressed="${Music.on()}" aria-label="${L('Музыка','Music','Música')}" title="${Music.on() ? L('Выключить музыку','Turn music off','Desligar a música') : L('Включить спокойную музыку','Turn on calm music','Ligar música calma')}">${ICON_NOTE(Music.on())}</button>
     <button class="hud-btn theme-btn" data-act="theme" aria-label="${themeNow()==='dark' ? L('Светлая тема','Light theme', 'Tema claro') : L('Тёмная тема','Dark theme', 'Tema escuro')}" title="${themeNow()==='dark' ? L('Светлая тема','Light theme', 'Tema claro') : L('Тёмная тема','Dark theme', 'Tema escuro')}">${themeNow()==='dark' ? ICON_SUN : ICON_MOON}</button>
     <div class="lang" role="group" aria-label="Язык / Language / Idioma">${LANGS.map(lg=>`<button data-act="lang" data-lang="${lg}" aria-pressed="${lg===LANG}" lang="${lg}">${lg.toUpperCase()}</button>`).join('')}</div>
     ${S?`<div class="rank"><i>${int(totalXp())} XP</i><b>${L('Уровень','Level', 'Nível')} ${levelFromXp(totalXp())}</b></div>`:''}`;
@@ -5982,6 +6078,7 @@ document.addEventListener('click', e=>{
   if(a==='lang'){ setLang(b.dataset.lang); return; }
   if(a==='hint'){ if(S && S.phase==='challenge' && !S.cur.hintUsed){ S.cur.hintUsed = true; S.xpPen = (S.xpPen||0) + Math.min(HINT.cost, Math.max(0, totalXp())); /* never below zero */ track('hint'); save(); render(); } return; }
   if(a==='theme'){ setTheme(themeNow()==='dark' ? 'light' : 'dark'); return; }
+  if(a==='music'){ Music.toggle(); renderHud(); return; }
   if(a==='shareCard'){ shareCard(); return; }
   if(a==='publishImg'){ publishImage(); return; }
   if(a==='lbSubmit'){ lbSubmit(); return; }
